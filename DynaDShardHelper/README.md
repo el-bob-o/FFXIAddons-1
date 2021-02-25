@@ -1,0 +1,74 @@
+# Dynamis D Shard Helper
+
+This is for groups doing Dynamis D that wants some help with lotting (e.g people choosing 2 jobs and only lotting for those shards for those 2 jobs).
+
+Party members can use party chat or tell to register which job shards they want to lot for by prefixing a '{' character and then the job three-letter abbreviations (e.g "/p {rdm geo"). When a shard for those classes drops, this will automatically output to chat the players who registered interest (e.g "/p Voidshard: RDM, Dabidobido, Dabidabida")
+
+# Notes
+
+- Lot list is saved in a csv file so that it is saved if player with this addon crashes or disconnects in Dynamis D. For this reason, please use *ddsh clear* to reset the lot list before asking party members to register interest before a Dynamis D run.
+
+- Currently, Windower will sometimes pass chat strings that are not terminated properly with the 'chat message' event. This means that parsing chat messages will lead to crashes. For this reason, I have used matching instead of parsing to determine player interest. If not for this, I would have made this for more general usage. However, a possible workaround for other drops is to manually add drops and players using *ddsh addDebug*.
+
+# Commands
+
+use //ddsh to send commands
+
+## ddsh list 
+
+Prints in either windower chat mode, party chat or say chat the jobs and players who registered interest
+
+## ddsh printMode <number>
+
+Sets which channel to print stuff.
+ 
+- -1 = Windower Chat
+- 0 = Say
+- 4 = Party Chat
+	
+## ddsh testDrop <itemName> <jobName>
+
+Test a drop.
+
+>ddsh testDrop "Voidtorso: RDM" RDM
+
+Print out all players who registered as RDM job
+
+> ddsh testDrop "Voidtorso: RDM" MNK
+
+Do nothing since it's the wrong job
+
+## ddsh add <chatMessage> <senderName>
+
+Manually add players to the lot list. Chat message has to have the '{' prefix.
+
+> ddsh add "{ rdm" Dabidobido
+
+Add Dabidobido to the RDM list
+
+## ddsh clearLots
+
+This will clear the lot list
+
+## ddsh addDrop <itemName>
+
+This will add a drop to the drop list.
+
+## ddsh removeDrop <itemName>
+
+This removes a drop from the drop list.
+
+## ddsh reload
+
+Reloads drops from setting file and lots from lots file.
+
+# Version History
+
+1.0.1:
+- Fix printing to chat. Need to schedule it otherwise there will be an error or it will crash.
+- Moved the drop names to a settings file. Added addDrop and removeDrop command.
+- Changed clear command to clearLots so that it is clear it doesn't clear the settings, only the lots.
+- Added reload command to reload settings and lots from file. This is to let people edit the file and reload it if needed.
+- Removed addDebug command.
+
+1.0.0: First version with basic functionality
