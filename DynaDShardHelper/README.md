@@ -1,6 +1,6 @@
 # Dynamis D Shard Helper
 
-This is for groups doing Dynamis D that wants some help with lotting (e.g people choosing 2 jobs and only lotting for those shards for those 2 jobs).
+This is for groups doing Dynamis D that wants some help with lotting (e.g people choosing 2 jobs and only lotting the shards for those 2 jobs).
 
 Party members can use party chat or tell to register which job shards they want to lot for by prefixing a '{' character and then the job three-letter abbreviations (e.g "/p {rdm geo"). When a shard for those classes drops, this will automatically output to chat the players who registered interest (e.g "/p Voidshard: RDM, Dabidobido, Dabidabida")
 
@@ -63,6 +63,9 @@ This removes a drop from the drop list.
 Reloads drops from setting file and lots from lots file.
 
 # Version History
+1.0.2:
+- added ChatDelay command to configure delay
+- use multiple lines in one chat message
 
 1.0.1:
 - Fix printing to chat. Need to schedule it otherwise there will be an error or it will crash.
@@ -71,4 +74,5 @@ Reloads drops from setting file and lots from lots file.
 - Added reload command to reload settings and lots from file. This is to let people edit the file and reload it if needed.
 - Removed addDebug command.
 
-1.0.0: First version with basic functionality
+1.0.0: 
+- First version with basic functionality

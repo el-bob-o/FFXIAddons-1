@@ -1,20 +1,14 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.1'
+_addon.version = '1.0.2'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
 res = require('resources')
 config = require('config')
+chatHelper = require('ChatHelper')
 
-SayMode = 0
 TellMode = 3
-PartyMode = 4
-WindowerMode = -1
-
-PrintMode = PartyMode
-
-ChatSchedule = 0.0
 
 default = {
 	 "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN"
@@ -40,7 +34,7 @@ windower.register_event('addon command', function(...)
 		end
 	elseif args[1] == "printMode" then
 		if type(tonumber(args[2])) == 'number' then
-			PrintMode = tonumber(args[2])
+			chatHelper.PrintMode = tonumber(args[2])
 		end
 	elseif args[1] == "add" then
 		parse_chat(args[2], args[3], TellMode, false)
@@ -62,6 +56,21 @@ windower.register_event('addon command', function(...)
 	elseif args[1] == "reload" then
 		lots = load_lots()
 		drops = config.load()
+	elseif args[1] == "chatDelay" then
+		if type(tonumber(args[2])) == 'number' then
+			chatHelper.ChatDelay = tonumber(args[2])
+		end
+	else
+		windower.add_to_chat(122, "Commands:")
+		windower.add_to_chat(122, "//ddsh list: print the list of players who registered interest to the selected chat channel")
+		windower.add_to_chat(122, "//ddsh printMode <mode>: sets the selected chat channel. 0 = Say, 4 = Party, -1 = Windower")
+		windower.add_to_chat(122, "//ddsh add <chatmsg> <sender>: simulates a tell msg. E.g //ddsh add \"{ geo run\" Dabidobido")
+		windower.add_to_chat(122, "//ddsh addDrop <dropName>: adds a drop to the watch list. E.g //ddsh addDrop Wings will add any drop with Wings in the name to the watchlist")
+		windower.add_to_chat(122, "//ddsh removeDrop <dropName>: removes a drop from the watch list")
+		windower.add_to_chat(122, "//ddsh clearLots: clears the list of interested players")
+		windower.add_to_chat(122, "//ddsh reload: reloads watchlist and list of players from file")
+		windower.add_to_chat(122, "//ddsh testDrop <itemName> <nameInWatchlist>: tests a itemDrop along with the name in the watchList")
+		windower.add_to_chat(122, "//ddsh chatDelay <delay>: sets the delay between chats to <delay>. I get errors at 2 secs but it seems fine at 4 seconds")
 	end	
 end)
 
@@ -88,13 +97,13 @@ windower.register_event('chat message', parse_chat)
 
 
 function check(index, itemId)
-	ChatSchedule = 0.0
+	chatHelper.clear()
 	if res.items[itemId] then
 		for k,v in pairs(drops) do 
 			check_item_name(string.upper(res.items[itemId].name), v)
 		end
 	end
-	ChatSchedule = 0.0
+	chatHelper.print_lines()
 end
 
 function check_item_name(itemName, dropName)
@@ -111,7 +120,7 @@ function check_item_name(itemName, dropName)
 		if not found then
 			printString = printString .. ", Free"
 		end
-		print_string(printString)
+		chatHelper.add_line(printString)
 	end
 end
 
@@ -129,30 +138,18 @@ function already_in_lots(key, name)
 end
 
 function print_lots()
-	ChatSchedule = 0.0
+	chatHelper.clear()
 	for k,v in pairs(lots) do
-		local printString = k .. ":"
+		local printString = k .. ": "
 		if type(v) == "table" then
 			for k2, v2 in pairs(v) do
 				printString = printString .. v2 .. ", "
 			end
+			printString = printString
 		end	
-		print_string(printString)
+		chatHelper.add_line(printString)
 	end
-	ChatSchedule = 0.0
-end
-
-function print_string(str)
-	if string.len(str) > 0 then
-		ChatSchedule = ChatSchedule + 0.2
-		if PrintMode == WindowerMode then
-			windower.add_to_chat(122, str)
-		elseif PrintMode == PartyMode then
-			windower.chat.input:schedule(ChatSchedule, '/p ' .. str)
-		elseif PrintMode == SayMode then
-			windower.chat.input:schedule(ChatSchedule, '/s ' .. str)
-		end
-	end
+	chatHelper.print_lines()
 end
 
 function save_lots()

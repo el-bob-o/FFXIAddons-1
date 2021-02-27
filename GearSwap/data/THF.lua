@@ -25,7 +25,7 @@ function get_sets()
 	sets.Hybrid = {
 		ammo="Aurgelmir Orb",
 		head="Malignance Chapeau",neck="Erudit. Necklace",ear1="Cessance Earring",ear2="Brutal Earring", 
-		body="Malignance Tabard",hands="Mummu Wrists +2",ring1="Vocane Ring +1",ring2="Gelatinous Ring +1",
+		body="Malignance Tabard",hands="Herculean Gloves",ring1="Vocane Ring +1",ring2="Gelatinous Ring +1",
 		back="Toutatis's Cape",waist="Sailfi Belt +1",legs="Meg. Chausses +2",feet="Malignance Boots"}
 	sets.Lilith = set_combine(sets.Hybrid, {ring1="Vocane Ring +1", back="Repulse Mantle"})
 	
@@ -36,6 +36,7 @@ function get_sets()
 	
 	sets.DW0 = {}
 	sets.DW6 = { sub = "Shijo" } -- 5
+	sets.DW11 = set_combine(sets.DW6, {ear2="Suppanomimi"} )
 	sets.DW20 = set_combine(sets.DW6, { 
 		ear1="Eabani Earring", ear2="Suppanomimi",
 		body="Samnuha Coat",
@@ -78,8 +79,10 @@ function get_sets()
 		back="Toutatis's Cape", waist="Fotia Belt", legs="Pill. Culottes +2", feet="Mummu Gamash. +1"
 		}
 	sets.WS_Str = set_combine(sets.WS_Any, {
-		head="Herculean Helm",
-		hands="Herculean Gloves", ring1="Rajas Ring", ring2="Rufescent Ring",	
+		ammo="Seeth. Bomblet +1",
+		head="Herculean Helm", 
+		body="Herculean Vest", hands="Herculean Gloves", ring1="Rajas Ring", ring2="Rufescent Ring",
+		legs="Herculean Trousers", feet="Herculean Boots"
 	})
  
 	sets.WS = {}
@@ -361,6 +364,8 @@ function getDWSet()
 		return sets.DW26
 	elseif DW_Needed >= 20 then
 		return sets.DW20
+	elseif DW_Needed >= 11 then
+		return sets.DW11
 	elseif  DW_Needed >= 6 then
 		return sets.DW6
 	else
