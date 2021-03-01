@@ -1,6 +1,6 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.3'
+_addon.version = '1.0.4'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
@@ -17,11 +17,22 @@ drops = config.load(default)
 
 lots_file_path = windower.addon_path .. "data/lots.txt"
 
+treasures = {}
+
 windower.register_event('incoming chunk', function(id, data)
     if id == 0x0D2 then
         local treasure = packets.parse('incoming', data)
-        check(treasure.Index, treasure.Item)
+		table.insert(treasures, treasure)
     end
+end)
+
+windower.register_event('postrender', function()
+	if #treasures > 0 then
+		for k,v in pairs(treasures) do
+			check(v.Index, v.Item)
+		end
+		treasures = {}
+	end
 end)
 
 windower.register_event('addon command', function(...)
