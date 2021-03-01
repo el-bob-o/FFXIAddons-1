@@ -60,10 +60,10 @@ function get_sets()
 	
 	-- Make sure first mode is not a DW mode
 	Modes = { 
-		{ name = "Tank", dwSub = false, hybrid = false },
 		{ name = "Hybrid", dwSub = false, hybrid = true },
-		{ name = "DWTank", dwSub = true, hybrid = false },
+		{ name = "Tank", dwSub = false, hybrid = false },
 		{ name = "HybridDW", dwSub = true, hybrid = true },
+		{ name = "DWTank", dwSub = true, hybrid = false },	
 	}
 	ModeCount = 4 --Update if add new modes
 	

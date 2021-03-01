@@ -63,6 +63,9 @@ This removes a drop from the drop list.
 Reloads drops from setting file and lots from lots file.
 
 # Version History
+1.0.3:
+- fix chat not appearing for party and say modes
+
 1.0.2:
 - added ChatDelay command to configure delay
 - use multiple lines in one chat message

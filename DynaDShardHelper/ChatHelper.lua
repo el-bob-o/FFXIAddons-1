@@ -27,7 +27,7 @@ function chatHelper.print_lines()
 			local prefix = nil
 			if chatHelper.PrintMode == SayMode then 
 				prefix = "/s "
-			elseif chatHelper.PrintMode == PartyMode then 
+			elseif chatHelper.PrintMode == PartyMode then
 				prefix = "/p "
 			end
 			if prefix then
@@ -45,6 +45,7 @@ function chatHelper.print_lines()
 						end			
 					end
 				end
+				table.insert(chatLines, printString)
 				chatHelper.ChatSchedule = 0.0
 				for k, line in pairs(chatLines) do
 					windower.chat.input:schedule(chatHelper.ChatSchedule, line)

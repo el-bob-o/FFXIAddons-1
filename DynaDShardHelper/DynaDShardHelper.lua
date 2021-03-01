@@ -1,6 +1,6 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.2'
+_addon.version = '1.0.3'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
