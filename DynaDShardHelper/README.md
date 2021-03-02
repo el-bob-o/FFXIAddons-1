@@ -26,7 +26,7 @@ Sets which channel to print stuff.
 - 0 = Say
 - 4 = Party Chat
 	
-## ddsh testDrop <itemName> <name in watchlist> <item2 - optional>
+## ddsh testDrop "itemName" "name in watchlist" "item2 - optional"
 
 Test a drop.
 
@@ -38,7 +38,7 @@ Print out all players who registered as RDM job
 
 Do nothing since it's the wrong job
 
-## ddsh add <chatMessage> <senderName>
+## ddsh add "chatMessage" "senderName"
 
 Manually add players to the lot list. Chat message has to have the '{' prefix.
 
@@ -50,11 +50,11 @@ Add Dabidobido to the RDM list
 
 This will clear the lot list
 
-## ddsh addDrop <itemName>
+## ddsh addDrop "itemName"
 
 This will add a drop to the drop list.
 
-## ddsh removeDrop <itemName>
+## ddsh removeDrop "itemName"
 
 This removes a drop from the drop list.
 
