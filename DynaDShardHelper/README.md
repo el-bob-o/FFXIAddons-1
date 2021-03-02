@@ -26,7 +26,7 @@ Sets which channel to print stuff.
 - 0 = Say
 - 4 = Party Chat
 	
-## ddsh testDrop <itemName> <jobName>
+## ddsh testDrop <itemName> <name in watchlist> <item2 - optional>
 
 Test a drop.
 
@@ -63,6 +63,13 @@ This removes a drop from the drop list.
 Reloads drops from setting file and lots from lots file.
 
 # Version History
+1.0.5:
+- fixed only first chat appearing when there are multiple watched drops
+- fixed adding to wrong lots when names match with multiple watchlist items (e.g "/p { sch" will add player to "sch" and "eschalixir" lots if both are in the watchlist). However, "/p { geo" will add to both "geo" and "geode" as I'm matching if it starts the same due to the windower chat issue
+- changed watchlist to txt file instead of config because config can't add or remove from a list easily
+- more feedback to know when things are working or not
+- automatically remove player from lots if player sends a chat message again. Doesn't care if new message has valid lots or not.
+
 1.0.4:
 - attempt to fix only first chat appearing when there are multiple watched drops
 

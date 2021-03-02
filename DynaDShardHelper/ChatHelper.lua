@@ -7,6 +7,7 @@ local chatHelper = {
 	PrintMode = 4, -- Party Mode
 	Lines = {},
 	ChatDelay = 4, -- I get errors at 2 seconds, 4 seconds seems okay
+	NextChat = -1
 }
 
 function chatHelper.clear()
@@ -23,7 +24,8 @@ function chatHelper.print_lines()
 			for k, line in pairs(chatHelper.Lines) do
 				windower.add_to_chat(122, line)
 			end
-		else
+			chatHelper.clear()
+		elseif os.time() >= chatHelper.NextChat then
 			local prefix = nil
 			if chatHelper.PrintMode == SayMode then 
 				prefix = "/s "
@@ -31,26 +33,25 @@ function chatHelper.print_lines()
 				prefix = "/p "
 			end
 			if prefix then
-				local chatLines = {}
 				local printString = ""
-				for k, line in pairs(chatHelper.Lines) do
+				local linesToPrint = 0
+				for i = 1, #chatHelper.Lines do
 					if string.len(printString) == 0 then
-						printString = prefix .. line -- first line
+						printString = prefix .. chatHelper.Lines[i] -- first line
 					else
-						if chatHelper.ChatMaxLength - string.len(printString) - 1 - string.len(line) >= 0 then
-							printString = printString .. "\n" .. line
+						if chatHelper.ChatMaxLength - string.len(printString) - 1 - string.len(chatHelper.Lines[i]) >= 0 then
+							printString = printString .. "\n" .. chatHelper.Lines[i]
 						else
-							table.insert(chatLines, printString)
-							printString = ""
-						end			
+							break
+						end
 					end
+					linesToPrint = i
 				end
-				table.insert(chatLines, printString)
-				chatHelper.ChatSchedule = 0.0
-				for k, line in pairs(chatLines) do
-					windower.chat.input:schedule(chatHelper.ChatSchedule, line)
-					chatHelper.ChatSchedule = chatHelper.ChatSchedule + chatHelper.ChatDelay
+				for i = 1, linesToPrint do
+					table.remove(chatHelper.Lines, 1)
 				end
+				windower.chat.input(printString)
+				chatHelper.NextChat = os.time() + chatHelper.ChatDelay				
 			end
 		end
 	else
