@@ -7,8 +7,6 @@ function get_sets()
 	Indi = "Indi-Fury"
 	Geo = "Geo-Frailty"
 	Entrust = "Indi-Haste"
-	Na1 = "Poisona"
-	Na2 = "Stona"
 	FullCircleBot = false
 	BuffMode = 1
 	BuffModes = {
@@ -19,14 +17,14 @@ function get_sets()
 	sets.CombatIdleDT = {
 		main="Solstice", sub="Culminus", range="Dunna",
 		head="Azimuth Hood +1",neck="Twilight Torque",ear1="Handler's Earring +1",ear2="Odnowa Earring +1", 
-		body="Geomancy Tunic +2",hands="Geo. Mitaines +2",ring1="Vocane Ring +1",ring2="Dark Ring",
+		body="Vrikodara Jupon",hands="Geo. Mitaines +2",ring1="Vocane Ring +1",ring2="Dark Ring",
 		back="Lifestream Cape",waist="Isa Belt",legs="Psycloth Lappas",feet="Azimuth Gaiters +1"
 	}
 	
 	sets.IdleRefresh =	{
 		main="Daybreak",
 		neck="Lissome Necklace", 
-		body="Geomancy Tunic +2", ring2="Chirich Ring",
+		body="Vrikodara Jupon", ring2="Chirich Ring",
 		legs="Assid. Pants +1", feet="Geo. Sandals +2"
 	}
 	
@@ -38,7 +36,7 @@ function get_sets()
 	sets.Fastcast = set_combine(sets.IdleDT, {
 		main="Solstice",
 		head="Vanya Hood", neck="Voltsurge Torque", ear1="Loquac. Earring", ear2="Malignance Earring", 
-		body="Ros. Jaseran +1",
+		body="Vrikodara Jupon",
 		back="Lifestream Cape", waist="Witful Belt", legs="Geomancy Pants +2", feet="Regal Pumps +1"
 	})
 	sets.HealingFastcast = set_combine(sets.Fastcast, {
@@ -63,8 +61,8 @@ function get_sets()
 	})
 	sets.Healing = set_combine(sets.ConserveMP, {
 		main="Daybreak",
-		head="Vanya Hood",
-		neck="Incanter's Torque",ear2="Mendi. Earring",
+		head="Vanya Hood", neck="Incanter's Torque",ear2="Mendi. Earring",
+		body="Vrikodara Jupon",
 		back="Solemnity Cape", feet="Regal Pumps +1", 
 	})
 	sets.Elemental = set_combine(sets.ConserveMP, {
@@ -86,7 +84,7 @@ function get_sets()
 	
 	sets.JA = {}
 	sets.JA["Bolster"] = { body="Bagua Tunic +1" }
-	sets.JA["Life Cycle"] = { body="Geomancy Tunic +2", back=-"Nantosuelta's Cape" }
+	sets.JA["Life Cycle"] = { body="Geomancy Tunic +2", back="Nantosuelta's Cape" }
 	sets.JA["Full Circle"] = { head="Azimuth Hood +1" }
 	sets.JA["Curative Recantation"] = { hands="Bagua Mitaines +1" }	
 	sets.JA["Radial Arcana"] = { feet="Bagua Sandals +1" }
@@ -134,7 +132,7 @@ function midcast(spell)
 	if spell.action_type == 'Magic' then
 		if spell.skill == "Geomancy" then
 			equip(sets.Geomancy)
-		elseif spell.skill == "Healing Magic" then
+		elseif spell.skill == "Healing Magic" and spell.name:match("Cure") then
 			equip(sets.Healing)
 		elseif spell.skill == "Elemental Magic" then
 			if spell.element == world.weather_element or spell.element == world.day_element then 
@@ -288,12 +286,6 @@ function self_command(command)
 	elseif string.sub(command, 1, 10) == 'setEntrust' then
 		Entrust = string.sub(command, 12)
 		print_current_geos()
-	elseif string.sub(command, 1, 6) == 'setNa1' then
-		Na1 = string.sub(command, 8)
-		print_current_nas()
-	elseif string.sub(command, 1, 6) == 'setNa2' then
-		Na2 = string.sub(command, 8)
-		print_current_nas()
 	end
 end
 
@@ -340,10 +332,6 @@ end
 
 function party_current_geos()
 	send_command('input /p ' .. "Indi: " .. Indi .. " Geo: " .. Geo .. " Entrust: " .. Entrust)
-end
-
-function print_current_nas()
-	add_to_chat(122, "Na1: " .. Na1 .. " Na2: " .. Na2)
 end
 
 windower.register_event('time change', function(old, new)

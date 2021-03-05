@@ -32,7 +32,7 @@ function get_sets()
 	})
 	
 	sets.PDT = set_combine(sets.DT, {
-		head="Fu. Bandeau +1",
+		head="Fu. Bandeau +2",
 		hands="Meg. Gloves +2", ring2="Gelatinous Ring +1",
 		waist="Flume Belt +1", legs="Eri. Leg Guards +1", feet="Erilaz Greaves +1",
 	})
@@ -87,7 +87,7 @@ function get_sets()
 		back="Toro Cape"}
 	sets.JA["Swipe"] = sets.JA["Lunge"]
 	sets.JA["Vivacious Pulse"] = {head="Erilaz Galea +1",neck="Incanter's Torque", legs="Rune. Trousers +1"}
-	sets.JA["Battuta"] = {head="Futhark Bandeau +1"}
+	sets.JA["Battuta"] = {head="Futhark Bandeau +2"}
 	sets.JA["Valiance"] = {body = "Runeist's Coat +2", legs="Futhark Trousers +1", back = "Ogma's Cape"}
 	sets.JA["Vallation"] = sets.JA["Valiance"]
 	sets.JA["Elemental Sforzo"] = {body="Futhark Coat +1"}
@@ -100,11 +100,12 @@ function get_sets()
 	sets.WS_DEX = set_combine(sets.WS_Any, {
 		head="Herculean Helm", ear2="Odr Earring",
 		body="Herculean Vest",hands="Meg. Gloves +2",ring1="Rajas Ring",ring2="Ramuh Ring",
-		back=ogmaDex,waist="Sailfi Belt +1",legs="Herculean Trousers",feet="Herculean Boots"})
+		back=ogmaDex,waist="Sailfi Belt +1",legs="Meg. Chausses +2",feet="Herculean Boots"})
 	sets.WS_STR = set_combine(sets.WS_Any, {
+		ammo="Seeth. Bomblet +1",
 		head="Herculean Helm",
-		body="Herculean Vest",hands="Meg. Gloves +2",ring2="Rufescent Ring",
-		back=ogmaStr,waist="Sailfi Belt +1",legs="Herculean Trousers",feet="Herculean Boots"})
+		body="Herculean Vest",hands="Herculean Gloves",ring2="Rufescent Ring",
+		back=ogmaStr,waist="Sailfi Belt +1",legs="Meg. Chausses +2",feet="Herculean Boots"})
 	sets.WS_MagicAcc = set_combine(sets.WS_Any, {
 		ammo="Seeth. Bomblet +1",
 		head="Aya. Zucchetto +2", neck="Voltsurge Torque", ear1="Cessance Earring", ear2="Odr Earring",
@@ -119,6 +120,7 @@ function get_sets()
 	sets.WS["Swift Blade"] = set_combine(sets.WS_STR, {neck="Fotia Gorget"})
 	sets.WS["Armor Break"] = sets.WS_MagicAcc
 	sets.WS["Fell Cleave"] = sets.WS_STR
+	sets.WS["Shockwave"] = sets.WS_STR
 	sets.WS["Upheaval"] = sets.WS_STR
 	sets.WS["Steel Cyclone"] = sets.WS_STR
 	sets.WS["Sanguine Blade"] = sets.JA["Lunge"]
@@ -128,17 +130,17 @@ function get_sets()
 		body="Herculean Vest",hands="Meg. Gloves +2",ring1="Vertigo Ring",ring2="Rufescent Ring",
 		back=ogmaStr,waist="Fotia Belt",legs="Carmine Cuisses +1", feet="Herculean Boots"}
  
-	sets.Precast = {
+	sets.Fastcast = {
 		head="Rune. Bandeau +1",neck="Voltsurge Torque",ear1="Loquac. Earring",ear2="Etiolation Earring",
 		body="Samnuha Coat", hands="Leyline Gloves",
 		legs="Rawhide Trousers",feet="Carmine Greaves +1"}
 	sets.Enhancing = {}
-	sets.Enhancing["Precast"] = set_combine(sets.Precast, {legs="Futhark Trousers +1"})
+	sets.Enhancing["Fastcast"] = set_combine(sets.Fastcast, {legs="Futhark Trousers +1"})
 	sets.Enhancing["Any"] = {head="Erilaz Galea +1",hands="Runeist Mitons +1",legs="Carmine Cuisses +1"}
 	sets.Enhancing["Regen"] = set_combine(sets.Enhancing["Any"], {head="Rune. Bandeau +1"})
 	sets.Enhancing["Phalanx"] = set_combine(sets.Enhancing["Any"], 
 	{
-		head="Futhark Bandeau +1",
+		head="Futhark Bandeau +2",
 		hands="Taeon Gloves",
 	})
  
@@ -185,9 +187,9 @@ function precast(spell)
 		end
 	elseif spell.action_type == 'Magic' then
 		if spell.skill == "Enhancing Magic" then
-			equip(sets.Enhancing["Precast"])
+			equip(sets.Enhancing["Fastcast"])
 		else
-			equip(sets.Precast)
+			equip(sets.Fastcast)
 		end
     end
 end
@@ -237,7 +239,7 @@ function status_change(new,old)
     if T{'Idle','Resting'}:contains(new) then
 		equip(sets.Idle)
     elseif new == 'Engaged' then
-        equip(set_combine(get_set(), sets.TH))
+        equip(get_set())
     end
 end
  
@@ -272,7 +274,14 @@ windower.register_event('zone change', function()
 end)
  
 function self_command(command)
-	if command == 'cp' then
+	local args = T{}
+	if type(command) == 'string' then
+        args = T(command:split(' '))
+        if #args == 0 then
+            return
+        end
+    end
+	if args[1] == 'cp' then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
 			enable("back")
@@ -284,7 +293,7 @@ function self_command(command)
 			enable("back")
 			CPMode = false
 		end
-	elseif command == "combat" then
+	elseif args[1] == "combat" then
 		if Combat == true then
 			add_to_chat(122, "Combat off!")
 			Combat = false
@@ -293,7 +302,7 @@ function self_command(command)
 			equip(get_set())
 			Combat = true
 		end
-	elseif command == 'kite' then
+	elseif args[1] == 'kite' then
 		if KiteMode == false then
 			add_to_chat(122, "Kite Mode on")
 			enable("legs")
@@ -305,7 +314,7 @@ function self_command(command)
 			enable("legs")
 			KiteMode = false
 		end
-	elseif command == 'emnity' then
+	elseif args[1] == 'emnity' then
 		if EmnityMode == false then
 			add_to_chat(122, "Emnity Mode on")
 			EmnityMode = true
@@ -313,39 +322,69 @@ function self_command(command)
 			add_to_chat(122, "Emnity Mode off")
 			EmnityMode = false
 		end
-	elseif command == "mode" then
-		Mode = Mode + 1
-		if Modes[Mode] == nil then
-			Mode = 1
-		else
-			local validMode = nil
-			for i = Mode, ModeCount, 1 do
-				if Modes[Mode].dwSub == false then
-					validMode = Mode
-					break
+	elseif args[1] == "mode" then
+		if args[2] and type(tonumber(args[2])) == 'number' then
+			nextMode = tonumber(args[2])
+			if nextMode == nil then
+				add_to_chat(122, "Invalid mode number")
+			else
+				if Modes[nextMode] == nil then
+					add_to_chat(122, "Invalid node number")
 				else
-					if CanDualWield == true then
-						validMode = Mode
-						break
+					if Modes[nextMode].dwSub == true and CanDualWield == false then
+						add_to_chat(122, "Invalid node number, can't dual wield")
+					else
+						Mode = nextMode
 					end
 				end
 			end
-			if validMode then
-				Mode = validMode
-			else
+		else
+			Mode = Mode + 1
+			if Modes[Mode] == nil then
 				Mode = 1
+			else
+				local validMode = nil
+				for i = Mode, ModeCount, 1 do
+					if Modes[Mode].dwSub == false then
+						validMode = Mode
+						break
+					else
+						if CanDualWield == true then
+							validMode = Mode
+							break
+						end
+					end
+				end
+				if validMode then
+					Mode = validMode
+				else
+					Mode = 1
+				end
 			end
 		end
 		print_mode()
-	elseif command == "rune" then
-		send_command('input /ja "' .. Rune .. '" <me>')
-	elseif command == "sjAction" then
+	elseif args[1] == "rune" then
+		if args[2] then
+			if args[2] == "light" then Rune = "Lux"
+			elseif args[2] == "dark" then Rune = "Tenebrae" 
+			elseif args[2] == "fire" then Rune = "Ignis"
+			elseif args[2] == "water" then Rune = "Unda"
+			elseif args[2] == "thunder" then Rune = "Sulpor"
+			elseif args[2] == "ice" then Rune = "Gelus"
+			elseif args[2] == "wind" then Rune = "Flabra"
+			elseif args[2] == "earth" then Rune = "Tellus"
+			end
+			print_current_rune()
+		else
+			send_command('input /ja "' .. Rune .. '" <me>')
+		end
+	elseif args[1] == "sjAction" then
 		if SJAction == nil then
 			add_to_chat(122, "No SubjobAction for " .. player.sub_job)
 		else
 			send_command('input ' .. SJAction)
 		end
-	elseif command == "resistCharm" then
+	elseif args[1] == "resistCharm" then
 		if ResistCharm == false then
 			ResistCharm = true
 			equip(sets.ResistCharm)
@@ -360,7 +399,7 @@ function self_command(command)
 			enable("legs")
 			add_to_chat(122, "Resist Charm off")
 		end
-	elseif command == "engravedbelt" then
+	elseif args[1] == "engravedbelt" then
 		if EngravedBelt == false then
 			EngravedBelt = true
 			add_to_chat(122, "Engraved Belt on")
@@ -368,61 +407,24 @@ function self_command(command)
 			EngravedBelt = false
 			add_to_chat(122, "Resist Charm off")
 		end
-	elseif string.sub(command, 1, 5) == 'setWS' then
-		WS = string.sub(command, 7)
+	elseif args[1] == 'setWS' and args[2] then
+		WS = args[2]
 		print_current_ws()
-	elseif string.sub(command, 1, 6) == 'resist' then
-		resist = string.sub(command, 8)
-		if resist == "light" then Rune = "Tenebrae"
-		elseif resist == "dark" then Rune = "Lux"
-		elseif resist == "fire" then Rune = "Unda"
-		elseif resist == "water" then Rune = "Sulpor"
-		elseif resist == "thunder" then Rune = "Tellus"
-		elseif resist == "ice" then Rune = "Ignis"
-		elseif resist == "wind" then Rune = "Gelus"
-		elseif resist == "earth" then Rune = "Flabra"
+	elseif args[1] == 'resist' and args[2] then
+		if args[2] == "light" then Rune = "Tenebrae"
+		elseif args[2] == "dark" then Rune = "Lux"
+		elseif args[2] == "fire" then Rune = "Unda"
+		elseif args[2] == "water" then Rune = "Sulpor"
+		elseif args[2] == "thunder" then Rune = "Tellus"
+		elseif args[2] == "ice" then Rune = "Ignis"
+		elseif args[2] == "wind" then Rune = "Gelus"
+		elseif args[2] == "earth" then Rune = "Flabra"
 		end
 		print_current_rune()
-	elseif string.sub(command, 1, 4) == 'rune' then
-		resist = string.sub(command, 6)
-		if resist == "light" then Rune = "Lux"
-		elseif resist == "dark" then Rune = "Tenebrae" 
-		elseif resist == "fire" then Rune = "Ignis"
-		elseif resist == "water" then Rune = "Unda"
-		elseif resist == "thunder" then Rune = "Sulpor"
-		elseif resist == "ice" then Rune = "Gelus"
-		elseif resist == "wind" then Rune = "Flabra"
-		elseif resist == "earth" then Rune = "Tellus"
-		end
-		print_current_rune()
-	elseif string.sub(command, 1, 4) == 'mode' then
-		nextMode = tonumber(string.sub(command, 6))
-		if nextMode == nil then
-			add_to_chat(122, "Invalid mode number")
-		else
-			if Modes[nextMode] == nil then
-				add_to_chat(122, "Invalid node number")
-			else
-				if Modes[nextMode].dwSub == true and CanDualWield == false then
-					add_to_chat(122, "Invalid node number, can't dual wield")
-				else
-					Mode = nextMode
-					print_mode()
-				end
-			end
-		end
-	elseif string.sub(command, 1, 8) == 'gearinfo' then
-		local gInfo = string.sub(command, 10)
-		local index = string.find(gInfo, ' ')
-		local dwParam = string.sub(gInfo, 1, index)
-		if type(tonumber(dwParam)) == 'number' then
-			local dwgi = tonumber(dwParam)
-			if DW_Needed ~= dwgi then
-				DW_Needed = dwgi
-				if player.status == "Engaged" then
-					equip(get_set())
-				end
-			end
+	elseif args[1] == "dw" and args[2] then
+		if type(tonumber(args[2])) == 'number' then
+			local dwNo = tonumber(args[2])
+			DwNeeded = dwNo
 		end
 	end
 end

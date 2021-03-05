@@ -82,7 +82,7 @@ function get_sets()
 		ammo="Seeth. Bomblet +1",
 		head="Herculean Helm", 
 		body="Herculean Vest", hands="Herculean Gloves", ring1="Rajas Ring", ring2="Rufescent Ring",
-		legs="Herculean Trousers", feet="Herculean Boots"
+		legs="Meg. Chausses +2", feet="Herculean Boots"
 	})
  
 	sets.WS = {}
@@ -181,7 +181,36 @@ windower.register_event('zone change', function()
 end)
  
 function self_command(command)
-	if command == 'cp' then
+	local args = T{}
+	if type(command) == 'string' then
+        args = T(command:split(' '))
+        if #args == 0 then
+            return
+        end
+    end
+	if args[1] == "th" then
+		if args[2] and type(tonumber(args[2])) == 'number' then
+			nextMode = tonumber(args[2])
+			if nextMode == nil then
+				add_to_chat(122, "Invalid THMode number")
+			else
+				if THModes[nextMode] == nil then
+					add_to_chat(122, "Invalid THnode number")
+				else
+					THMode = nextMode
+					th_lock(player.status=="Engaged")
+					print_th_mode()
+				end
+			end
+		else
+			THMode = THMode + 1
+			if THModes[THMode] == nil then
+				THMode = 1
+			end
+			print_th_mode()
+			th_lock(player.status=="Engaged")
+		end
+	elseif args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
 			enable("back")
@@ -193,22 +222,29 @@ function self_command(command)
 			enable("back")
 			CPMode = false
 		end
-	elseif command == "th" then
-		THMode = THMode + 1
-		if THModes[THMode] == nil then
-			THMode = 1
+	elseif args[1] == "mode" then
+		if args[2] and type(tonumber(args[2])) == 'number' then
+			nextMode = tonumber(args[2])
+			if nextMode == nil then
+				add_to_chat(122, "Invalid mode number")
+			else
+				if Modes[nextMode] == nil then
+					add_to_chat(122, "Invalid node number")
+				else
+					Mode = nextMode
+					print_mode()
+				end
+			end
+		else
+			Mode = Mode + 1
+			if Modes[Mode] == nil then
+				Mode = 1
+			end
+			print_mode()
 		end
-		print_th_mode()
-		th_lock(player.status=="Engaged")
-	elseif command == "mode" then
-		Mode = Mode + 1
-		if Modes[Mode] == nil then
-			Mode = 1
-		end
-		print_mode()
-	elseif command == "ws" then
+	elseif args[1] == "ws" then
 		send_command('input /ws "' .. WS .. '" <t>')
-	elseif command == "throwing" then
+	elseif args[1] == "throwing" then
 		if Throwing == false then
 			Throwing = true
 			equip(sets.Throwing)
@@ -218,50 +254,13 @@ function self_command(command)
 			enable("ammo")
 		end
 		print_throwing()
-	elseif string.sub(command, 1, 5) == 'setWS' then
-		WS = string.sub(command, 7)
+	elseif args[1] == "setWS" and args[2] then
+		WS = args[2]
 		print_current_ws()
-	elseif string.sub(command, 1, 4) == 'mode' then
-		nextMode = tonumber(string.sub(command, 6))
-		if nextMode == nil then
-			add_to_chat(122, "Invalid mode number")
-		else
-			if Modes[nextMode] == nil then
-				add_to_chat(122, "Invalid node number")
-			else
-				Mode = nextMode
-				print_mode()
-			end
-		end
-	elseif string.sub(command, 1, 2) == 'th' then
-		nextMode = tonumber(string.sub(command, 4))
-		if nextMode == nil then
-			add_to_chat(122, "Invalid THMode number")
-		else
-			if THModes[nextMode] == nil then
-				add_to_chat(122, "Invalid THnode number")
-			else
-				THMode = nextMode
-				th_lock(player.status=="Engaged")
-				print_th_mode()
-			end
-		end
-	elseif string.sub(command, 1, 2) == 'dw' then
-		local dwNo = tonumber(string.sub(command, 4))
-		if dwNo == nil then
-			add_to_chat(122, "Invalid DW_Needed number")
-		else
+	elseif args[1] == "dw" and args[2] then
+		if type(tonumber(args[2])) == 'number' then
+			local dwNo = tonumber(args[2])
 			DwNeeded = dwNo
-		end
-	elseif string.sub(command, 1, 8) == 'gearinfo' then
-		local gInfo = string.sub(command, 10)
-		local index = string.find(gInfo, ' ')
-		local dwParam = string.sub(gInfo, 1, index)
-		if type(tonumber(dwParam)) == 'number' then
-			local dwgi = tonumber(dwParam)
-			if DW_Needed ~= dwgi then
-				DW_Needed = dwgi
-			end
 		end
 	end
 end
