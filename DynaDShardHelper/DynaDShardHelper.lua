@@ -1,6 +1,6 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.5'
+_addon.version = '1.0.6'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
@@ -31,12 +31,13 @@ function should_loop()
 end
 
 function update_loop()
-	if got_treasure then
+	if got_treasure then	
 		chatHelper.clear()
 		for k,v in pairs(treasures) do
 			check(v.Index, v.Item)
 		end
 		got_treasure = false
+		treasures = {}
 	end
 	chatHelper.print_lines()
 end
@@ -150,7 +151,6 @@ windower.register_event('chat message', parse_chat)
 
 
 function check(index, itemId)
-	chatHelper.clear()
 	if res.items[itemId] then
 		for k,v in pairs(watchlist) do 
 			check_item_name(string.upper(res.items[itemId].name), v)

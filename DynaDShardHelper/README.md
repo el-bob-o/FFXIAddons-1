@@ -63,6 +63,10 @@ This removes a drop from the drop list.
 Reloads drops from setting file and lots from lots file.
 
 # Version History
+1.0.6:
+- fixed lots not appearing
+- fixed treasure pool not clearing
+
 1.0.5:
 - fixed only first chat appearing when there are multiple watched drops
 - fixed adding to wrong lots when names match with multiple watchlist items (e.g "/p { sch" will add player to "sch" and "eschalixir" lots if both are in the watchlist). However, "/p { geo" will add to both "geo" and "geode" as I'm matching if it starts the same due to the windower chat issue
