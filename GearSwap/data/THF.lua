@@ -1,3 +1,5 @@
+include('THHelper.lua')
+
 function get_sets()
 	CPMode = false
 	Throwing = false
@@ -7,18 +9,12 @@ function get_sets()
 	DW_Needed = 0
 	Buffs = {}
 		
-	THModes = {
-		{ name = "Off", lock = false, onEngage = false, onAfterCast = false },
-		{ name = "FirstAction", lock = false, onEngage = true, onAfterCast = false }, --wear on engage until an action wears another set
-		{ name = "OffForWs", lock = false, onEngage = true, onAfterCast = true},
-		{ name = "FullTime", lock = true, onEngage = true, onAfterCast = false },		
-	}
-	
 	sets.TH = {
 		ammo="Per. Lucky Egg", 
 		hands="Plun. Armlets +1",
-		waist="Chaac Belt", feet="Skulk. Poulaines +1"
-		}	
+		waist="Chaac Belt", 
+		feet="Skulk. Poulaines +1"
+	}
 	
 	sets.Throwing = { ranged="Wingcutter +1" }
  
@@ -59,7 +55,7 @@ function get_sets()
 		
 	sets.WS_Any = {
 		ammo="Aurgelmir Orb",
-		head="Pill. Bonnet +2", neck="Lissome Necklace", ear1="Moonshade Earring", ear2="Brutal Earring", 
+		head="Pill. Bonnet +2", neck="Lissome Necklace", ear1="Cessance Earring", ear2="Brutal Earring", 
 		body="Herculean Vest", hands="Meg. Gloves +2", 
 		back="Toutatis's Cape",	waist="Sailfi Belt +1", legs="Pill. Culottes +2", feet="Herculean Boots"}
 	sets.WS_DEX = set_combine(sets.WS_Any, {		
@@ -68,13 +64,13 @@ function get_sets()
 		waist="Chiner's Belt +1"})
 	sets.WS_Magical = {
 		ammo="Seeth. Bomblet +1",
-		head="Herculean Helm", neck="Satlada Necklace", ear1="Moonshade Earring", ear2="Friomisi Earring",
+		head="Herculean Helm", neck="Satlada Necklace", ear1="Cessance Earring", ear2="Friomisi Earring",
 		body="Samnuha Coat", hands="Leyline Gloves", 
 		back="Toro Cape", feet="Herculean Boots"
 		}
 	sets.WS_Crit = {
 		ammo="Yetshila",
-		head="Pill. Bonnet +2", neck="Fotia Gorget", ear1="Moonshade Earring", ear2="Odr Earring",
+		head="Pill. Bonnet +2", neck="Fotia Gorget", ear1="Cessance Earring", ear2="Odr Earring",
 		body="Pillager's Vest +2", hands="Mummu Wrists +2", ring1="Mummu ring", ring2="Ramuh Ring",
 		back="Toutatis's Cape", waist="Fotia Belt", legs="Pill. Culottes +2", feet="Mummu Gamash. +1"
 		}
@@ -121,11 +117,17 @@ function precast(spell)
 	elseif spell.action_type == 'Magic' then
 		equip(sets.FastCast)
     elseif spell.type=="WeaponSkill" then
-        if sets.WS[spell.english] then 
-			SATA_check(sets.WS[spell.english])
-		else 
-			SATA_check(sets.WS["Any"])
+		local setToUse = {}
+        if sets.WS[spell.english] then
+			setToUse = sets.WS[spell.english]
+		else
+			setToUse = sets.WS["Any"]
 		end
+		setToUse = SATA_check(setToUse)
+		if player.tp < 3000 then
+			setToUse = set_combine(setToUse, {ear1="Moonshade Earring"})
+		end
+		equip(setToUse)
     end
 end
 
@@ -140,21 +142,18 @@ end
 function aftercast(spell)
     if player.status=='Engaged' then
         equip(set_combine(Modes[Mode].set, getDWSet()))
-		if THModes[THMode].onAfterCast then 
-			equip(sets.TH)
-		end
     else
         equip(sets.Idle)
     end
 end
  
 function status_change(new,old)
-    if T{'Idle','Resting'}:contains(new) then
-		th_lock(false)
+	if new == 'Engaged' then
+		equip(set_combine(Modes[Mode].set, getDWSet()))
+		on_status_change_for_th(new, old)
+	elseif T{'Idle','Resting'}:contains(new) then
+		on_status_change_for_th(new, old)
 		equip(sets.Idle)
-    elseif new == 'Engaged' then
-        equip(set_combine(Modes[Mode].set, getDWSet()))
-		th_lock(true)
     end
 end
  
@@ -189,27 +188,7 @@ function self_command(command)
         end
     end
 	if args[1] == "th" then
-		if args[2] and type(tonumber(args[2])) == 'number' then
-			nextMode = tonumber(args[2])
-			if nextMode == nil then
-				add_to_chat(122, "Invalid THMode number")
-			else
-				if THModes[nextMode] == nil then
-					add_to_chat(122, "Invalid THnode number")
-				else
-					THMode = nextMode
-					th_lock(player.status=="Engaged")
-					print_th_mode()
-				end
-			end
-		else
-			THMode = THMode + 1
-			if THModes[THMode] == nil then
-				THMode = 1
-			end
-			print_th_mode()
-			th_lock(player.status=="Engaged")
-		end
+		parse_th_command(args)
 	elseif args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
@@ -249,9 +228,11 @@ function self_command(command)
 			Throwing = true
 			equip(sets.Throwing)
 			disable("ammo")
+			AmmoDisabled = true
 		else
 			Throwing = false
 			enable("ammo")
+			AmmoDisabled = false
 		end
 		print_throwing()
 	elseif args[1] == "setWS" and args[2] then
@@ -273,43 +254,19 @@ function print_current_ws()
 	add_to_chat(122, "Current WS: " .. WS)
 end
 
-function th_lock(engaged)
-	if engaged then	
-		if THModes[THMode].onEngage then
-			equip(sets.TH)
-		end
-		if THModes[THMode].lock then
-			disable("hands")
-			disable("waist")
-			disable("feet")
-			if Throwing == false then 
-				disable("ammo")
-			end
-		end
-	else
-		enable("hands")
-		enable("waist")
-		enable("feet")
-		if Throwing == false then 
-			enable("ammo")
-		end
-	end
-end
-
 function SATA_check(set)
 	SA = Buffs["Sneak Attack"]
 	TA = Buffs["Trick Attack"]
 	if SA or TA then
 		if SA and TA then
-			equip(set_combine(set, sets.SATA))
+			set = set_combine(set, sets.SATA)
 		elseif SA then
-			equip(set_combine(set, sets.SA))
+			set = set_combine(set, sets.SA)
 		elseif TA then
-			equip(set_combine(set, sets.TA))
+			set = set_combine(set, sets.TA)
 		end
-	else
-		equip(set)
 	end
+	return set
 end
 
 function print_mode()
@@ -321,20 +278,6 @@ function print_mode()
 			break
 		else
 			printString = printString .. i .. ":" .. Modes[i].name .. " "
-		end
-	end	
-	add_to_chat(122, printString)
-end
-
-function print_th_mode()
-	printString = "Current THMode: "
-	for i = 1, 10, 1 do
-		if i == THMode then
-			printString = printString .. "[" .. i .. ":" .. THModes[i].name .. "] "
-		elseif THModes[i] == nil then
-			break
-		else
-			printString = printString .. i .. ":" .. THModes[i].name .. " "
 		end
 	end	
 	add_to_chat(122, printString)

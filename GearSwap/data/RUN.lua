@@ -1,10 +1,77 @@
+include("THHelper.lua")
+
+EmnityActions = {}
+EmnityActions["JA"] = { "Valiance", "Vallation", "Swordplay", "Pflug", "Gambit", "Rayke", "Liement",
+	"Battuta", "One for All", "Elemental Sforzo" }
+EmnityActions["RUN"] = { "Flash", "Foil" }
+EmnityActions["DRK"] = { "Poisonga", "Stun" }
+EmnityActions["BLU"] = { "Blank Gaze", "Jettatura", "Geist Wall" }
+
+Resist = {}
+Resist["ice"] = "Ignis"
+Resist["paralyze"] = "Ignis"
+Resist["bind"] = "Ignis"
+Resist["frost"] = "Ignis"
+Resist["evadown"] = "Ignis"
+Resist["agidown"] = "Ignis"
+Resist["wind"] = "Gelus"
+Resist["silence"] = "Gelus"
+Resist["gravity"] = "Gelus"
+Resist["choke"] = "Gelus"
+Resist["defdown"] = "Gelus"
+Resist["vitdown"] = "Gelus"
+Resist["earth"] = "Flabra"
+Resist["slow"] = "Flabra"
+Resist["petrify"] = "Flabra"
+Resist["rasp"] = "Flabra"
+Resist["accdown"] = "Flabra"
+Resist["dexdown"] = "Flabra"
+Resist["thunder"] = "Telus"
+Resist["stun"] = "Telus"
+Resist["shock"] = "Telus"
+Resist["mnddown"] = "Telus"
+Resist["water"] = "Sulpor"
+Resist["poison"] = "Sulpor"
+Resist["strdown"] = "Sulpor"
+Resist["atkdown"] = "Sulpor"
+Resist["fire"] = "Unda"
+Resist["addle"] = "Unda"
+Resist["amnesia"] = "Unda"
+Resist["virus"] = "Unda"
+Resist["burn"] = "Unda"
+Resist["mabdown"] = "Unda"
+Resist["intdown"] = "Unda"
+Resist["dark"] = "Lux"
+Resist["blind"] = "Lux"
+Resist["bio"] = "Lux"
+Resist["sleep"] = "Lux"
+Resist["dispel"] = "Lux"
+Resist["drain"] = "Lux"
+Resist["curse"] = "Lux"
+Resist["doom"] = "Lux"
+Resist["zombie"] = "Lux"
+Resist["mevadown"] = "Lux"
+Resist["hpdown"] = "Lux"
+Resist["mpdown"] = "Lux"
+Resist["chrdown"] = "Lux"
+Resist["absorb"] = "Lux"
+Resist["light"] = "Tenebrae"
+Resist["dia"] = "Tenebrae"
+Resist["repose"] = "Tenebrae"
+Resist["finale"] = "Tenebrae"
+Resist["charm"] = "Tenebrae"
+Resist["lullaby"] = "Tenebrae"
+Resist["sheepsong"] = "Tenebrae"
+Resist["maccdown"] = "Tenebrae"
+	
+
 function get_sets()
 	KiteMode = false
 	CPMode = false
 	Rune = "Lux"
 	SJAction = nil
 	Mode = 1
-	EmnityMode = true
+	EmnityMode = false
 	CanDualWield = false
 	ResistCharm = false
 	EngravedBelt = false
@@ -17,45 +84,84 @@ function get_sets()
 	
 	sets.EngravedBelt = { waist="Engraved Belt" }
 	
+	ayaHead 		= { name = "Aya. Zucchetto +2", 	priority = 45 }	
+	ayaBody			= { name = "Ayanmo Corazza +2", 	priority = 57 }
+	ayaHands		= { name = "Aya. Manopolas +1",		priority = 22 }
+	ayaLegs			= { name = "Aya. Cosciales +1", 	priority = 45 }
+	ayaFeet			= { name = "Aya. Gambieras +1", 	priority = 11 }
+	carmLegs		= { name = "Carmine Cuisses +1", 	priority = 50 }	
+	carmFeet		= { name = "Carmine Greaves +1", 	priority = 15 }
+	darkRing 		= { name = "Dark Ring", 			priority = -20 }
+	despHelm		= { name = "Despair Helm", 			priority = 38 }
+	eabaEar			= { name = "Eabani Earring", 		priority = 45 }
+	emetBody		= { name = "Emet Harness +1",		priority = 61 }
+	etheEar 		= { name = "Ethereal Earring", 		priority = 15 }
+	etioEar			= { name = "Etiolation Earring",	priority = 50 }
+	eriHead 		= { name = "Erilaz Galea +1", 		priority = 91 }	
+	eriLegs			= { name = "Eri. Leg Guards +1",	priority = 80 }
+	eriFeet			= { name = "Erilaz Greaves +1", 	priority = 18 }
+	futhHead		= { name = "Fu. Bandeau +2", 		priority = 46 }
+	futhNeck 		= { name = "Futhark Torque +1", 	priority = 30 }
+	futhBody 		= { name = "Futhark Coat +1", 		priority = 99 }
+	futhLegs 		= { name = "Futhark Trousers +1", 	priority = 87 }
+	futhFeet		= { name = "Futhark Boots +1", 		priority = 13 }
+	gelaRing		= { name = "Gelatinous Ring +1",	priority = 135 }
+	hercHelm 		= { name = "Herculean Helm", 		priority = 38 }
+	hercBody		= { name = "Herculean Vest", 		priority = 61 }
+	hercHands		= { name = "Herculean Gloves",		priority = 20 }
+	hercFeet		= { name = "Herculean Boots", 		priority = 9 }
+	leylHands		= { name = "Leyline Gloves", 		priority = 25 }
+	megHands		= { name = "Meg. Gloves +2",		priority = 30 }
+	megLegs			= { name = "Meg. Chausses +2", 		priority = 35 }
+	odnoEar 		= { name = "Odnowa Earring +1", 	priority = 110 }
+	rawhLegs		= { name = "Rawhide Trousers", 		priority = 47 }
+	runeHelm		= { name = "Rune. Bandeau +1", 		priority = 66 }
+	runeBody		= { name = "Runeist's Coat +2", 	priority = 208 }
+	runeLegs		= { name = "Rune. Trousers +1", 	priority = 47 }
+	runeHands		= { name = "Runeist Mitons +1", 	priority = 50 }	
+	samnBody		= { name = "Samnuha Coat", 			priority = 63 }
+	supeRing		= { name = "Supershear Ring", 		priority = 30 }
+	taeoHands		= { name = "Taeon Gloves", 			priority = 25 }
+
 	-- dt -40
 	sets.DT = {
 		ammo="Staunch Tathlum", 
-		head="Aya. Zucchetto +2", neck="Futhark Torque +1", ear1="Ethereal Earring", ear2="Odnowa Earring +1", 
-		body="Futhark Coat +1", hands="Aya. Manopolas +1", ring1="Vocane Ring +1", ring2="Dark Ring",
-		back="Evasionist's Cape", legs="Aya. Cosciales +1", feet="Aya. Gambieras +1"
+		head=ayaHead, neck=futhNeck, ear1=etherealEar, ear2=odnowaEar, 
+		body=futhBody, hands=ayaHands, ring1="Vocane Ring +1", ring2=darkRing,
+		back="Evasionist's Cape", legs=ayaLegs, feet=ayaFeet
 	}
 	
 	-- pdt 51, mdt -40
 	sets.MDT = set_combine(sets.DT, {
-		ear2="Etiolation Earring",
+		ear2=etioEar,
 		waist="Engraved Belt",
 	})
 	
 	sets.PDT = set_combine(sets.DT, {
-		head="Fu. Bandeau +2",
-		hands="Meg. Gloves +2", ring2="Gelatinous Ring +1",
-		waist="Flume Belt +1", legs="Eri. Leg Guards +1", feet="Erilaz Greaves +1",
+		head=futhHead,
+		hands=megHands, ring2=gelaRing,
+		waist="Flume Belt +1", legs=eriLegs, feet=eriFeet,
 	})
 	
 	-- emnity +41, pdt - 53/50, mdt -22, +61 allresist, 388 magic eva
 	sets.ShellVTank = set_combine(sets.PDT, {
-		body="Runeist's Coat +2",
+		body=runeBody,
 	})
 	sets.NoBuffTank = sets.MDT
 	
 	sets.Hybrid = {
 		ammo="Aurgelmir Orb",
-		head="Aya. Zucchetto +2", neck="Futhark Torque +1", ear1="Cessance Earring", ear2="Brutal Earring", 
-		body="Ayanmo Corazza +2", hands="Herculean Gloves",
-		back=ogmaDex, waist="Sailfi Belt +1", legs="Meg. Chausses +2", feet="Herculean Boots",
+		head=ayaHead, neck=futhNeck, ear1="Cessance Earring", ear2="Brutal Earring", 
+		body=ayaBody, hands=hercHands,
+		back=ogmaDex, waist="Sailfi Belt +1", legs=megLegs, feet=hercFeet,
 	}
 	sets.ShellVHybrid = set_combine(sets.ShellVTank, sets.Hybrid)
 	sets.NoBuffHybrid = set_combine(sets.NoBuffTank, sets.Hybrid)
 	
 	sets.DW0 = {}
-	sets.DW9 = { ear1 = "Suppanomimi", ear2="Eabani Earring" } -- 9
+	sets.DW9 = { ear1 = "Suppanomimi", ear2=eabaEar } -- 9
 	sets.DW21 = set_combine(sets.DW9, { 
-		body="Samnuha Coat",
+		body=samnBody,
 	}) -- 9 + 5 = 14
 	
 	-- Make sure first mode is not a DW mode
@@ -69,48 +175,42 @@ function get_sets()
 	
 	-- 47 emnity
 	sets.Emnity = {
-		head="Despair Helm", neck="Futhark Torque +1", ear1="Friomisi Earring",
-		body="Emet Harness +1", ring2="Supershear Ring",
-		back="Evasionist's Cape", legs="Eri. Leg Guards +1", feet="Erilaz Greaves +1"
+		head=despHelm, neck=futhNeck, ear1="Friomisi Earring",
+		body=emetBody, ring2=supeRing,
+		back="Evasionist's Cape", legs=eriLegs, feet=eriFeet
 	}
-	EmnityActions = {}
-	EmnityActions["JA"] = { "Valiance", "Vallation", "Swordplay", "Pflug", "Gambit", "Rayke", "Liement",
-		"Battuta", "One for All", "Elemental Sforzo" }
-	EmnityActions["RUN"] = { "Flash", "Foil" }
-	EmnityActions["DRK"] = { "Poisonga", "Stun" }
-	EmnityActions["BLU"] = { "Blank Gaze", "Jettatura", "Geist Wall" }
 	
 	sets.JA = {}
 	sets.JA["Lunge"] = {
 		neck="Eddy Necklace",ear1="Friomisi Earring",ear2="Hecate's Earring",
-		body="Samnuha Coat",hands="Leyline Gloves",ring1="Locus Ring",
+		body=samnBody,hands=leylHands,ring1="Locus Ring",
 		back="Toro Cape"}
 	sets.JA["Swipe"] = sets.JA["Lunge"]
-	sets.JA["Vivacious Pulse"] = {head="Erilaz Galea +1",neck="Incanter's Torque", legs="Rune. Trousers +1"}
-	sets.JA["Battuta"] = {head="Futhark Bandeau +2"}
-	sets.JA["Valiance"] = {body = "Runeist's Coat +2", legs="Futhark Trousers +1", back = "Ogma's Cape"}
+	sets.JA["Vivacious Pulse"] = {head=eriHead,neck="Incanter's Torque", legs=runeLegs}
+	sets.JA["Battuta"] = {head=futhHead}
+	sets.JA["Valiance"] = {body = runeBody, legs=futhLegs, back = "Ogma's Cape"}
 	sets.JA["Vallation"] = sets.JA["Valiance"]
-	sets.JA["Elemental Sforzo"] = {body="Futhark Coat +1"}
-	sets.JA["Rayke"] = {feet="Futhark Boots +1"}
-	sets.JA["Liement"] = {body = "Futhark Coat +1"}
-	sets.JA["Gambit"] = {hands="Runeist Mitons +1"}
+	sets.JA["Elemental Sforzo"] = {body=futhBody}
+	sets.JA["Rayke"] = {feet=futhFeet}
+	sets.JA["Liement"] = {body=futhBody}
+	sets.JA["Gambit"] = {hands=runeHands}
  
-	sets.WS_Any = {ammo="Aurgelmir Orb", ear1="Moonshade Earring", ear2="Brutal Earring"}
+	sets.WS_Any = {ammo="Aurgelmir Orb", ear1="Cessance Earring", ear2="Brutal Earring"}
  
 	sets.WS_DEX = set_combine(sets.WS_Any, {
-		head="Herculean Helm", ear2="Odr Earring",
-		body="Herculean Vest",hands="Meg. Gloves +2",ring1="Rajas Ring",ring2="Ramuh Ring",
-		back=ogmaDex,waist="Sailfi Belt +1",legs="Meg. Chausses +2",feet="Herculean Boots"})
+		head=hercHelm, ear2="Odr Earring",
+		body=hercBody,hands=megHands,ring1="Rajas Ring",ring2="Ramuh Ring",
+		back=ogmaDex,waist="Sailfi Belt +1",legs=megLegs,feet=hercFeet})
 	sets.WS_STR = set_combine(sets.WS_Any, {
 		ammo="Seeth. Bomblet +1",
-		head="Herculean Helm",
-		body="Herculean Vest",hands="Herculean Gloves",ring2="Rufescent Ring",
-		back=ogmaStr,waist="Sailfi Belt +1",legs="Meg. Chausses +2",feet="Herculean Boots"})
+		head=hercHelm,
+		body=hercBody,hands=hercHands,ring2="Rufescent Ring",
+		back=ogmaStr,waist="Sailfi Belt +1",legs=megLegs,feet=hercFeet})
 	sets.WS_MagicAcc = set_combine(sets.WS_Any, {
 		ammo="Seeth. Bomblet +1",
-		head="Aya. Zucchetto +2", neck="Voltsurge Torque", ear1="Cessance Earring", ear2="Odr Earring",
-		body="Samnuha Coat", hands="Leyline Gloves", ring1="Rufescent Ring", ring2="Vertigo Ring",
-		back="Izdubar Mantle", waist="Kentarch Belt +1", legs="Rawhide Trousers", feet="Herculean Boots"
+		head=ayaHead, neck="Voltsurge Torque", ear1="Cessance Earring", ear2="Odr Earring",
+		body=samnBody, hands=leylHands, ring1="Rufescent Ring", ring2="Vertigo Ring",
+		back="Izdubar Mantle", waist="Kentarch Belt +1", legs=rawhLegs, feet=hercFeet
 		})
 		
 	sets.WS = {}
@@ -126,30 +226,30 @@ function get_sets()
 	sets.WS["Sanguine Blade"] = sets.JA["Lunge"]
 	sets.WS["Freezebite"] = sets.JA["Lunge"]
 	sets.WS["Requeiescat"] = {ammo="Seething Bomblet +1",
-		head="Herculean Helm",neck="Fotia Gorget",ear2="Moonshade Earring",
-		body="Herculean Vest",hands="Meg. Gloves +2",ring1="Vertigo Ring",ring2="Rufescent Ring",
-		back=ogmaStr,waist="Fotia Belt",legs="Carmine Cuisses +1", feet="Herculean Boots"}
+		head=hercHelm,neck="Fotia Gorget",ear2="Moonshade Earring",
+		body=hercBody,hands=megHands,ring1="Vertigo Ring",ring2="Rufescent Ring",
+		back=ogmaStr,waist="Fotia Belt",legs=carmLegs, feet=hercFeet}
  
 	sets.Fastcast = {
-		head="Rune. Bandeau +1",neck="Voltsurge Torque",ear1="Loquac. Earring",ear2="Etiolation Earring",
-		body="Samnuha Coat", hands="Leyline Gloves",
-		legs="Rawhide Trousers",feet="Carmine Greaves +1"}
+		head=runeHelm,neck="Voltsurge Torque",ear1="Loquac. Earring",ear2=etioEar,
+		body=samnBody, hands=leylHands,
+		legs=rawhLegs,feet=carmFeet}
+	sets.Fastcast["Enhancing"] = set_combine(sets.Fastcast, {legs=futhLegs})
 	sets.Enhancing = {}
-	sets.Enhancing["Fastcast"] = set_combine(sets.Fastcast, {legs="Futhark Trousers +1"})
-	sets.Enhancing["Any"] = {head="Erilaz Galea +1",hands="Runeist Mitons +1",legs="Carmine Cuisses +1"}
-	sets.Enhancing["Regen"] = set_combine(sets.Enhancing["Any"], {head="Rune. Bandeau +1"})
+	sets.Enhancing["Any"] = {head=eriHead,hands=runeHands,legs=carmLegs}
+	sets.Enhancing["Regen"] = set_combine(sets.Enhancing["Any"], {head=runeHelm})
 	sets.Enhancing["Phalanx"] = set_combine(sets.Enhancing["Any"], 
 	{
-		head="Futhark Bandeau +2",
-		hands="Taeon Gloves",
+		head=futhHead,
+		hands=taeoHands,
 	})
  
-	sets.Movement = {legs="Carmine Cuisses +1"}
-	sets.Idle = set_combine(sets.Movement, {body="Runeist's Coat +2",neck="Lissome Necklace",ring2="Chirich Ring"})
+	sets.Movement = {legs=carmLegs}
+	sets.Idle = set_combine(sets.Movement, {body=runeBody,neck="Lissome Necklace",ring2="Chirich Ring"})
 	
 	sets.ResistCharm = { 
 		ammo="Staunch Tathlum", 
-		back="Solemnity Cape", legs= "Rune. Trousers +1",
+		back="Solemnity Cape", legs= runeLegs,
 	}
  
 	sets.Reive = {neck="Ygnas's Resolve +1"}
@@ -161,6 +261,7 @@ function get_sets()
 	subjob_check(player.sub_job)
 	print_mode()
 	print_current_rune()
+	print_th_mode()
 	send_command('@input /macro book 1;wait 1;input /macro set 1')
 end
  
@@ -172,22 +273,28 @@ function precast(spell)
 			equip(sets.JA[spell.english])
 		end
     elseif spell.type=="WeaponSkill" then
-        if sets.WS[spell.english] then
-			if EmnityMode == true then
-				equip(set_combine(sets.Emnity, sets.WS[spell.english]))
-			else
-				equip(sets.WS[spell.english])
+		local setToUse = {}
+		if sets.WS[spell.english] then
+			setToUse = sets.WS[spell.english]
+		else
+			setToUse = sets.WS["Any"]
+		end
+		if player.equipment.main == "Lionheart" then 
+			if player.tp < 2500 then
+				setToUse = set_combine(setToUse, {ear1="Moonshade Earring"})
 			end
 		else
-			if EmnityMode == true then
-				equip(set_combine(sets.Emnity, sets.WS["Any"]))
-			else
-				equip(sets.WS["Any"])
+			if player.tp < 3000 then
+				setToUse = set_combine(setToUse, {ear1="Moonshade Earring"})
 			end
 		end
+		if EmnityMode == true then
+			setToUse = set_combine(setToUse, sets.Emnity)
+		end
+		equip(setToUse)
 	elseif spell.action_type == 'Magic' then
 		if spell.skill == "Enhancing Magic" then
-			equip(sets.Enhancing["Fastcast"])
+			equip(sets.Fastcast["Enhancing"])
 		else
 			equip(sets.Fastcast)
 		end
@@ -237,9 +344,11 @@ end
  
 function status_change(new,old)
     if T{'Idle','Resting'}:contains(new) then
+		on_status_change_for_th(new, old)
 		equip(sets.Idle)
     elseif new == 'Engaged' then
-        equip(get_set())
+		equip(get_set())
+		on_status_change_for_th(new, old)
     end
 end
  
@@ -411,21 +520,16 @@ function self_command(command)
 		WS = args[2]
 		print_current_ws()
 	elseif args[1] == 'resist' and args[2] then
-		if args[2] == "light" then Rune = "Tenebrae"
-		elseif args[2] == "dark" then Rune = "Lux"
-		elseif args[2] == "fire" then Rune = "Unda"
-		elseif args[2] == "water" then Rune = "Sulpor"
-		elseif args[2] == "thunder" then Rune = "Tellus"
-		elseif args[2] == "ice" then Rune = "Ignis"
-		elseif args[2] == "wind" then Rune = "Gelus"
-		elseif args[2] == "earth" then Rune = "Flabra"
-		end
+		local arg2 = string.lower(args[2])
+		if Resist[arg2] then Rune = Resist[arg2] end
 		print_current_rune()
 	elseif args[1] == "dw" and args[2] then
 		if type(tonumber(args[2])) == 'number' then
 			local dwNo = tonumber(args[2])
 			DwNeeded = dwNo
 		end
+	elseif args[1] == "th" then
+		parse_th_command(args)
 	end
 end
 
