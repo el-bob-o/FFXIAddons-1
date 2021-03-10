@@ -186,9 +186,9 @@ function get_sets()
 		body=samnBody,hands=leylHands,ring1="Locus Ring",
 		back="Toro Cape"}
 	sets.JA["Swipe"] = sets.JA["Lunge"]
-	sets.JA["Vivacious Pulse"] = {head=eriHead,neck="Incanter's Torque", legs=runeLegs}
+	sets.JA["Vivacious Pulse"] = {head=eriHead}
 	sets.JA["Battuta"] = {head=futhHead}
-	sets.JA["Valiance"] = {body = runeBody, legs=futhLegs, back = "Ogma's Cape"}
+	sets.JA["Valiance"] = {body = runeBody, legs=futhLegs, back=ogmaDex}
 	sets.JA["Vallation"] = sets.JA["Valiance"]
 	sets.JA["Elemental Sforzo"] = {body=futhBody}
 	sets.JA["Rayke"] = {feet=futhFeet}

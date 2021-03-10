@@ -135,7 +135,6 @@ function check_mode(modeNumber)
 end
 
 function on_status_change_for_th(new_status, old_status)
-	add_to_chat(122, "on_status_change_for_th")
     if new_status == "Engaged" then -- engaged
         equip_th()
     elseif old_status == "Engaged" then
