@@ -71,7 +71,6 @@ end
 
 function parse_action(act)
 	if not THModes[THMode].onEngage then return end	
-	local shouldEquipTH = false
 	if act.actor_id == windower.ffxi.get_player().id then -- add to MobsTagged if player initiated attack
 		if act.category == 1 then -- melee
 			for index, target in pairs(act.targets) do				
@@ -81,6 +80,7 @@ function parse_action(act)
 	elseif MobsTagged[act.actor_id] then -- update timeToDead
 		MobsTagged[act.actor_id] = os.clock()
 	end
+	
 end
 
 function clear_tags()
@@ -137,7 +137,7 @@ end
 function on_status_change_for_th(new_status, old_status)
     if new_status == "Engaged" then -- engaged
         equip_th()
-    elseif old_status == "Engaged" then
+    elseif new_status == "Idle" then
         unlock_th()
     end
 end
