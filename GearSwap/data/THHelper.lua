@@ -10,7 +10,6 @@ THModes = {
 	{ name = "FullTime", 	thfMain = true, 	onEngage = true, 	fulltime = true },
 }
 
-sets.TH = {}
 SlotsUsed = S{}
 AmmoDisabled = false
 
@@ -40,9 +39,9 @@ end
 
 function equip_th()
 	if THModes[THMode].onEngage then
-		equip(sets.TH)
+		equip(sets["TH"])
 		if THModes[THMode].fulltime then
-			for slot,item in pairs(sets.TH) do
+			for slot,item in pairs(sets["TH"]) do
 				SlotsUsed:append(slot)
 			end
 			disable(SlotsUsed)
@@ -52,7 +51,9 @@ end
 
 function unlock_th()
 	for index, slot in pairs(SlotsUsed) do
-		if AmmoDisabled and slot ~= "ammo" then
+		if AmmoDisabled then 
+			if slot ~= "ammo" then enable(slot) end
+		else
 			enable(slot)
 		end
 	end
