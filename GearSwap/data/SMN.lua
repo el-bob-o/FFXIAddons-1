@@ -5,8 +5,7 @@ BPs = {
 	["Carbuncle"] = 
 		{
 			["Rage1"] = { name = "Poison Nails",		target = "stnpc", 		description = "Phy Atk + poison" },
-			["Rage2"] = { name = "Meteorite",			target = "stnpc",  		description = "Light Atk" },
-			["Rage3"] = { name = "Holy Mist",			target = "stnpc", 		description = "Light Atk" },
+			["Rage2"] = { name = "Holy Mist",			target = "stnpc", 		description = "Light Atk" },
 			["Ward1"] = { name = "Healing Ruby II", 	target = "stpt", 		description = "Healing" },
 			["Ward2"] = { name = "Soothing Ruby", 		target = "stpt", 		description = "Erase" },
 			["Ward3"] = { name = "Pacifying Ruby", 		target = "stpt",		description = "-Emnity" },
@@ -15,9 +14,101 @@ BPs = {
 		{
 			["Rage1"] = { name = "Flaming Crush",		target = "stnpc",	 	description = "Hybrid Atk" },
 			["Rage2"] = { name = "Fire IV",				target = "stnpc", 		description = "Fire Nuke" },
-			["Rage2"] = { name = "Meteor Strike",		target = "stnpc", 		description = "Fire Nuke" },
+			["Rage3"] = { name = "Meteor Strike",		target = "stnpc", 		description = "Fire Nuke" },
+			["Rage4"] = { name = "Conflag Strike",		target = "stnpc", 		description = "Fire + Burn" },
 			["Ward1"] = { name = "Crimson Howl", 		target = "stpt", 		description = "+10% Atk" },
-			["Ward2"] = { name = "Inferno Howl", 		target = "stpt", 		description = "Enfire" },			
+			["Ward2"] = { name = "Inferno Howl", 		target = "stpt", 		description = "Enfire" },
+		},
+	["Shiva"] = 
+		{
+			["Rage1"] = { name = "Rush",				target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Blizzard IV",			target = "stnpc", 		description = "Ice Nuke" },
+			["Rage3"] = { name = "Heavenly Strike",		target = "stnpc", 		description = "Ice Nuke" },
+			["Ward1"] = { name = "Frost Armor", 		target = "stpt", 		description = "Ice Spikes" },
+			["Ward2"] = { name = "Sleepga", 			target = "stnpc", 		description = "Sleepga" },
+			["Ward3"] = { name = "Diamond Storm", 		target = "stnpc", 		description = "-Evasion" },
+			["Ward4"] = { name = "Crystal Blessing", 	target = "stpt", 		description = "TP Bonus" },
+		},
+	["Garuda"] = 
+		{
+			["Rage1"] = { name = "Predator Claws",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Aero IV",				target = "stnpc", 		description = "Wind Nuke" },
+			["Rage3"] = { name = "Wind Blade",			target = "stnpc", 		description = "Wind Nuke" },
+			["Ward1"] = { name = "Aerial Armor", 		target = "stpt", 		description = "Blink" },
+			["Ward2"] = { name = "Whispering Wind", 	target = "stpt", 		description = "Heal" },
+			["Ward3"] = { name = "Fleet Wind", 			target = "stpt", 		description = "Movement" },
+			["Ward4"] = { name = "Hastega II", 			target = "stpt", 		description = "Haste2" },
+		},
+	["Titan"] = 
+		{
+			["Rage1"] = { name = "Mountain Buster",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Stone IV",			target = "stnpc", 		description = "Earth Nuke" },
+			["Rage3"] = { name = "Geocrush",			target = "stnpc", 		description = "Earth Nuke" },
+			["Ward1"] = { name = "Earthen Ward", 		target = "stpt", 		description = "Stoneskin" },
+			["Ward2"] = { name = "Earthen Armor", 		target = "stpt", 		description = "Heavy Dmg Reduction" },
+		},
+	["Ramuh"] = 
+		{
+			["Rage1"] = { name = "Volt Strike",			target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Thunderspark",		target = "stnpc", 		description = "AOE Thunder Paralyze" },
+			["Rage3"] = { name = "Thunder IV",			target = "stnpc", 		description = "Thunder Nuke" },
+			["Rage4"] = { name = "Thunderstorm",		target = "stnpc", 		description = "Thunder Nuke" },
+			["Ward1"] = { name = "Rolling Thunder", 	target = "stpt", 		description = "Enthunder" },
+			["Ward2"] = { name = "Lightning Armor", 	target = "stpt", 		description = "Shock Spikes" },
+			["Ward3"] = { name = "Shock Squall", 		target = "stnpc", 		description = "Stun" },
+		},
+	["Leviathan"] = 
+		{
+			["Rage1"] = { name = "Spinning Dive",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Water IV",			target = "stnpc", 		description = "Water Nuke" },
+			["Rage3"] = { name = "Grand Fall",			target = "stnpc", 		description = "Water Nuke" },
+			["Ward1"] = { name = "Slowga", 				target = "stnpc", 		description = "Slow" },
+			["Ward2"] = { name = "Spring Water", 		target = "stpt", 		description = "Heal & Erase" },
+			["Ward3"] = { name = "Tidal Roar", 			target = "stnpc", 		description = "-Atk" },
+			["Ward4"] = { name = "Soothing Current", 	target = "stpt", 		description = "+Heal" },
+		},
+	["Cait Sith"] = 
+		{
+			["Rage1"] = { name = "Regal Gash",			target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Level ? Holy",		target = "stnpc", 		description = "Light Nuke" },
+			["Ward1"] = { name = "Raise II", 			target = "stpt", 		description = "Raise" },
+			["Ward2"] = { name = "Mewing Lullaby", 		target = "stnpc", 		description = "-TP & Sleep" },
+			["Ward3"] = { name = "Reraise II", 			target = "stpt", 		description = "Reraise" },
+			["Ward4"] = { name = "Eerie Eye", 			target = "stnpc", 		description = "Silence & Amnesia" },
+		},
+	["Fenrir"] = 
+		{
+			["Rage1"] = { name = "Eclipse Bite",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Lunar Bay",			target = "stnpc", 		description = "Dark Nuke" },
+			["Rage3"] = { name = "Impact",				target = "stnpc", 		description = "Dark & -Attr" },
+			["Ward1"] = { name = "Lunar Cry", 			target = "stnpc", 		description = "-Evasion" },
+			["Ward2"] = { name = "Lunar Roar", 			target = "stnpc", 		description = "Dispel x2" },
+			["Ward3"] = { name = "Ecliptic Growl", 		target = "stpt", 		description = "+Attr" },
+			["Ward4"] = { name = "Ecliptic Howl", 		target = "stpt", 		description = "+Acc / +Eva" },
+			["Ward5"] = { name = "Heavenward Howl", 	target = "stpt", 		description = "Endrain / Enaspir" },
+		},
+	["Diabolos"] = 
+		{
+			["Rage1"] = { name = "Camisado",			target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Nether Blast",		target = "stnpc", 		description = "Dark Ranged Atk" },
+			["Rage3"] = { name = "Night Terror",		target = "stnpc", 		description = "Dark Nuke" },
+			["Ward1"] = { name = "Somnolence", 			target = "stnpc", 		description = "Gravity & Magic Dmg" },
+			["Ward2"] = { name = "Nightmare", 			target = "stnpc", 		description = "AOE Sleep & Dark Dmg" },
+			["Ward3"] = { name = "Ultimate Terror", 	target = "stnpc", 		description = "AOE -Attr" },
+			["Ward4"] = { name = "Noctoshield", 		target = "stpt", 		description = "Phalanx" },
+			["Ward5"] = { name = "Dream Shroud", 		target = "stpt", 		description = "+MAB & +MDB" },
+			["Ward6"] = { name = "Pavor Nocturnus", 	target = "stnpc", 		description = "Death / Dispel" },
+		},
+	["Siren"] = 
+		{
+			["Rage1"] = { name = "Hysteric Assault",	target = "stnpc",	 	description = "Phy Atk" },
+			["Rage2"] = { name = "Tornado II",			target = "stnpc", 		description = "Wind Nuke" },
+			["Rage3"] = { name = "Sonic Buffet",		target = "stnpc", 		description = "Wind Nuke & Dispel" },
+			["Ward1"] = { name = "Lunatic Voice", 		target = "stnpc", 		description = "AOE Silence" },
+			["Ward2"] = { name = "Katabatic Blades", 	target = "stpt", 		description = "Enaero" },
+			["Ward3"] = { name = "Chinook", 			target = "stpt", 		description = "Aquaveil" },
+			["Ward4"] = { name = "Bitter Elegy", 		target = "stnpc", 		description = "-Atk Speed" },
+			["Ward5"] = { name = "Wind’s Blessing", 	target = "stpt", 		description = "Magic Shield" },
 		},
 }
 
@@ -70,7 +161,7 @@ function get_sets()
 	CPMode = false
 	StartedBPWard = false
 	StartedBPRage = false
-	TimerFromPrecast = 1.0
+	TimerFromPrecast = 1.25
 	
 	sets = get_set_for_job("SMN")
 	
@@ -120,11 +211,9 @@ end
 
 function check_pet_midcast()
 	if StartedBPRage then
-		equip(sets["BPDmg"])
-		StartedBPRage = false
+		equip(sets["BPDmg"])		
 	elseif StartedBPWard then
-		equip(sets["SmnSkill"])
-		StartedBPWard = false
+		equip(sets["SmnSkill"])	
 	end
 end
 
@@ -133,6 +222,8 @@ function pet_midcast(spell)
 end
 
 function pet_aftercast(spell)
+	StartedBPRage = false
+	StartedBPWard = false
 	equip(sets["Idle"])
 end
 
@@ -152,22 +243,34 @@ function update_blood_pact_info(petName)
 	if BPs[petName] then
 		local infoString = ""
 		if BPs[petName]["Rage1"] then 
-			infoString = infoString .. "Rage1" .. ": " .. BPs[petName]["Rage1"].name .. "(" .. BPs[petName]["Rage1"].description .. ")\n"
+			infoString = infoString .. "[CTRL+1] Rage1" .. ": " .. BPs[petName]["Rage1"].name .. "(" .. BPs[petName]["Rage1"].description .. ")\n"
 		end
 		if BPs[petName]["Rage2"] then 
-			infoString = infoString .. "Rage2" .. ": " .. BPs[petName]["Rage2"].name .. "(" .. BPs[petName]["Rage2"].description .. ")\n"
+			infoString = infoString .. "[CTRL+2] Rage2" .. ": " .. BPs[petName]["Rage2"].name .. "(" .. BPs[petName]["Rage2"].description .. ")\n"
 		end
 		if BPs[petName]["Rage3"] then 
-			infoString = infoString .. "Rage3" .. ": " .. BPs[petName]["Rage3"].name .. "(" .. BPs[petName]["Rage3"].description .. ")\n"
+			infoString = infoString .. "[CTRL+3] Rage3" .. ": " .. BPs[petName]["Rage3"].name .. "(" .. BPs[petName]["Rage3"].description .. ")\n"
+		end
+		if BPs[petName]["Rage4"] then 
+			infoString = infoString .. "[CTRL+4] Rage4" .. ": " .. BPs[petName]["Rage4"].name .. "(" .. BPs[petName]["Rage4"].description .. ")\n"
 		end
 		if BPs[petName]["Ward1"] then 
-			infoString = infoString .. "Ward1" .. ": " .. BPs[petName]["Ward1"].name .. "(" .. BPs[petName]["Ward1"].description .. ")\n"
+			infoString = infoString .. "[CTRL+5] Ward1" .. ": " .. BPs[petName]["Ward1"].name .. "(" .. BPs[petName]["Ward1"].description .. ")\n"
 		end
 		if BPs[petName]["Ward2"] then 
-			infoString = infoString .. "Ward2" .. ": " .. BPs[petName]["Ward2"].name .. "(" .. BPs[petName]["Ward2"].description .. ")\n"
+			infoString = infoString .. "[CTRL+6] Ward2" .. ": " .. BPs[petName]["Ward2"].name .. "(" .. BPs[petName]["Ward2"].description .. ")\n"
 		end
 		if BPs[petName]["Ward3"] then 
-			infoString = infoString .. "Ward3" .. ": " .. BPs[petName]["Ward3"].name .. "(" .. BPs[petName]["Ward3"].description .. ")\n"
+			infoString = infoString .. "[CTRL+7] Ward3" .. ": " .. BPs[petName]["Ward3"].name .. "(" .. BPs[petName]["Ward3"].description .. ")\n"
+		end
+		if BPs[petName]["Ward4"] then 
+			infoString = infoString .. "[CTRL+8] Ward4" .. ": " .. BPs[petName]["Ward4"].name .. "(" .. BPs[petName]["Ward4"].description .. ")\n"
+		end
+		if BPs[petName]["Ward5"] then 
+			infoString = infoString .. "[CTRL+9] Ward5" .. ": " .. BPs[petName]["Ward5"].name .. "(" .. BPs[petName]["Ward5"].description .. ")\n"
+		end
+		if BPs[petName]["Ward6"] then 
+			infoString = infoString .. "[CTRL+0] Ward6" .. ": " .. BPs[petName]["Ward5"].name .. "(" .. BPs[petName]["Ward5"].description .. ")\n"
 		end
 		BloodPactTextHub.info = infoString
 	else

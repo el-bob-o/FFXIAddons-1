@@ -133,9 +133,10 @@ MasterGearList = {
 													} },
 	},
 	body = {
-		{ name = "Apogee Dalmatica +1",	setList = { { job = "SMN", sets = { "Idle", "BPDmg", "PrecastBP" } } } },
+		--{ name = "Apogee Dalmatica +1",	setList = { { job = "SMN", sets = { "Idle", "BPDmg", "PrecastBP" } } } },
+		{ name = "Con. Doublet +1",		setList = { { job = "SMN", sets = { "BPDmg", "PrecastBP" } } } },
 		{ name = "Vrikodara Jupon",		setList = { { job = "GEO", sets = { "CombatIdleDT", "IdleRefresh", "Fastcast" } },
-													{ job = "SMN", sets = { "Fastcast" } },
+													{ job = "SMN", sets = { "Idle", "Fastcast" } },
 													} },
 		{ name = "Bagua Tunic +2", 		setList = { { job = "GEO", sets = { "Geomancy", "Bolster", "Elemental", "MACC" } } } },
 		{ name = "Geomancy Tunic +2", 	setList = { { job = "GEO", sets = { "Life Cycle" } } } },
@@ -157,7 +158,7 @@ MasterGearList = {
 	},
 	hands = {
 		{ name = "Asteria Mitts +1", 	setList = { { job = "SMN", sets = { "Idle" } } } },
-		{ name = "Merlinic Dastanas", 	setList = { { job = "SMN", sets = { "BPDmg" } } } },
+		-- { name = "Merlinic Dastanas", 	setList = { { job = "SMN", sets = { "BPDmg" } } } },
 		{ name = "Glyphic Bracers +1", 	setList = {	{ job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
 		{ name = "Geo. Mitaines +2", 	setList = {	{ job = "GEO", sets = { "CombatIdleDT", "Geomancy" } } } },
 		{ name = "Bagua Mitaines +1", 	setList = {	{ job = "GEO", sets = { "ElementalFastcast", "Curative Recantation" } } } },

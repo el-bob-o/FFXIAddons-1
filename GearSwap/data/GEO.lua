@@ -69,6 +69,8 @@ function midcast(spell)
 			elseif spell.name:match("Stun") then
 				equip(sets["MACC"])
 			end
+		elseif spell.skill == "Enfeebling Magic" then
+			equip(sets["MACC"])
 		end
 	end
 end
