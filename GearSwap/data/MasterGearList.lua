@@ -73,7 +73,9 @@ MasterGearList = {
 		{ name = "Incanter's Torque",	setList = { { job =	"SMN", sets = { "PrecastBP", "SmnSkill" } }, 
 													{ job = "GEO", sets = { "ConserveMP", "Geomancy", "Healing" } },
 													} },
-		{ name = "Twilight Torque",		setList = { { job = "GEO", sets = { "CombatIdleDT" } } } },
+		{ name = "Loricate Torque",		setList = { { job = "GEO", sets = { "CombatIdleDT" } },
+													{ job = "SMN", sets = { "IdleDT" } },
+													} },
 		{ name = "Lissome Necklace",	setList = { { job = "GEO", sets = { "IdleRefresh" } },
 													{ job = "THF", sets = { "WS_Any", "IdleRegen" } },
 													} },
@@ -93,7 +95,8 @@ MasterGearList = {
 													} },
 	},
 	ear1 = {
-		{ name = "Evans Earring", 		setList = { { job = "SMN", sets = { "Idle", "PrecastBP" } } } }, 		
+		{ name = "Evans Earring", 		setList = { { job = "SMN", sets = { "Idle", "PrecastBP" } } } },
+		-- { name = "Lodurr Earring", 		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- 600 domain points
 		{ name = "Handler's Earring +1",setList = { { job = "GEO", sets = { "CombatIdleDT" } } } },
 		{ name = "Loquac. Earring",		setList = { { job = "ALL", sets = { "Fastcast" } } } },
 		{ name = "Mendi. Earring",		setList = { { job = "ALL", sets = { "HealingFastcast", "Healing" } } } },
@@ -115,6 +118,7 @@ MasterGearList = {
 													{ job = "SMN", sets = { "Fastcast" } },
 													} },
 		{ name = "Odnowa Earring +1",	setList = { { job = "GEO", sets = { "CombatIdleDT" } },
+													{ job = "SMN", sets = { "IdleDT" } },
 													{ job = "RUN", sets = { "DT", } }
 													},
 			priority = 110 },
@@ -160,6 +164,7 @@ MasterGearList = {
 		{ name = "Asteria Mitts +1", 	setList = { { job = "SMN", sets = { "Idle" } } } },
 		-- { name = "Merlinic Dastanas", 	setList = { { job = "SMN", sets = { "BPDmg" } } } },
 		{ name = "Glyphic Bracers +1", 	setList = {	{ job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
+		-- { name = "Lamatsu Mitts +1", 	setList = {	{ job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- use this once can cap -bp recast without relic hands
 		{ name = "Geo. Mitaines +2", 	setList = {	{ job = "GEO", sets = { "CombatIdleDT", "Geomancy" } } } },
 		{ name = "Bagua Mitaines +1", 	setList = {	{ job = "GEO", sets = { "ElementalFastcast", "Curative Recantation" } } } },
 		{ name = "Jhakri Cuffs +1", 	setList = {	{ job = "GEO", sets = { "Elemental", "MACC" } } } },
@@ -184,13 +189,13 @@ MasterGearList = {
 		{ name = "Mummu Wrists +2", 	setList = {	{ job = "THF", sets = { "WS_Crit" } } } },
 	},
 	ring1 = {
-		{ name = "Vocane Ring +1",		setList = {	{ job = "SMN", sets = { "Idle" } },
+		{ name = "Vocane Ring +1",		setList = {	{ job = "SMN", sets = { "IdleDT" } },
 													{ job = "GEO", sets = { "CombatIdleDT" } },
 													{ job = "RUN", sets = { "DT" } },
 													{ job = "THF", sets = { "Hybrid", "Lilith" } },
 													} },
-		{ name = "Varar Ring", 			setList = { { job = "SMN", sets = { "BPDmg" } } } },
-		{ name = "Evoker's Ring",		setList = { { job = "SMN", sets = { "PrecastBP" } } } },
+		{ name = "Varar Ring +1", 		setList = { { job = "SMN", sets = { "BPDmg" } } } },
+		{ name = "Evoker's Ring",		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
 		{ name = "Resonance Ring",		setList = { { job = "GEO", sets = { "Elemental" } } } },
 		{ name = "Locus Ring",			setList = { { job = "RUN", sets = { "Lunge" } },
 													{ job = "THF", sets = { "WS_Magical" } },
@@ -202,9 +207,11 @@ MasterGearList = {
 		{ name = "Mummu Ring",			setList = { { job = "THF", sets = { "WS_Crit" } } } },
 	},
 	ring2 = {
-		{ name = "Stikini Ring +1", 	setList = { { job =	"SMN", sets = { "Idle", "PrecastBP", "SmnSkill" } } } },
-		{ name = "Varar Ring",			setList = { { job = "SMN", sets = { "BPDmg" } } } },
+		-- { name = "Stikini Ring +1", 	setList = { { job =	"SMN", sets = { "Idle", "PrecastBP", "SmnSkill" } } } }, -- 30 mil gil :(
+		-- { name = "Globidonta Ring", 	setList = { { job =	"SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- +5 skill from incursion
+		{ name = "Varar Ring +1",		setList = { { job = "SMN", sets = { "BPDmg" } } } },
 		{ name = "Dark Ring",			setList = { { job = "GEO", sets = { "CombatIdleDT" } },
+													{ job = "SMN", sets = { "IdleDT" } },
 													{ job = "RUN", sets = { "DT" } },
 													} },
 		{ name = "Vertigo Ring",		setList = { { job = "GEO", sets = { "Elemental" } } } },
@@ -270,6 +277,7 @@ MasterGearList = {
 													} },
 		{ name = "Enticer's Pants", 	setList = {	{ job = "SMN", sets = { "BPDmg" } } } },
 		{ name = "Glyphic Spats +1",	setList = { { job = "SMN", sets = { "PrecastBP" } } } },
+		-- { name = "Beckoner Spats +1",	setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- use this once can cap BPRecast without relic legs
 		{ name = "Psycloth Lappas",		setList = { { job = "GEO", sets = { "CombatIdleDT" } } } },
 		{ name = "Geomancy Pants +2",	setList = { { job = "GEO", sets = { "Fastcast" } } } },
 		{ name = "Bagua Pants +2",		setList = { { job = "GEO", sets = { "Geomancy", "Elemental", "MACC" } } } },
@@ -293,7 +301,9 @@ MasterGearList = {
 	},
 	feet = {
 		{ name = "Apogee Pumps +1",		setList = { { job = "SMN", sets = { "Idle", "BPDmg" } } } },
+		{ name = "Herald's Gaiters",	setList = { { job = "SMN", sets = { "Movement" } } } },
 		{ name = "Glyph. Pigaches +1", 	setList = { { job = "SMN", sets = { "PrecastBP" } } } },
+		-- { name = "Baayami Sabots +1", 	setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- 30mil gil :(
 		{ name = "Azimuth Gaiters +1", 	setList = { { job = "GEO", sets = { "CombatIdleDT", "Geomancy" } } } },
 		{ name = "Geo. Sandals +2", 	setList = { { job = "GEO", sets = { "IdleRefresh" } } } },
 		{ name = "Regal Pumps +1", 		setList = { { job = "GEO", sets = { "Fastcast", "Healing" } },
