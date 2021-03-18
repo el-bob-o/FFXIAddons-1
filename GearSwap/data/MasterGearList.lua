@@ -69,11 +69,12 @@ MasterGearList = {
 	},
 	neck = {
 		{ name = "Caller's Pendant",	setList = { { job = "SMN", sets = { "Idle" } } } },
-		-- { name = "Smn. Collar +1",		setList = { { job =	"SMN", sets = { "BPDmg" } } } },
+		{ name = "Adad Amulet",			setList = { { job =	"SMN", sets = { "BPDmg" } } } },
+		-- { name = "Smn. Collar +1",			setList = { { job =	"SMN", sets = { "BPDmg" } } } }, -- 9mil gil
 		{ name = "Incanter's Torque",	setList = { { job =	"SMN", sets = { "PrecastBP", "SmnSkill" } }, 
 													{ job = "GEO", sets = { "ConserveMP", "Geomancy", "Healing" } },
 													} },
-		{ name = "Loricate Torque",		setList = { { job = "GEO", sets = { "CombatIdleDT" } },
+		{ name = "Loricate Torque +1",	setList = { { job = "GEO", sets = { "CombatIdleDT" } },
 													{ job = "SMN", sets = { "IdleDT" } },
 													} },
 		{ name = "Lissome Necklace",	setList = { { job = "GEO", sets = { "IdleRefresh" } },
@@ -137,8 +138,8 @@ MasterGearList = {
 													} },
 	},
 	body = {
-		--{ name = "Apogee Dalmatica +1",	setList = { { job = "SMN", sets = { "Idle", "BPDmg", "PrecastBP" } } } },
-		{ name = "Con. Doublet +1",		setList = { { job = "SMN", sets = { "BPDmg", "PrecastBP" } } } },
+		--{ name = "Apogee Dalmatica +1",	setList = { { job = "SMN", sets = { "Idle", "BPDmg" } } } },
+		{ name = "Con. Doublet +2",		setList = { { job = "SMN", sets = { "BPDmg", "PrecastBP" } } } },
 		{ name = "Vrikodara Jupon",		setList = { { job = "GEO", sets = { "CombatIdleDT", "IdleRefresh", "Fastcast" } },
 													{ job = "SMN", sets = { "Idle", "Fastcast" } },
 													} },
@@ -162,9 +163,8 @@ MasterGearList = {
 	},
 	hands = {
 		{ name = "Asteria Mitts +1", 	setList = { { job = "SMN", sets = { "Idle" } } } },
-		-- { name = "Merlinic Dastanas", 	setList = { { job = "SMN", sets = { "BPDmg" } } } },
-		{ name = "Glyphic Bracers +1", 	setList = {	{ job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
-		-- { name = "Lamatsu Mitts +1", 	setList = {	{ job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- use this once can cap -bp recast without relic hands
+		{ name = "Merlinic Dastanas", 	setList = { { job = "SMN", sets = { "BPDmg" } } } },
+		{ name = "Lamatsu Mitts +1", 	setList = {	{ job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
 		{ name = "Geo. Mitaines +2", 	setList = {	{ job = "GEO", sets = { "CombatIdleDT", "Geomancy" } } } },
 		{ name = "Bagua Mitaines +1", 	setList = {	{ job = "GEO", sets = { "ElementalFastcast", "Curative Recantation" } } } },
 		{ name = "Jhakri Cuffs +1", 	setList = {	{ job = "GEO", sets = { "Elemental", "MACC" } } } },

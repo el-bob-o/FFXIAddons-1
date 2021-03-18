@@ -112,7 +112,7 @@ ${info|}
 function setup_text_window()
 	local default_settings = {}
 	default_settings.pos = {}
-	default_settings.pos.x = 1500
+	default_settings.pos.x = 1400
 	default_settings.pos.y = 700
 	default_settings.bg = {}
 	default_settings.bg.alpha = 255
@@ -155,6 +155,7 @@ function get_sets()
 	DT = false
 	Movement = false
 	Engaged = false
+	Combat = false
 	StartedBPWard = false
 	StartedBPRage = false
 	TimerFromPrecast = 1.25
@@ -209,7 +210,7 @@ end
  
 function aftercast(spell)
 	if StartedBPRage == false and StartedBPWard == false then -- don't equip idle set if still going to do a BP
-		equip(sets["Idle"])
+		equip_idle_set()
 	end
 end
 
@@ -234,7 +235,7 @@ end
 function equip_idle_set()
 	local setToUse = sets["Idle"]
 	if DT then setToUse = set_combine(setToUse, sets["IdleDT"]) end
-	if not Engaged or Movement then setToUse = set_combine(setToUse, sets["Movement"]) end
+	if not Combat and (not Engaged or Movement) then setToUse = set_combine(setToUse, sets["Movement"]) end
 	equip(setToUse)
 end
 
@@ -362,6 +363,16 @@ function self_command(command)
 		else
 			add_to_chat(122, "Movement on!")
 			Movement = true
+			equip_idle_set()
+		end
+	elseif args[1] == "combat" then
+		if Combat == true then
+			add_to_chat(122, "Combat off!")
+			Combat = false
+			equip_idle_set()
+		else
+			add_to_chat(122, "Combat on!")
+			Combat = true
 			equip_idle_set()
 		end
 	else
