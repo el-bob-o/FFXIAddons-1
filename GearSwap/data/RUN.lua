@@ -9,62 +9,71 @@ EmnityActions["DRK"] = { "Poisonga", "Stun" }
 EmnityActions["BLU"] = { "Blank Gaze", "Jettatura", "Geist Wall" }
 
 Resist = {}
-Resist["ice"] = "Ignis"
-Resist["paralyze"] = "Ignis"
-Resist["bind"] = "Ignis"
-Resist["frost"] = "Ignis"
-Resist["evadown"] = "Ignis"
-Resist["agidown"] = "Ignis"
-Resist["wind"] = "Gelus"
-Resist["silence"] = "Gelus"
-Resist["gravity"] = "Gelus"
-Resist["choke"] = "Gelus"
-Resist["defdown"] = "Gelus"
-Resist["vitdown"] = "Gelus"
-Resist["earth"] = "Flabra"
-Resist["slow"] = "Flabra"
-Resist["petrify"] = "Flabra"
-Resist["rasp"] = "Flabra"
-Resist["accdown"] = "Flabra"
-Resist["dexdown"] = "Flabra"
-Resist["thunder"] = "Tellus"
-Resist["stun"] = "Tellus"
-Resist["shock"] = "Tellus"
-Resist["mnddown"] = "Tellus"
-Resist["water"] = "Sulpor"
-Resist["poison"] = "Sulpor"
-Resist["strdown"] = "Sulpor"
-Resist["atkdown"] = "Sulpor"
-Resist["fire"] = "Unda"
-Resist["addle"] = "Unda"
-Resist["amnesia"] = "Unda"
-Resist["virus"] = "Unda"
-Resist["burn"] = "Unda"
-Resist["mabdown"] = "Unda"
-Resist["intdown"] = "Unda"
-Resist["dark"] = "Lux"
-Resist["blind"] = "Lux"
-Resist["bio"] = "Lux"
-Resist["sleep"] = "Lux"
-Resist["dispel"] = "Lux"
-Resist["drain"] = "Lux"
-Resist["curse"] = "Lux"
-Resist["doom"] = "Lux"
-Resist["zombie"] = "Lux"
-Resist["mevadown"] = "Lux"
-Resist["hpdown"] = "Lux"
-Resist["mpdown"] = "Lux"
-Resist["chrdown"] = "Lux"
-Resist["absorb"] = "Lux"
-Resist["light"] = "Tenebrae"
-Resist["dia"] = "Tenebrae"
-Resist["repose"] = "Tenebrae"
-Resist["finale"] = "Tenebrae"
-Resist["charm"] = "Tenebrae"
-Resist["lullaby"] = "Tenebrae"
-Resist["sheepsong"] = "Tenebrae"
-Resist["maccdown"] = "Tenebrae"
-	
+Resist["ice"] = "ignis"
+Resist["paralyze"] = "ignis"
+Resist["bind"] = "ignis"
+Resist["frost"] = "ignis"
+Resist["evadown"] = "ignis"
+Resist["agidown"] = "ignis"
+Resist["wind"] = "gelus"
+Resist["silence"] = "gelus"
+Resist["gravity"] = "gelus"
+Resist["choke"] = "gelus"
+Resist["defdown"] = "gelus"
+Resist["vitdown"] = "gelus"
+Resist["earth"] = "flabra"
+Resist["slow"] = "flabra"
+Resist["petrify"] = "flabra"
+Resist["rasp"] = "flabra"
+Resist["accdown"] = "flabra"
+Resist["dexdown"] = "flabra"
+Resist["thunder"] = "tellus"
+Resist["stun"] = "tellus"
+Resist["shock"] = "tellus"
+Resist["mnddown"] = "tellus"
+Resist["water"] = "sulpor"
+Resist["poison"] = "sulpor"
+Resist["strdown"] = "sulpor"
+Resist["atkdown"] = "sulpor"
+Resist["fire"] = "unda"
+Resist["addle"] = "unda"
+Resist["amnesia"] = "unda"
+Resist["virus"] = "unda"
+Resist["burn"] = "unda"
+Resist["mabdown"] = "unda"
+Resist["intdown"] = "unda"
+Resist["dark"] = "lux"
+Resist["blind"] = "lux"
+Resist["bio"] = "lux"
+Resist["sleep"] = "lux"
+Resist["dispel"] = "lux"
+Resist["drain"] = "lux"
+Resist["curse"] = "lux"
+Resist["doom"] = "lux"
+Resist["zombie"] = "lux"
+Resist["mevadown"] = "lux"
+Resist["hpdown"] = "lux"
+Resist["mpdown"] = "lux"
+Resist["chrdown"] = "lux"
+Resist["absorb"] = "lux"
+Resist["light"] = "tenebrae"
+Resist["dia"] = "tenebrae"
+Resist["repose"] = "tenebrae"
+Resist["finale"] = "tenebrae"
+Resist["charm"] = "tenebrae"
+Resist["lullaby"] = "tenebrae"
+Resist["sheepsong"] = "tenebrae"
+Resist["maccdown"] = "tenebrae"
+
+Runes = {}
+Runes["light"] = "lux"
+Runes["dark"] = "tenebrae"
+Runes["water"] = "unda"
+Runes["thunder"] = "sulpor"
+Runes["fire"] = "ignis"
+Runes["wind"] = "flabra"
+Runes["earth"] = "tellus"
+Runes["ice"] = "gelus"
 
 function get_sets()
 	KiteMode = false
@@ -76,6 +85,17 @@ function get_sets()
 	EngravedBelt = false
 	Combat = false
 	Buffs = {}
+	MultiRune = false
+	TargetRuneCount = {
+		["tenebrae"] = 0,
+		["lux"] = 0,
+		["unda"] = 0,
+		["sulpor"] = 0,
+		["tellus"] = 0,
+		["flabra"] = 0,
+		["gelus"] = 0,
+		["ignis"] = 0,
+	}
 	
 	sets = get_set_for_job("RUN")
 		
@@ -84,7 +104,6 @@ function get_sets()
 	sets.ShellVHybrid = set_combine(sets.ShellVTank, sets["Hybrid"])
 	sets.NoBuffHybrid = set_combine(sets.NoBuffTank, sets["Hybrid"])
 	
-	-- Make sure first mode is not a DW mode
 	Modes = { 
 		{ name = "Hybrid", hybrid = true },
 		{ name = "Tank", hybrid = false },
@@ -287,19 +306,51 @@ function self_command(command)
 		end
 		print_mode()
 	elseif args[1] == "rune" then
-		if args[2] then
-			if args[2] == "light" then Rune = "Lux"
-			elseif args[2] == "dark" then Rune = "Tenebrae" 
-			elseif args[2] == "fire" then Rune = "Ignis"
-			elseif args[2] == "water" then Rune = "Unda"
-			elseif args[2] == "thunder" then Rune = "Sulpor"
-			elseif args[2] == "ice" then Rune = "Gelus"
-			elseif args[2] == "wind" then Rune = "Flabra"
-			elseif args[2] == "earth" then Rune = "Tellus"
+		if args[2] and args[3] and args[4] then
+			local ele1 = string.lower(args[2])
+			local ele2 = string.lower(args[3])
+			local ele3 = string.lower(args[4])
+			if Runes[ele1] and Runes[ele2] and Runes[ele3] then
+				local rune1 = Runes[ele1]
+				local rune2 = Runes[ele2]
+				local rune3 = Runes[ele3]
+				if TargetRuneCount[rune1] and TargetRuneCount[rune2] and TargetRuneCount[rune3] then
+					MultiRune = true
+					TargetRuneCount["lux"] = 0
+					TargetRuneCount["tenebrae"] = 0
+					TargetRuneCount["unda"] = 0
+					TargetRuneCount["sulpor"] = 0
+					TargetRuneCount["tellus"] = 0
+					TargetRuneCount["flabra"] = 0
+					TargetRuneCount["gelus"] = 0
+					TargetRuneCount["ignis"] = 0
+					TargetRuneCount[rune1] = TargetRuneCount[rune1] + 1
+					TargetRuneCount[rune2] = TargetRuneCount[rune2] + 1
+					TargetRuneCount[rune3] = TargetRuneCount[rune3] + 1
+					print_current_rune()
+				end
+			end
+		elseif args[2] then
+			MultiRune = false
+			if Runes[string.lower(args[2])] then
+				Rune = Runes[string.lower(args[2])]
+				print_current_rune()
 			end
 			print_current_rune()
 		else
-			send_command('input /ja "' .. Rune .. '" <me>')
+			if MultiRune then
+				for k,v in pairs(TargetRuneCount) do
+					if v > 0 then
+						if buffactive[k] == nil or buffactive[k] < v then
+							send_command('input /ja "' .. k .. '" <me>')
+							break;
+						end
+					end
+					-- can't get duration info so can't refresh time... have to wait for it to expire
+				end
+			else
+				send_command('input /ja "' .. Rune .. '" <me>')
+			end
 		end
 	elseif args[1] == "sjAction" then
 		if SJAction == nil then
@@ -311,11 +362,44 @@ function self_command(command)
 		WS = args[2]
 		print_current_ws()
 	elseif args[1] == 'resist' and args[2] then
-		local arg2 = string.lower(args[2])
-		if Resist[arg2] then Rune = Resist[arg2] end
-		print_current_rune()
+		if args[2] and args[3] and args[4] then
+			local res1 = string.lower(args[2])
+			local res2 = string.lower(args[3])
+			local res3 = string.lower(args[4])
+			if Resist[res1] and Resist[res2] and Resist[res3] then
+				local rune1 = Resist[res1]
+				local rune2 = Resist[res2]
+				local rune3 = Resist[res3]
+				if TargetRuneCount[rune1] and TargetRuneCount[rune2] and TargetRuneCount[rune3] then
+					MultiRune = true
+					TargetRuneCount["lux"] = 0
+					TargetRuneCount["tenebrae"] = 0
+					TargetRuneCount["unda"] = 0
+					TargetRuneCount["sulpor"] = 0
+					TargetRuneCount["tellus"] = 0
+					TargetRuneCount["flabra"] = 0
+					TargetRuneCount["gelus"] = 0
+					TargetRuneCount["ignis"] = 0
+					TargetRuneCount[rune1] = TargetRuneCount[rune1] + 1
+					TargetRuneCount[rune2] = TargetRuneCount[rune2] + 1
+					TargetRuneCount[rune3] = TargetRuneCount[rune3] + 1
+					print_current_rune()
+				end
+			end
+		else
+			local arg2 = string.lower(args[2])
+			if Resist[arg2] then 
+				Rune = Resist[arg2] 
+				MultiRune = false
+				print_current_rune()
+			end
+		end
 	elseif args[1] == "th" then
 		parse_th_command(args)
+	elseif args[1] == "printBuffs" then
+		for k,v in pairs(buffactive) do
+			add_to_chat(122, k .. " " .. tostring(v))
+		end
 	else
 		master_gear_list_command(args)
 	end
@@ -345,7 +429,17 @@ function print_mode()
 end
 
 function print_current_rune()
-	add_to_chat(122, "Current Rune: " .. Rune)
+	if MultiRune then
+		local runeString = ""
+		for k,v in pairs(TargetRuneCount) do
+			if v > 0 then
+				runeString = runeString .. k .. "*" .. v .. " "
+			end
+		end
+		add_to_chat(122, "Current Runes: " .. runeString)
+	else
+		add_to_chat(122, "Current Rune: " .. Rune)
+	end
 end
 
 function print_subjob_action()

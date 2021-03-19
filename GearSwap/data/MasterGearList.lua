@@ -8,7 +8,6 @@ MasterGearList = {
 		{ name = "Tauret", 				setList = { { job = "THF", sets = { } } } },
 		{ name = "Epeolatry", 			setList = { { job = "RUN", sets = { } } } },
 		{ name = "Lionheart", 			setList = { { job = "RUN", sets = { } } } },
-		{ name = "Aettir", 				setList = { { job = "RUN", sets = { } } } },
 	},
 	sub = {
 		{ name = "Elan Strap +1", 		setList = { { job = "SMN", sets = { } } } },
