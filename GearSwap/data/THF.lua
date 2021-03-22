@@ -20,17 +20,9 @@ function get_sets()
 	
 	sets.SATA = set_combine(sets["SneakAttack"], sets["TrickAttack"])
 		
-	sets.WS_DEX = set_combine(sets["WS_Any"], sets["WS_DEX"])
-	sets.WS_Magical = set_combine(sets["WS_Any"], sets["WS_Magical"])
-	sets.WS_Str = set_combine(sets["WS_Any"], sets["WS_STR"])
- 
-	sets["Rudra's Storm"] = sets.WS_DEX
-	sets["Evisceration"] = sets["WS_Crit"]
-	sets["Mandalic Stab"] = sets.WS_DEX
-	sets["Aeolian Edge"] = sets.WS_Magical
-	sets["Cyclone"] = sets.WS_Magical
-	sets["Gust Slash"] = sets.WS_Magical
-	sets["Savage Blade"] = sets.WS_Str
+	sets["Mandalic Stab"] = sets["Rudra's Storm"]
+	sets["Cyclone"] = sets["Aeolian Edge"]
+	sets["Gust Slash"] = sets["Aeolian Edge"]
  
 	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
 	

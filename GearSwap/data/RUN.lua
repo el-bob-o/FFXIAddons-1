@@ -111,18 +111,10 @@ function get_sets()
 	
 	sets["Swipe"] = sets["Lunge"]
 	sets["Vallation"] = sets["Valiance"]
-	sets["Dimidiation"] = sets["WS_DEX"]
-	sets["Resolution"] = set_combine(sets["WS_STR"], sets["Fotia"])
-	sets["Savage Blade"] = sets["WS_STR"]
-	sets["Swift Blade"] = set_combine(sets["WS_STR"], sets["Fotia"])
-	sets["Armor Break"] = sets["WS_MagicAcc"]
-	sets["Fell Cleave"] = sets["WS_STR"]
-	sets["Shockwave"] = sets["WS_STR"]
-	sets["Upheaval"] = sets["WS_STR"]
-	sets["Steel Cyclone"] = sets["WS_STR"]
-	sets["Sanguine Blade"] = sets["Lunge"]
+	sets["Frostbite"] = sets["Lunge"]
 	sets["Freezebite"] = sets["Lunge"]
-	sets["Requeiescat"] = sets["Requeiescat"]
+	sets["Herculean Slash"] = sets["Lunge"]
+	sets["Shockwave"] = sets["Resolution"]
 	
 	sets.FastcastEnhancing = set_combine(sets["Fastcast"], sets["FastcastEnhancing"])
 	sets.EnhancingRegen = set_combine(sets["EnhancingAny"], sets["EnhancingRegen"])
@@ -336,7 +328,6 @@ function self_command(command)
 				Rune = Runes[string.lower(args[2])]
 				print_current_rune()
 			end
-			print_current_rune()
 		else
 			if MultiRune then
 				for k,v in pairs(TargetRuneCount) do
