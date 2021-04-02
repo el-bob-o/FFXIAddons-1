@@ -9,9 +9,9 @@ function get_sets()
 	Mode = 1
 	Buffs = {}
 	
-	sets = get_set_for_job("THF")
+	get_set_for_job("THF", sets)
 		
-	sets.Lilith = set_combine(sets["Hybrid"], sets["Lilith"])
+	sets.Lilith = set_combine(sets["Hybrid"], sets["Knockback"])
 	
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] },
@@ -36,7 +36,7 @@ end
  
 function precast(spell)
 	if spell.action_type == 'Magic' then
-		equip(sets["FastCast"])
+		equip(sets["Fastcast"])
     elseif spell.type=="WeaponSkill" then
 		local setToUse = {}
         if sets[spell.english] then

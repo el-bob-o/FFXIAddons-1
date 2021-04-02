@@ -97,7 +97,7 @@ function get_sets()
 		["ignis"] = 0,
 	}
 	
-	sets = get_set_for_job("RUN")
+	get_set_for_job("RUN", sets)
 		
 	sets.ShellVTank = set_combine(sets["DT"], sets["PDT"])
 	sets.NoBuffTank = set_combine(sets["DT"], sets["MDT"])	

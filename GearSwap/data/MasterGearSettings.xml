@@ -1,0 +1,31 @@
+<?xml version="1.1" ?>
+<settings>
+    <global>
+        <blm>false</blm>
+        <blu>false</blu>
+        <brd>false</brd>
+        <bst>false</bst>
+        <cor>false</cor>
+        <dnc>false</dnc>
+        <drg>false</drg>
+        <drk>false</drk>
+        <geo>false</geo>
+        <mnk>false</mnk>
+        <nin>false</nin>
+        <pld>false</pld>
+        <pup>false</pup>
+        <rdm>false</rdm>
+        <rng>false</rng>
+        <run>false</run>
+        <sam>false</sam>
+        <sch>false</sch>
+        <smn>false</smn>
+        <thf>false</thf>
+        <war>false</war>
+        <whm>false</whm>
+    </global>
+    <dabidobido>
+        <run>true</run>
+        <thf>true</thf>
+    </dabidobido>
+</settings>

@@ -4,7 +4,7 @@ texts = require('texts')
 BPs = {
 	["Carbuncle"] = 
 		{
-			["Rage1"] = { name = "Poison Nails",		target = "stnpc", 		description = "Phy Atk + poison" },
+			["Rage1"] = { name = "Poison Nails",		target = "stnpc", 		description = "Pierce + poison" },
 			["Rage2"] = { name = "Holy Mist",			target = "stnpc", 		description = "Light Atk" },
 			["Ward1"] = { name = "Healing Ruby II", 	target = "stpt", 		description = "Healing" },
 			["Ward2"] = { name = "Soothing Ruby", 		target = "stpt", 		description = "Erase" },
@@ -12,14 +12,14 @@ BPs = {
 		},
 	["Ifrit"] = 
 		{
-			["Rage1"] = { name = "Flaming Crush",		target = "stnpc",	 	description = "Hybrid Atk" },
+			["Rage1"] = { name = "Flaming Crush",		target = "stnpc",	 	description = "Blunt + Fire" },
 			["Rage2"] = { name = "Conflag Strike",		target = "stnpc", 		description = "Fire + Burn" },
 			["Ward1"] = { name = "Crimson Howl", 		target = "stpt", 		description = "+10% Atk" },
 			["Ward2"] = { name = "Inferno Howl", 		target = "stpt", 		description = "Enfire" },
 		},
 	["Shiva"] = 
 		{
-			["Rage1"] = { name = "Rush",				target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Rush",				target = "stnpc",	 	description = "Blunt" },
 			["Rage2"] = { name = "Heavenly Strike",		target = "stnpc", 		description = "Ice Nuke" },
 			["Ward1"] = { name = "Frost Armor", 		target = "stpt", 		description = "Ice Spikes" },
 			["Ward2"] = { name = "Sleepga", 			target = "stnpc", 		description = "Sleepga" },
@@ -28,7 +28,7 @@ BPs = {
 		},
 	["Garuda"] = 
 		{
-			["Rage1"] = { name = "Predator Claws",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Predator Claws",		target = "stnpc",	 	description = "Slash" },
 			["Rage2"] = { name = "Aero IV",				target = "stnpc", 		description = "Wind Nuke" },
 			["Ward1"] = { name = "Aerial Armor", 		target = "stpt", 		description = "Blink" },
 			["Ward2"] = { name = "Whispering Wind", 	target = "stpt", 		description = "Heal" },
@@ -37,14 +37,14 @@ BPs = {
 		},
 	["Titan"] = 
 		{
-			["Rage1"] = { name = "Mountain Buster",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Mountain Buster",		target = "stnpc",	 	description = "Blunt" },
 			["Rage2"] = { name = "Stone IV",			target = "stnpc", 		description = "Earth Nuke" },
 			["Ward1"] = { name = "Earthen Ward", 		target = "stpt", 		description = "Stoneskin" },
 			["Ward2"] = { name = "Earthen Armor", 		target = "stpt", 		description = "Heavy Dmg Reduction" },
 		},
 	["Ramuh"] = 
 		{
-			["Rage1"] = { name = "Volt Strike",			target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Volt Strike",			target = "stnpc",	 	description = "Blunt" },
 			["Rage2"] = { name = "Thunderstorm",		target = "stnpc", 		description = "Thunder Nuke" },
 			["Rage3"] = { name = "Thunderspark",		target = "stnpc", 		description = "AOE Thunder Paralyze" },
 			["Ward1"] = { name = "Rolling Thunder", 	target = "stpt", 		description = "Enthunder" },
@@ -53,7 +53,7 @@ BPs = {
 		},
 	["Leviathan"] = 
 		{
-			["Rage1"] = { name = "Spinning Dive",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Spinning Dive",		target = "stnpc",	 	description = "Slash" },
 			["Rage2"] = { name = "Water IV",			target = "stnpc", 		description = "Water Nuke" },
 			["Ward1"] = { name = "Slowga", 				target = "stnpc", 		description = "Slow" },
 			["Ward2"] = { name = "Spring Water", 		target = "stpt", 		description = "Heal & Erase" },
@@ -62,7 +62,7 @@ BPs = {
 		},
 	["Cait Sith"] = 
 		{
-			["Rage1"] = { name = "Regal Gash",			target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Regal Gash",			target = "stnpc",	 	description = "Slash" },
 			["Rage2"] = { name = "Level ? Holy",		target = "stnpc", 		description = "Light Nuke" },
 			["Ward1"] = { name = "Raise II", 			target = "stpt", 		description = "Raise" },
 			["Ward2"] = { name = "Mewing Lullaby", 		target = "stnpc", 		description = "-TP & Sleep" },
@@ -71,7 +71,7 @@ BPs = {
 		},
 	["Fenrir"] = 
 		{
-			["Rage1"] = { name = "Eclipse Bite",		target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Eclipse Bite",		target = "stnpc",	 	description = "Slash" },
 			["Rage2"] = { name = "Lunar Bay",			target = "stnpc", 		description = "Dark Nuke" },
 			["Rage3"] = { name = "Impact",				target = "stnpc", 		description = "Dark & -Attr" },
 			["Ward1"] = { name = "Lunar Cry", 			target = "stnpc", 		description = "-Evasion" },
@@ -82,7 +82,7 @@ BPs = {
 		},
 	["Diabolos"] = 
 		{
-			["Rage1"] = { name = "Blindside",			target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Blindside",			target = "stnpc",	 	description = "Slash" },
 			["Rage2"] = { name = "Nether Blast",		target = "stnpc", 		description = "Dark Ranged Atk" },
 			["Rage3"] = { name = "Night Terror",		target = "stnpc", 		description = "Dark Nuke" },
 			["Ward1"] = { name = "Somnolence", 			target = "stnpc", 		description = "Gravity & Magic Dmg" },
@@ -94,7 +94,7 @@ BPs = {
 		},
 	["Siren"] = 
 		{
-			["Rage1"] = { name = "Hysteric Assault",	target = "stnpc",	 	description = "Phy Atk" },
+			["Rage1"] = { name = "Hysteric Assault",	target = "stnpc",	 	description = "Pierce" },
 			["Rage2"] = { name = "Tornado II",			target = "stnpc", 		description = "Wind Nuke" },
 			["Rage3"] = { name = "Sonic Buffet",		target = "stnpc", 		description = "Wind Nuke & Dispel" },
 			["Ward1"] = { name = "Lunatic Voice", 		target = "stnpc", 		description = "AOE Silence" },
@@ -160,7 +160,7 @@ function get_sets()
 	StartedBPRage = false
 	TimerFromPrecast = 1.25
 	
-	sets = get_set_for_job("SMN")
+	get_set_for_job("SMN", sets)
 	
 	setup_text_window()
 	if pet.isvalid then update_blood_pact_info(pet.name) end
@@ -348,7 +348,7 @@ function self_command(command)
 			end
 		end
 	elseif args[1] == "dt" then
-		if Combat == true then
+		if DT == true then
 			add_to_chat(122, "DT off!")
 			DT = false
 		else
@@ -357,7 +357,7 @@ function self_command(command)
 			equip_idle_set()
 		end
 	elseif args[1] == "movement" then
-		if Combat == true then
+		if Movement == true then
 			add_to_chat(122, "Movement off!")
 			Movement = false
 		else

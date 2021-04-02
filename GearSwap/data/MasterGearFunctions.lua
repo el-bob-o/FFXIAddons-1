@@ -35,10 +35,8 @@ equipable_bags = { --0, -- don't care inventory
 					
 storage_bags = { 1, 2, 5, 6, 7, 9 }
 
-function get_set_for_job(job)
-	local sets = {}
+function get_set_for_job(job, sets)
 	populate_set(sets, job)
-	return sets
 end
 
 function populate_set(sets, job)
@@ -95,7 +93,8 @@ function export_sets()
 	local saveString = ""
 	for job, v in pairs(settings) do
 		saveString = saveString .. job .. " {\n"
-		local sets = get_set_for_job(job)
+		local sets = {} 
+		get_set_for_job(job, sets)
 		for set, gearlist in pairs(sets) do
 			saveString = saveString .. "\t" .. set .. " {\n"
 			if gearlist["main"] then saveString = saveString .. "\t\t main = " .. gearlist["main"].name .. "\n" end

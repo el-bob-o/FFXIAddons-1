@@ -5,7 +5,7 @@ function get_sets()
 	CPMode = false
 	Combat = false
 	Mode = 1
-	Nuke = "Stone"
+	Nuke = "Dia"
 	Indi = "Indi-Fury"
 	Geo = "Geo-Frailty"
 	Entrust = "Indi-Haste"
@@ -16,7 +16,7 @@ function get_sets()
 		{ name = "Magic", Indi = "Indi-Acumen", Geo = "Geo-Malaise" }
 	}
 	
-	sets = get_set_for_job("GEO")
+	get_set_for_job("GEO", sets)
 		
 	Modes = { 
 		{ name = "CombatIdleDT", set = sets["CombatIdleDT"]},
