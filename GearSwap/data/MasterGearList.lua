@@ -147,7 +147,7 @@ MasterGearList = {
 		{ name = "Bagua Tunic +2", 		setList = { { job = "GEO", sets = { "Geomancy", "Bolster", "Elemental" } } } },
 		{ name = "Geomancy Tunic +2", 	setList = { { job = "GEO", sets = { "Life Cycle", "MACC" } } } },
 		{ name = "Councilor's Garb", 	setList = { { job = "ALL", sets = { "Adoulin" } } } },
-		{ name = "Futhark Coat +3", 	setList = { { job = "RUN", sets = { "DT", "Elemental Sforzo", "Liement", "IdleRegen" } } },
+		{ name = "Futhark Coat +3", 	setList = { { job = "RUN", sets = { "DT", "Elemental Sforzo", "Liement", "IdleRegen", "Dimidiation", "Savage Blade", "Resolution", 	"Requiescat" } } },
 			priorty = 119 },
 		{ name = "Runeist's Coat +2", 	setList = { { job = "RUN", sets = { "PDT", "Valiance" } } },
 			priorty = 208 },
@@ -160,10 +160,7 @@ MasterGearList = {
 													},
 			priorty = 63 },
 		{ name = "Malignance Tabard", 	setList = { { job = "THF", sets = { "Hybrid" } } } },
-		{ name = "Pillager's Vest +2", 	setList = { { job = "THF", sets = { "Hide", "Evisceration" } } } },
-		{ name = "Onca Suit", 			setList = { { job = "THF", sets = { "Rudra's Storm" } },
-													{ job = "RUN", sets = { "Dimidiation", "Savage Blade", "Resolution", "Requiescat" } },
-													} },
+		{ name = "Pillager's Vest +2", 	setList = { { job = "THF", sets = { "Hide", "Evisceration", "Rudra's Storm" } } } },
 	},
 	hands = {
 		{ name = "Asteria Mitts +1", 	setList = { { job = "SMN", sets = { "Idle" } } } },
@@ -300,8 +297,8 @@ MasterGearList = {
 			priority = 80 },
 		{ name = "Futhark Trousers +1",	setList = { { job = "RUN", sets = { "Valiance", "FastcastEnhancing" } } },
 			priority = 87 },
-		{ name = "Meg. Chausses +2",	setList = { { job = "RUN", sets = { "Hybrid" } },
-													{ job = "THF", sets = { "Hybrid" } }
+		{ name = "Meg. Chausses +2",	setList = { { job = "RUN", sets = { "Hybrid", "Dimidiation", "Savage Blade", "Resolution" } },
+													{ job = "THF", sets = { "Hybrid", "Rudra's Storm" } }
 													},
 			priority = 35 },
 		{ name = "Rawhide Trousers",	setList = { { job = "RUN", sets = { "Fastcast" } },
