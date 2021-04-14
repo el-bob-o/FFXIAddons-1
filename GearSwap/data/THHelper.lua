@@ -39,8 +39,8 @@ end
 
 function equip_th()
 	if THModes[THMode].onEngage then
-		equip(sets["TH"])
-		if THModes[THMode].fulltime then
+		if not mob_tagged(player.target.id) then
+			equip(sets["TH"])
 			for slot,item in pairs(sets["TH"]) do
 				SlotsUsed:append(slot)
 			end
@@ -73,10 +73,14 @@ end
 function parse_action(act)
 	if not THModes[THMode].onEngage then return end	
 	if act.actor_id == windower.ffxi.get_player().id then -- add to MobsTagged if player initiated attack
-		if act.category == 1 then -- melee
+		if act.category == 1 or act.category == 3 then -- 1 = melee, 3 = ws
 			for index, target in pairs(act.targets) do				
 				MobsTagged[target.id] = os.clock()
 			end
+		end
+		if mob_tagged(player.target.id) and not THModes[THMode].fulltime then
+			unlock_th()
+			send_command('gs c thtagged')
 		end
 	elseif MobsTagged[act.actor_id] then -- update timeToDead
 		MobsTagged[act.actor_id] = os.clock()
@@ -137,7 +141,7 @@ end
 
 function on_status_change_for_th(new_status, old_status)
     if new_status == "Engaged" then -- engaged
-        equip_th()
+        on_target_change_for_th()
     elseif new_status == "Idle" then
         unlock_th()
     end

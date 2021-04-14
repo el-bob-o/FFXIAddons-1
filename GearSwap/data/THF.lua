@@ -151,6 +151,10 @@ function self_command(command)
 	elseif args[1] == "setWS" and args[2] then
 		WS = args[2]
 		print_current_ws()
+	elseif args[1] == "thtagged" then
+		if player.status == "Engaged" then
+			equip(Modes[Mode].set)
+		end
 	else
 		master_gear_list_command(args)
 	end
@@ -208,5 +212,7 @@ function subjob_macro_page(job)
 		send_command('@wait 1;input /macro set 2')
 	elseif job == "RUN" then
 		send_command('@wait 1;input /macro set 3')
+	elseif job == "WAR" then
+		send_command('@wait 1;input /macro set 4')
 	end
 end

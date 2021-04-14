@@ -25,7 +25,8 @@ function get_sets()
 	sets["Shining Strike"] = sets["Elemental"]
 	sets["Seraph Strike"] = sets["Elemental"]
 	sets["Flash Nova"] = sets["Elemental"]
-	
+	sets["Cataclysm"] = sets["Elemental"]
+	 
 	send_command('@input /macro book 3;wait 1;input /macro set 1')
 	print_mode()
 	print_current_nuke()

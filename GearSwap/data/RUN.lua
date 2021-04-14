@@ -391,6 +391,10 @@ function self_command(command)
 		for k,v in pairs(buffactive) do
 			add_to_chat(122, k .. " " .. tostring(v))
 		end
+	elseif args[1] == "thtagged" then
+		if player.status == "Engaged" then
+			equip(Modes[Mode].set)
+		end
 	else
 		master_gear_list_command(args)
 	end
@@ -398,13 +402,6 @@ end
 
 function sub_job_change(new, old)
 	subjob_check(new)
-end
-
-function check_mode()
-	if Modes[Mode].dwSub == true and CanDualWield == false then
-		Mode = 1
-	end
-	print_mode()
 end
 
 function print_mode()
@@ -454,7 +451,6 @@ function subjob_check(job)
 	else
 		SJAction = nil
 	end
-	check_mode()
 	print_subjob_action()
 end
 

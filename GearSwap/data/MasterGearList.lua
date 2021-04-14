@@ -25,7 +25,7 @@ MasterGearList = {
 	ammo = {
 		{ name = "Epitaph", 			setList = { { job = "SMN", sets = { "Idle", "BPDmg", "PrecastBP" } } } },
 		{ name = "Per. Lucky Egg", 		setList = { { job = "SMN", sets = { "Dia", "Dia II", "Diaga" } },
-													{ job = "GEO", sets = { "Dia", "Dia II", "Diaga" } },
+													{ job = "GEO", sets = { "Dia", "Dia II", "Diaga", "Bio" } },
 													{ job = "RUN", sets = { "TH" } },
 													{ job = "THF", sets = { "TH" } },
 													} },
@@ -33,7 +33,9 @@ MasterGearList = {
 		{ name = "Aurgelmir Orb", 		setList = { { job = "RUN", sets = { "Hybrid", "Dimdiation" } },
 													{ job = "THF", sets = { "Hybrid", "Rudra's Storm" } },
 													} },
-		{ name = "Seeth. Bomblet +1", 	setList = { { job = "RUN", sets = { "Resolution", "Requiescat", "Savage Blade" } } } },
+		{ name = "Seeth. Bomblet +1", 	setList = { { job = "RUN", sets = { "Resolution", "Requiescat", "Savage Blade" } },
+													{ job = "THF", sets = { "Requiescat", "Savage Blade" } },
+													} },
 		{ name = "Yetshila", 			setList = { { job = "THF", sets = { "Evisceration" } } } },
 		{ name = "Ghastly Tathlum +1",	setList = { { job = "THF", sets = { "Aeolian Edge" } },
 													{ job = "RUN", sets = { "Lunge" } },
@@ -63,7 +65,7 @@ MasterGearList = {
 		{ name = "Rune. Bandeau +2",	setList = { { job = "RUN", sets = { "Fastcast", "EnhancingRegen" } } }, 
 			priority = 99 },
 		{ name = "Malignance Chapeau",	setList = { { job = "THF", sets = { "Hybrid" } } } },
-		{ name = "Pill. Bonnet +2",		setList = { { job = "THF", sets = { "Rudra's Storm", "Evisceration" } } } },
+		{ name = "Pill. Bonnet +2",		setList = { { job = "THF", sets = { "Rudra's Storm", "Evisceration", "Savage Blade", "Requiescat" } } } },
 	},
 	neck = {
 		{ name = "Caller's Pendant",	setList = { { job = "SMN", sets = { "Idle" } } } },
@@ -84,7 +86,7 @@ MasterGearList = {
 		{ name = "Futhark Torque +1",	setList = { { job = "RUN", sets = { "DT", "Hybrid", "Emnity" } } },
 			priority = 30 },
 		{ name = "Fotia Gorget",		setList = { { job = "RUN", sets = { "Resolution", "Requiescat" } },
-													{ job = "THF", sets = { "Evisceration" } },
+													{ job = "THF", sets = { "Evisceration", "Requiescat" } },
 													} },
 		{ name = "Lissome Necklace",	setList = {  } },
 		{ name = "Erudit. Necklace",	setList = { { job = "THF", sets = { "Hybrid" } } } },
@@ -92,7 +94,7 @@ MasterGearList = {
 													{ job = "GEO", sets = { "Elemental" } },
 													{ job = "RUN", sets = { "Lunge" } },
 													} },
-		{ name = "Caro Necklace",		setList = { { job = "THF", sets = { "Rudra's Storm" } },
+		{ name = "Caro Necklace",		setList = { { job = "THF", sets = { "Rudra's Storm", "Savage Blade" } },
 													{ job = "RUN", sets = { "Dimidiation", "Savage Blade" } },
 													} },
 	},
@@ -106,8 +108,11 @@ MasterGearList = {
 		{ name = "Moonshade Earring",	setList = { { job = "ALL", sets = { "TPBonus" } } } },
 		{ name = "Ethereal Earring",	setList = { { job = "RUN", sets = { "DT" } } },
 			priority = 15 },
-		{ name = "Cessance Earring",	setList = { { job = "RUN", sets = { "Hybrid", "Dimidiation", "Resolution", "Requiescat", "Savage Blade" } },
+		{ name = "Cessance Earring",	setList = { { job = "RUN", sets = { "Hybrid" } },
 													{ job = "THF", sets = { "Hybrid" } },
+													} },
+		{ name = "Ishvara Earring",		setList = { { job = "RUN", sets = { "Dimidiation", "Resolution", "Requiescat", "Savage Blade" } },
+													{ job = "THF", sets = { "Requiescat", "Savage Blade" } },
 													} },
 		{ name = "Sherida Earring",		setList = { { job = "THF", sets = { "Rudra's Storm", "Evisceration" } } } },
 		{ name = "Friomisi Earring",	setList = { { job = "RUN", sets = { "Emnity", "Lunge" } },
@@ -130,7 +135,7 @@ MasterGearList = {
 													},
 			priority = 110 },
 		{ name = "Sherida Earring",		setList = { { job = "RUN", sets = { "Hybrid", "Dimidiation", "Resolution", "Requiescat", "Savage Blade" } },
-													{ job = "THF", sets = { "Hybrid" } }
+													{ job = "THF", sets = { "Hybrid", "Requiescat", "Savage Blade" } }
 													} },
 		{ name = "Hecate's Earring",	setList = { { job = "RUN", sets = { "Lunge" } },
 													{ job = "THF", sets = { "Aeolian Edge" } },
@@ -160,7 +165,7 @@ MasterGearList = {
 													},
 			priorty = 63 },
 		{ name = "Malignance Tabard", 	setList = { { job = "THF", sets = { "Hybrid" } } } },
-		{ name = "Pillager's Vest +2", 	setList = { { job = "THF", sets = { "Hide", "Evisceration", "Rudra's Storm" } } } },
+		{ name = "Plunderer's Vest +3", setList = { { job = "THF", sets = { "TrickAttack", "Evisceration", "Rudra's Storm", "Savage Blade", "Requiescat" } } } },
 	},
 	hands = {
 		{ name = "Asteria Mitts +1", 	setList = { { job = "SMN", sets = { "Idle" } } } },
@@ -171,12 +176,12 @@ MasterGearList = {
 		{ name = "Jhakri Cuffs +1", 	setList = {	{ job = "GEO", sets = { "Elemental" } } } },
 		{ name = "Aya. Manopolas +1", 	setList = { { job = "RUN", sets = { "DT" } } },
 			priorty = 22 },
-		{ name = "Leyline Gloves", 		setList = { { job = "RUN", sets = { "Fastcast","Lunge" } },
-													{ job = "THF", sets = { "FastCast", "Aeolian Edge" } },
+		{ name = "Leyline Gloves", 		setList = { { job = "RUN", sets = { "Fastcast", "Lunge" } },
+													{ job = "THF", sets = { "Fastcast", "Aeolian Edge" } },
 													},
 			priorty = 25 },
 		{ name = "Meg. Gloves +2", 		setList = { { job = "RUN", sets = { "PDT", "Dimidiation", "Resolution", "Requiescat", "Savage Blade" } },
-													{ job = "THF", sets = { "Hybrid", "Rudra's Storm" } },
+													{ job = "THF", sets = { "Hybrid", "Rudra's Storm", "Requiescat", "Savage Blade" } },
 													},
 			priorty = 30 },
 		{ name = "Runeist's Mitons +2",	setList = { { job = "RUN", sets = { "Gambit", "EnhancingAny" } } },
@@ -200,13 +205,14 @@ MasterGearList = {
 		{ name = "Evoker's Ring",		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
 		
 		{ name = "Vertigo Ring",		setList = { { job = "GEO", sets = { "Elemental", "MACC" } },
-													{ job = "RUN", sets = { "Requiescat" } }
+													{ job = "RUN", sets = { "Requiescat" } },
+													{ job = "THF", sets = { "Requiescat" } }
 													} },
 		{ name = "Locus Ring",			setList = { { job = "RUN", sets = { "Lunge" } },
 													{ job = "THF", sets = { "Aeolian Edge" } },
 													} },
 		{ name = "Rajas Ring",			setList = { { job = "RUN", sets = { "Dimidiation", "Resolution", "Savage Blade" } },
-													{ job = "THF", sets = { "Rudra's Storm" } },
+													{ job = "THF", sets = { "Rudra's Storm", "Savage Blade" } },
 													} },
 		{ name = "Mummu Ring",			setList = { { job = "THF", sets = { "Evisceration" } } } },
 	},
@@ -214,10 +220,6 @@ MasterGearList = {
 		-- { name = "Stikini Ring +1", 	setList = { { job =	"SMN", sets = { "Idle", "PrecastBP", "SmnSkill" } } } }, -- 30 mil gil :(
 		-- { name = "Globidonta Ring", 	setList = { { job =	"SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- +5 skill from incursion
 		{ name = "Varar Ring +1",		setList = { { job = "SMN", sets = { "BPDmg" } } } },
-		{ name = "Dark Ring",			setList = { { job = "GEO", sets = { "CombatIdleDT" } },
-													{ job = "SMN", sets = { "IdleDT" } },
-													{ job = "RUN", sets = { "DT" } },
-													} },
 		{ name = "Resonance Ring",		setList = { { job = "GEO", sets = { "Elemental" } } } },
 		{ name = "Chirich Ring",		setList = { { job = "GEO", sets = { "IdleRefresh" } },
 													{ job = "RUN", sets = { "IdleRegen" } },
@@ -225,6 +227,8 @@ MasterGearList = {
 													} },
 		{ name = "Gelatinous Ring +1",	setList = { { job = "RUN", sets = { "PDT" } },
 													{ job = "THF", sets = { "Hybrid" } },
+													{ job = "SMN", sets = { "IdleDT" } },
+													{ job = "GEO", sets = { "CombatIdleDT" } },
 													},
 			priority = 135 },
 		{ name = "Supershear Ring",		setList = { { job = "RUN", sets = { "Emnity" } } },
@@ -232,7 +236,9 @@ MasterGearList = {
 		{ name = "Ramuh Ring",			setList = { { job = "RUN", sets = { "Dimidiation" } },
 													{ job = "THF", sets = { "Rudra's Storm", "Evisceration" } },
 													} },
-		{ name = "Rufescent Ring",		setList = { { job = "RUN", sets = { "Resolution", "Requiescat", "Savage Blade" } } } },
+		{ name = "Rufescent Ring",		setList = { { job = "RUN", sets = { "Resolution", "Requiescat", "Savage Blade" } },
+													{ job = "THF", sets = { "Requiescat", "Savage Blade" } }
+													} },
 	},
 	back = {
 		{ name = "Campestres's Cape",	setList = { { job = "SMN", sets = { "Idle", "BPDmg" } } } },
@@ -254,7 +260,6 @@ MasterGearList = {
 	},
 	waist = {
 		{ name = "Lucidity Sash", 		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
-		-- { name = "Incarnation Sash",	setList = { { job = "SMN", sets = { "BPDmg" } } } }, -- from plouton
 		{ name = "Chaac Belt", 			setList = { { job = "SMN", sets = { "Dia", "Dia II", "Diaga" } },
 													{ job = "GEO", sets = { "Dia", "Dia II", "Diaga", "Bio" } },
 													{ job = "RUN", sets = { "TH" } },
@@ -273,10 +278,13 @@ MasterGearList = {
 													} },
 		{ name = "Flume Belt +1",		setList = { { job = "RUN", sets = { "PDT" } } } },
 		{ name = "Fotia Belt",			setList = { { job = "RUN", sets = { "Resolution", "Requiescat" } },
-													{ job = "THF", sets = { "Evisceration" } },
+													{ job = "THF", sets = { "Evisceration", "Requiescat" } },
 													} },
-		{ name = "Sailfi Belt +1",		setList = { { job = "RUN", sets = { "Hybrid", "Dimdiation", "Savage Blade" } },
-													{ job = "THF", sets = { "Hybrid", "Rudra's Storm" } },
+		{ name = "Sailfi Belt +1",		setList = { { job = "RUN", sets = { "Hybrid", "Savage Blade" } },
+													{ job = "THF", sets = { "Hybrid", "Savage Blade" } },
+													} },
+		{ name = "Grunfeld Rope",		setList = { { job = "RUN", sets = { "Dimdiation" } },
+													{ job = "THF", sets = { "Rudra's Storm" } },
 													} },
 	},
 	legs = {
@@ -289,7 +297,7 @@ MasterGearList = {
 		{ name = "Psycloth Lappas",		setList = { { job = "GEO", sets = { "CombatIdleDT" } } } },
 		{ name = "Geomancy Pants +2",	setList = { { job = "GEO", sets = { "Fastcast", "MACC" } } } },
 		{ name = "Bagua Pants +2",		setList = { { job = "GEO", sets = { "Geomancy", "Elemental" } } } },
-		{ name = "Aya. Cosciales +1",	setList = { { job = "RUN", sets = { "DT" } } },
+		{ name = "Aya. Cosciales +2",	setList = { { job = "RUN", sets = { "DT", "Fastcast" } } },
 			priority = 45 },
 		{ name = "Carmine Cuisses +1",	setList = { { job = "RUN", sets = { "Requeiescat", "Movement", "EnhancingAny" } } },
 			priority = 50 },
@@ -298,14 +306,11 @@ MasterGearList = {
 		{ name = "Futhark Trousers +1",	setList = { { job = "RUN", sets = { "Valiance", "FastcastEnhancing" } } },
 			priority = 87 },
 		{ name = "Meg. Chausses +2",	setList = { { job = "RUN", sets = { "Hybrid", "Dimidiation", "Savage Blade", "Resolution" } },
-													{ job = "THF", sets = { "Hybrid", "Rudra's Storm" } }
-													},
-			priority = 35 },
-		{ name = "Rawhide Trousers",	setList = { { job = "RUN", sets = { "Fastcast" } },
-													{ job = "THF", sets = { "Fastcast" } },
+													{ job = "THF", sets = { "Hybrid", "Rudra's Storm", "Savage Blade", "Requeiescat" } }
 													},
 			priority = 35 },
 		{ name = "Pill. Culottes +2",	setList = { { job = "THF", sets = { "Evisceration" } } } },
+		-- { name = "Plunderer Culottes +2",	setList = { { job = "THF", sets = { "Rudra's Storm", "Savage Blade", "Requeiescat" } } } },
 	},
 	feet = {
 		{ name = "Apogee Pumps +1",		setList = { { job = "SMN", sets = { "Idle", "BPDmg" } } } },
@@ -328,16 +333,16 @@ MasterGearList = {
 		{ name = "Futhark Boots +1",	setList = { { job = "RUN", sets = { "Rayke" } } },
 			priority = 13 },
 		{ name = "Herculean Boots",		setList = { { job = "RUN", sets = { "Hybrid", "Lunge", "Requiescat" } },
-													{ job = "THF", sets = { "Aeolian Edge" } }
+													{ job = "THF", sets = { "Aeolian Edge", "Requiescat" } }
 													},
 			priority = 9 },
 		{ name = "Lustra. Leggings +1",	setList = { { job = "RUN", sets = { "Dimidiation", "Resolution", "Savage Blade" } },
-													{ job = "THF", sets = { "Rudra's Storm" } }
+													{ job = "THF", sets = { "Rudra's Storm", "Savage Blade",  } }
 													},
 			priority = 12 },
 		{ name = "Skulk. Poulaines +1", setList = { { job = "THF", sets = { "TH" } } } },
 		{ name = "Malignance Boots", 	setList = { { job = "THF", sets = { "Hybrid" } } } },
-		{ name = "Mummu Gamash. +1", 	setList = { { job = "THF", sets = { "Evisceration" } } } },
+		{ name = "Mummu Gamash. +2", 	setList = { { job = "THF", sets = { "Evisceration" } } } },
 		{ name = "Jute Boots +1", 		setList = { { job = "THF", sets = { "Movement" } } } },
 	}
 }
