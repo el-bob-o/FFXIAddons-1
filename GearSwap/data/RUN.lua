@@ -393,7 +393,7 @@ function self_command(command)
 		end
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
-			equip(Modes[Mode].set)
+			equip(get_set())
 		end
 	else
 		master_gear_list_command(args)

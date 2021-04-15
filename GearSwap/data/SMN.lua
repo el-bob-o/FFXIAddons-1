@@ -203,8 +203,12 @@ function precast(spell)
 end
  
 function midcast(spell)
-	if sets[spell.english] then
-		equip(sets[spell.english])
+	if spell.action_type == 'Magic' then
+		if spell.skill == "Enfeebling Magic" then
+			equip(sets["MACC"]) 
+		elseif sets[spell.english] then
+			equip(sets[spell.english])
+		end
 	end
 end
  

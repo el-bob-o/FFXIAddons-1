@@ -77,7 +77,7 @@ function midcast(spell)
 end
  
 function aftercast(spell)
-	if Combat then
+	if Combat or player.status == "Engaged" then
 		equip(Modes[Mode].set)
 	else
 		equip(sets["IdleRefresh"])
@@ -175,6 +175,11 @@ function self_command(command)
 	elseif args[1] == "combat" then
 		if Combat == true then
 			add_to_chat(122, "Combat off!")
+			if player.status ~= "Engaged" then
+				equip(sets["IdleRefresh"])
+			else 
+				equip(Modes[Mode].set)
+			end
 			Combat = false
 		else
 			add_to_chat(122, "Combat on!")
@@ -252,11 +257,11 @@ function print_current_nuke()
 end
 
 function print_current_geos()
-	add_to_chat(122, "Indi: " .. Indi .. " Geo: " .. Geo .. " Entrust: " .. Entrust)
+	add_to_chat(122, "Indi: " .. Indi .. ", Geo: " .. Geo .. ", Entrust: " .. Entrust)
 end
 
 function party_current_geos()
-	send_command('input /p ' .. "Indi: " .. Indi .. " Geo: " .. Geo .. " Entrust: " .. Entrust)
+	send_command('input /p ' .. "Indi: " .. Indi .. ", Geo: " .. Geo .. ", Entrust: " .. Entrust)
 end
 
 windower.register_event('time change', function(old, new)
