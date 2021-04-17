@@ -100,8 +100,8 @@ MasterGearList = {
 													} },
 	},
 	ear1 = {
-		{ name = "Evans Earring", 		setList = { { job = "SMN", sets = { "Idle", "PrecastBP" } } } },
-		-- { name = "Lodurr Earring", 		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- 600 domain points
+		{ name = "Evans Earring", 		setList = { { job = "SMN", sets = { "Idle" } } } },
+		{ name = "Lodurr Earring", 		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
 		{ name = "Handler's Earring +1",setList = { { job = "GEO", sets = { "CombatIdleDT" } } } },
 		{ name = "Loquac. Earring",		setList = { { job = "ALL", sets = { "Fastcast" } } } },
 		{ name = "Mendi. Earring",		setList = { { job = "ALL", sets = { "HealingFastcast", "Healing" } } } },
@@ -121,7 +121,7 @@ MasterGearList = {
 													} },
 	},
 	ear2 = {
-		-- { name = "C. Palug Earring",	setList = { { job = "SMN", sets = { "BPDmg", "PrecastBP", "SmnSkill" } } } },
+		-- { name = "C. Palug Earring",	setList = { { job = "SMN", sets = { "BPDmg", "PrecastBP", "SmnSkill" } } } },		
 		{ name = "Gelos Earring",		setList = { { job = "SMN", sets = { "BPDmg" } } } },
 		{ name = "Malignance Earring",	setList = { { job = "GEO", sets = { "Fastcast", "Elemental", "MACC" } },
 													{ job = "SMN", sets = { "Fastcast", "MACC" } },
@@ -146,7 +146,7 @@ MasterGearList = {
 	},
 	body = {
 		{ name = "Apo. Dalmatica +1",	setList = { { job = "SMN", sets = { "Idle", "BPDmg" } } } },
-		{ name = "Con. Doublet +2",		setList = { { job = "SMN", sets = { "PrecastBP" } } } },
+		{ name = "Con. Doublet +3",		setList = { { job = "SMN", sets = { "PrecastBP" } } } },
 		{ name = "Vrikodara Jupon",		setList = { { job = "GEO", sets = { "CombatIdleDT", "IdleRefresh", "Fastcast" } },
 													{ job = "SMN", sets = { "Fastcast" } },
 													} },
@@ -298,8 +298,7 @@ MasterGearList = {
 													{ job = "GEO", sets = { "IdleRefresh" } },
 													} },
 		{ name = "Enticer's Pants", 	setList = {	{ job = "SMN", sets = { "BPDmg" } } } },
-		{ name = "Glyphic Spats +1",	setList = { { job = "SMN", sets = { "PrecastBP" } } } },
-		-- { name = "Beckoner Spats +1",	setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } }, -- use this once can cap BPRecast without relic legs
+		{ name = "Beck. Spats +1",		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
 		{ name = "Psycloth Lappas",		setList = { { job = "GEO", sets = { "CombatIdleDT" } },
 													{ job = "SMN", sets = { "MACC" } }
 													} },

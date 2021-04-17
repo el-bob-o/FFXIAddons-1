@@ -174,18 +174,18 @@ end
 
 function count_gear(args)
 	add_to_chat(122, "Gear Count")
-	local exclusion = nil
-	if args[2] == "exclude" and args[3] then
-		exclusion = args[3]:split(',')
-		add_to_chat(122,  "Excluding: " .. args[3])
+	local filter = nil
+	if args[2] == "filter" and args[3] then
+		filter = args[3]:split(',')
+		add_to_chat(122,  "Only: " .. args[3])
 	end
 	local totalGearCount = 0
 	for slot,gears in pairs(MasterGearList) do
 		local gearCount = 0
 		for k, gear in pairs(gears) do
-			if exclusion ~= nil then
+			if filter ~= nil then
 				for k2, set in pairs(gear.setList) do
-					if not exclusion:contains(set.job) then
+					if filter:contains(set.job) then
 						gearCount = gearCount + 1
 						totalGearCount = totalGearCount + 1
 						break
