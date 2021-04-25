@@ -13,7 +13,8 @@ function get_sets()
 	BuffMode = 1
 	BuffModes = {
 		{ name = "Melee", Indi = "Indi-Fury", Geo = "Geo-Frailty" },
-		{ name = "Magic", Indi = "Indi-Acumen", Geo = "Geo-Malaise" }
+		{ name = "Magic", Indi = "Indi-Acumen", Geo = "Geo-Malaise" },
+		{ name = "OmenSolo", Indi = "Indi-Haste", Geo = "Geo-Malaise", Entrust = "Indi-Refresh" }
 	}
 	
 	get_set_for_job("GEO", sets)
@@ -146,7 +147,8 @@ function self_command(command)
 				else
 					BuffMode = nextMode
 					set_buffs()
-					print_current_geos()
+					print_buff_mode()
+					print_current_geos()					
 				end
 			end
 		else
@@ -234,8 +236,15 @@ function print_mode()
 end
 
 function set_buffs()
-	Indi = BuffModes[BuffMode].Indi
-	Geo = BuffModes[BuffMode].Geo
+	if BuffModes[BuffMode].Indi then
+		Indi = BuffModes[BuffMode].Indi
+	end
+	if BuffModes[BuffMode].Geo then 
+		Geo = BuffModes[BuffMode].Geo
+	end
+	if BuffModes[BuffMode].Entrust then 
+		Entrust = BuffModes[BuffMode].Entrust
+	end
 end
 
 function print_buff_mode()

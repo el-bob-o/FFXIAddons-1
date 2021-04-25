@@ -44,9 +44,10 @@ BPs = {
 		},
 	["Ramuh"] = 
 		{
-			["Rage1"] = { name = "Volt Strike",			target = "stnpc",	 	description = "Blunt" },
-			["Rage2"] = { name = "Thunderstorm",		target = "stnpc", 		description = "Thunder Nuke" },
-			["Rage3"] = { name = "Thunderspark",		target = "stnpc", 		description = "AOE Thunder Paralyze" },
+			["Rage1"] = { name = "Chaotic Strike",		target = "stnpc",	 	description = "Blunt" },
+			["Rage2"] = { name = "Volt Strike",			target = "stnpc",	 	description = "Blunt" },
+			["Rage3"] = { name = "Thunderstorm",		target = "stnpc", 		description = "Thunder Nuke" },
+			["Rage4"] = { name = "Thunderspark",		target = "stnpc", 		description = "AOE Thunder Paralyze" },
 			["Ward1"] = { name = "Rolling Thunder", 	target = "stpt", 		description = "Enthunder" },
 			["Ward2"] = { name = "Lightning Armor", 	target = "stpt", 		description = "Shock Spikes" },
 			["Ward3"] = { name = "Shock Squall", 		target = "stnpc", 		description = "Stun" },
