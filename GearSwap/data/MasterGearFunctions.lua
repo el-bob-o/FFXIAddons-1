@@ -1,5 +1,6 @@
 res = require 'resources'
 slips = require 'slips'
+extdata = require 'extdata'
 
 jobs = { "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN" }
 
@@ -51,15 +52,19 @@ function master_gear_list_command(args)
 		print_missing_gear(args)
 	elseif args[1] == "exportsets" then
 		export_sets()
+	elseif args[1] == "mastergearhelp" then
+		print_help()
 	elseif args[1] == "testFunction" then
-		export_sets()
-	else
-		windower.add_to_chat(122, "MasterGear Commands:")
-		windower.add_to_chat(122, "//gs c countgear <filter:optional> <jobs:csv>: Count number of gear for jobs specified in third argument if filter keyword is specified. Otherwise count all gear")
-		windower.add_to_chat(122, "//gs c extragear <jobs:csv>: List gear that is in wardrobes but not in the MasterGearList for jobs specified in second argument")
-		windower.add_to_chat(122, "//gs c missinggear <jobs:csv>: List gear that is in MasterGearList for jobs specified in second argument but not in wardrobes")
-		windower.add_to_chat(122, "//gs c exportsets: Export all sets to a txt file")
+		export_sets()	
 	end
+end
+
+function print_help()
+	windower.add_to_chat(122, "MasterGear Commands:")
+	windower.add_to_chat(122, "//gs c countgear <filter:optional> <jobs:csv>: Count number of gear for jobs specified in third argument if filter keyword is specified. Otherwise count all gear")
+	windower.add_to_chat(122, "//gs c extragear <jobs:csv>: List gear that is in wardrobes but not in the MasterGearList for jobs specified in second argument")
+	windower.add_to_chat(122, "//gs c missinggear <jobs:csv>: List gear that is in MasterGearList for jobs specified in second argument but not in wardrobes")
+	windower.add_to_chat(122, "//gs c exportsets: Export all sets to a txt file")
 end
 
 function export_sets()
@@ -75,22 +80,22 @@ function export_sets()
 			saveString = saveString .. job .. " {\n"
 			for set, gearlist in pairs(sets) do
 				saveString = saveString .. "\t" .. set .. " {\n"
-				if gearlist["main"] then saveString = saveString .. "\t\t main = " .. gearlist["main"].name .. "\n" end
-				if gearlist["sub"] then saveString = saveString .. "\t\t sub = " .. gearlist["sub"].name .. "\n" end
-				if gearlist["range"] then saveString = saveString .. "\t\t range = " .. gearlist["range"].name .. "\n" end
-				if gearlist["ammo"] then saveString = saveString .. "\t\t ammo = " .. gearlist["ammo"].name .. "\n" end
-				if gearlist["head"] then saveString = saveString .. "\t\t head = " .. gearlist["head"].name .. "\n" end
-				if gearlist["neck"] then saveString = saveString .. "\t\t neck = " .. gearlist["neck"].name .. "\n" end
-				if gearlist["ear1"] then saveString = saveString .. "\t\t ear1 = " .. gearlist["ear1"].name .. "\n" end
-				if gearlist["ear2"] then saveString = saveString .. "\t\t ear2 = " .. gearlist["ear2"].name .. "\n" end
-				if gearlist["body"] then saveString = saveString .. "\t\t body = " .. gearlist["body"].name .. "\n" end
-				if gearlist["hands"] then saveString = saveString .. "\t\t hands = " .. gearlist["hands"].name .. "\n" end
-				if gearlist["ring1"] then saveString = saveString .. "\t\t ring1 = " .. gearlist["ring1"].name .. "\n" end
-				if gearlist["ring2"] then saveString = saveString .. "\t\t ring2 = " .. gearlist["ring2"].name .. "\n" end
-				if gearlist["back"] then saveString = saveString .. "\t\t back = " .. gearlist["back"].name .. "\n" end
-				if gearlist["waist"] then saveString = saveString .. "\t\t waist = " .. gearlist["waist"].name .. "\n" end
-				if gearlist["legs"] then saveString = saveString .. "\t\t legs = " .. gearlist["legs"].name .. "\n" end
-				if gearlist["feet"] then saveString = saveString .. "\t\t feet = " .. gearlist["feet"].name .. "\n" end
+				saveString = saveString .. gear_string(gearlist, "main")
+				saveString = saveString .. gear_string(gearlist, "sub")
+				saveString = saveString .. gear_string(gearlist, "range")
+				saveString = saveString .. gear_string(gearlist, "ammo")
+				saveString = saveString .. gear_string(gearlist, "head")
+				saveString = saveString .. gear_string(gearlist, "neck")
+				saveString = saveString .. gear_string(gearlist, "ear1")
+				saveString = saveString .. gear_string(gearlist, "ear2")
+				saveString = saveString .. gear_string(gearlist, "body")
+				saveString = saveString .. gear_string(gearlist, "hands")
+				saveString = saveString .. gear_string(gearlist, "ring1")
+				saveString = saveString .. gear_string(gearlist, "ring2")
+				saveString = saveString .. gear_string(gearlist, "back")
+				saveString = saveString .. gear_string(gearlist, "waist")
+				saveString = saveString .. gear_string(gearlist, "legs")
+				saveString = saveString .. gear_string(gearlist, "feet")
 				saveString = saveString .. "\t}\n"
 			end
 			saveString = saveString .. "}\n"
@@ -98,6 +103,23 @@ function export_sets()
 	end
 	f:write(saveString)
 	f:close()
+end
+
+function gear_string(gearlist, slot_name)
+	local ret_string = ""
+	if gearlist[slot_name] then	
+		ret_string = ret_string .. "\t\t " .. slot_name .. " = " .. gearlist[slot_name].name
+		if gearlist[slot_name].augments then 
+			ret_string = ret_string .. ", augments = "
+			for k, augment in pairs(gearlist[slot_name].augments) do
+				ret_string = ret_string .. augment .. ", "
+			end
+			ret_string = ret_string .. "\n"
+		else
+			ret_string = ret_string .. "\n"
+		end
+	end
+	return ret_string
 end
 
 function check_zone()
@@ -153,40 +175,70 @@ function print_extra_gear_not_in_master_list(args)
 	local filter = args[2]:split(',')
 	local masterGearList = get_list_of_gear_in_master_list(filter)
 	local extra = get_list_of_extra_gear(masterGearList)	
-	for itemId, bagId in pairs(extra) do
-		if res.items[itemId] then
-			local itemName = res.items[itemId].name
-			if masterGearList[itemName] == nil then
-				add_to_chat(122, itemName .. " in " .. res.bags[bagId].name)
+	for bagId, itemList in pairs(extra) do
+		for k, item in pairs(itemList) do
+			if res.items[item.id] then
+				if item.extdata then
+					local augments = extdata.decode(item).augments
+					if augments then
+						local print_string = res.items[item.id].name .. ", augments = "
+						for k3, augment in pairs(augments) do
+							print_string = print_string .. augment .. ", "
+						end		
+						add_to_chat(122, print_string .. " in " .. res.bags[bagId].name)
+					else
+						add_to_chat(122, res.items[item.id].name .. " in " .. res.bags[bagId].name)
+					end
+				else
+					add_to_chat(122, res.items[item.id].name .. " in " .. res.bags[bagId].name)
+				end
 			end
-		end	
+		end
 	end
 end
 
 function get_list_of_extra_gear(masterGearList)
 	local invSet = get_list_of_gear_in_equipable_inventory()
 	local extraGears = {}
-	for itemId, bagId in pairs(invSet) do
-		if masterGearList[res.items[itemId].name] == nil then
-			table.insert(extraGears, itemId, bagId)
+	for bagId, itemList in pairs(invSet) do
+		for k, item in pairs(itemList) do
+			local found = false
+			if res.items[item.id] then
+				for k2, master_gear_item in pairs(masterGearList) do
+					if master_gear_item.name == res.items[item.id].name then
+						if master_gear_item.augments then
+							if extdata.compare_augments(master_gear_item.augments ,extdata.decode(item).augments) then
+								found = true
+								break
+							end
+						else
+							found = true
+							break
+						end
+					end
+				end
+			end
+			if not found then
+				if extraGears[bagId] == nil then extraGears[bagId] = {} end
+				table.insert(extraGears[bagId], item)
+			end
 		end
 	end	
 	return extraGears
 end
 
 function get_list_of_gear_in_master_list(filter)
-	local gearSet = S{}
+	local gearSet = {}
 	for slot,gears in pairs(MasterGearList) do
 		for k, gear in pairs(gears) do
 			if filter ~= nil then
 				for k2, set in pairs(gear.setList) do
 					if filter:contains(string.lower(set.job)) then
-						gearSet[gear.name] = 1
-						break
+						table.insert(gearSet, gear)
 					end
 				end
 			else
-				gearSet[gear.name] = 1
+				table.insert(gearSet, gear)
 			end
 		end
 	end
@@ -194,13 +246,14 @@ function get_list_of_gear_in_master_list(filter)
 end
 
 function get_list_of_gear_in_equipable_inventory()
-	local inventorySet = S{}
+	local inventorySet = {}
 	for _, bagId in pairs(equipable_bags) do
 		local inv = windower.ffxi.get_items(bagId)
 		for _, item in pairs(inv) do
 			if type(item) == 'table' then
 				if item.id ~= nil and item.id ~= 0 and res.items[item.id] then
-					inventorySet[item.id] = bagId
+					if inventorySet[bagId] == nil then inventorySet[bagId] = {} end
+					table.insert(inventorySet[bagId], item)
 				end
 			end
 		end
@@ -213,11 +266,32 @@ function print_missing_gear(args)
 	local filter = args[2]:split(',')
 	local gearSet = get_list_of_gear_in_master_list(filter)
 	local invSet = get_list_of_gear_in_equipable_inventory()
-	for itemId, bagId in pairs(gearSet) do
-		if res.items[itemId] then
-			local itemName = res.items[itemId].name
-			if invSet[itemName] == nil then
-				add_to_chat(122, item)
+	for k, gear in pairs(gearSet) do
+		local found = false
+		for bagId, itemList in pairs(invSet) do
+			for k2, item in pairs(itemList) do
+				if res.items[item.id] and res.items[item.id].name == gear.name then
+					if gear.augments then
+						if extdata.compare_augments(gear.augments ,extdata.decode(item).augments) then
+							found = true
+							break
+						end
+					else
+						found = true
+						break
+					end
+				end
+			end
+		end
+		if not found then
+			if gear.augments then 
+				local print_string = gear.name .. ", augments = "
+				for k3, augment in pairs(gear.augments) do
+					print_string = print_string .. augment .. ", "
+				end		
+				add_to_chat(122, print_string)
+			else
+				add_to_chat(122, gear.name)
 			end
 		end
 	end
