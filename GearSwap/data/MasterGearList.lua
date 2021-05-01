@@ -154,9 +154,10 @@ MasterGearList = {
 													} },
 	},
 	body = {
-		{ name = "Apo. Dalmatica +1",	setList = { { job = "SMN", sets = { "Idle", "BPDmg" } } } },
+		{ name = "Apo. Dalmatica +1",	setList = { { job = "SMN", sets = { "BPDmg" } } },
+			priority = -160 },
 		{ name = "Con. Doublet +3",		setList = { { job = "SMN", sets = { "PrecastBP" } } } },
-		{ name = "Vrikodara Jupon",		setList = { { job = "GEO", sets = { "CombatIdleDT", "IdleRefresh", "Fastcast" } },
+		{ name = "Vrikodara Jupon",		setList = { { job = "GEO", sets = { "Idle", "CombatIdleDT", "IdleRefresh", "Fastcast" } },
 													{ job = "SMN", sets = { "Fastcast" } },
 													} },
 		{ name = "Bagua Tunic +2", 		setList = { { job = "GEO", sets = { "Geomancy", "Bolster" } } } },
