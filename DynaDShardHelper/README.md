@@ -14,11 +14,17 @@ Party members can use party chat or tell to register which job shards they want 
 
 use //ddsh to send commands
 
-## ddsh list 
+## ddsh list "dropNames - optional"
 
-Prints in either windower chat mode, party chat or say chat the jobs and players who registered interest
+> ddsh list
 
-## ddsh printMode <number>
+Prints in either windower chat mode, party chat or say chat the jobs and players who registered interest. 
+
+> ddsh list RUN,WHM
+
+Only list players who registered for RUN and WHM.
+
+## ddsh printMode "number"
 
 Sets which channel to print stuff.
  
@@ -26,17 +32,13 @@ Sets which channel to print stuff.
 - 0 = Say
 - 4 = Party Chat
 	
-## ddsh testDrop "itemName" "name in watchlist" "item2 - optional"
+## ddsh testDrop "itemIds"
 
-Test a drop.
+Simulates stuff dropping into treasure pool. Pass in itemIds. For more than one, use comma to seperate different ids.
 
->ddsh testDrop "Voidtorso: RDM" RDM
+>ddsh testDrop 9609,9609
 
-Print out all players who registered as RDM job
-
-> ddsh testDrop "Voidtorso: RDM" MNK
-
-Do nothing since it's the wrong job
+9609 is Torsoshard: RUN so will print list of people for registered for RUN.
 
 ## ddsh add "chatMessage" "senderName"
 
@@ -63,6 +65,11 @@ This removes a drop from the drop list.
 Reloads drops from setting file and lots from lots file.
 
 # Version History
+1.0.7:
+- fixed lots not appearing if another treasure dropped before lots were printed
+- changed testDrop function
+- added optional argument to list function
+
 1.0.6:
 - fixed lots not appearing
 - fixed treasure pool not clearing

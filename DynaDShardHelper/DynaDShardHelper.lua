@@ -1,12 +1,13 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.6'
+_addon.version = '1.0.7'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
 res = require('resources')
 config = require('config')
 chatHelper = require('ChatHelper')
+require('tables')
 
 TellMode = 3
 
@@ -31,8 +32,7 @@ function should_loop()
 end
 
 function update_loop()
-	if got_treasure then	
-		chatHelper.clear()
+	if got_treasure then
 		for k,v in pairs(treasures) do
 			check(v.Index, v.Item)
 		end
@@ -57,13 +57,14 @@ end)
 windower.register_event('addon command', function(...)
 	local args = L{...}
 	if args[1] == "list" then
-		print_lots()
-	elseif args[1] == "testDrop" then
-		if lots[string.upper(args[3])] then
-			check_item_name(string.upper(args[2]), string.upper(args[3]))
-			if args[4] then
-				check_item_name(string.upper(args[4]), string.upper(args[3]))
-			end		
+		print_lots(args)
+	elseif args[1] == "testDrop" and args[2] then
+		local treasureIds = args[2]:split(',')
+		for i = 1, #treasureIds do
+			if tonumber(treasureIds[i]) ~= nil then
+				table.insert(treasures, {Index = i, Item = tonumber(treasureIds[i])})
+				got_treasure = true
+			end
 		end
 	elseif args[1] == "printMode" then
 		if type(tonumber(args[2])) == 'number' then
@@ -110,14 +111,14 @@ windower.register_event('addon command', function(...)
 		end
 	else
 		windower.add_to_chat(122, "Commands:")
-		windower.add_to_chat(122, "//ddsh list: print the list of players who registered interest to the selected chat channel")
+		windower.add_to_chat(122, "//ddsh list <dropNames - optional>: print the list of players who registered interest to the selected chat channel. Can pass in a comma seperated drops list as second parameter to list only players for those drops.")
 		windower.add_to_chat(122, "//ddsh printMode <mode>: sets the selected chat channel. 0 = Say, 4 = Party, -1 = Windower")
 		windower.add_to_chat(122, "//ddsh add <chatmsg> <sender>: simulates a tell msg. E.g //ddsh add \"{ geo run\" Dabidobido")
 		windower.add_to_chat(122, "//ddsh addDrop <dropName>: adds a drop to the watch list. E.g //ddsh addDrop Wings will add any drop with Wings in the name to the watchlist")
 		windower.add_to_chat(122, "//ddsh removeDrop <dropName>: removes a drop from the watch list")
 		windower.add_to_chat(122, "//ddsh clearLots: clears the list of interested players")
 		windower.add_to_chat(122, "//ddsh reload: reloads watchlist and list of players from file")
-		windower.add_to_chat(122, "//ddsh testDrop <itemName> <nameInWatchlist> <item2 - optional>: tests a itemDrop along with the name in the watchList")
+		windower.add_to_chat(122, "//ddsh testDrop <itemIds>: simulates items dropping into a treasure pool. For more than one, use comma to seperate itemIds.")
 		windower.add_to_chat(122, "//ddsh chatDelay <delay>: sets the delay between chats to <delay>. I get errors at 2 secs but it seems fine at 4 seconds")
 	end	
 end)
@@ -189,17 +190,23 @@ function remove_player_from_lots(name)
 	end
 end
 
-function print_lots()
+function print_lots(args)
 	chatHelper.clear()
+	local filter = nil
+	if args[2] then
+		filter = T(string.upper(args[2]):split(','))
+	end
 	for k,v in pairs(lots) do
-		local printString = k .. ": "
-		if type(v) == "table" then
-			for k2, v2 in pairs(v) do
-				printString = printString .. v2 .. ", "
-			end
-			printString = printString
-		end	
-		chatHelper.add_line(printString)
+		if not filter or filter:contains(k) then
+			local printString = k .. ": "
+			if type(v) == "table" then
+				for k2, v2 in pairs(v) do
+					printString = printString .. v2 .. ", "
+				end
+				printString = printString
+			end	
+			chatHelper.add_line(printString)
+		end
 	end
 	chatHelper.print_lines()
 end
