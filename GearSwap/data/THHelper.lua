@@ -12,6 +12,7 @@ THModes = {
 
 SlotsUsed = S{}
 AmmoDisabled = false
+THEquipped = false
 
 function parse_th_command(args)
 	if args[2] and type(tonumber(args[2])) == 'number' then
@@ -45,6 +46,7 @@ function equip_th()
 				SlotsUsed:append(slot)
 			end
 			disable(SlotsUsed)
+			THEquipped = true
 		end
 	end
 end
@@ -57,6 +59,7 @@ function unlock_th()
 			enable(slot)
 		end
 	end
+	THEquipped = false
 	SlotsUsed = S{}
 end
 
@@ -71,6 +74,7 @@ function on_target_change_for_th(new_index, old_index)
 end
 
 function parse_action(act)
+	if not THEquipped then return end
 	if not THModes[THMode].onEngage then return end	
 	if act.actor_id == windower.ffxi.get_player().id then -- add to MobsTagged if player initiated attack
 		if act.category == 1 or act.category == 3 then -- 1 = melee, 3 = ws
