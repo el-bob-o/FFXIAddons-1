@@ -1,6 +1,6 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.7'
+_addon.version = '1.0.8'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
@@ -49,8 +49,10 @@ end)
 windower.register_event('incoming chunk', function(id, data)
     if id == 0x0D2 then
         local treasure = packets.parse('incoming', data)
-		table.insert(treasures, treasure)
-		got_treasure = true
+		if res.items[tresure.Item] then
+			table.insert(treasures, treasure)
+			got_treasure = true
+		end
     end
 end)
 
@@ -149,7 +151,6 @@ function parse_chat(message,sender,mode,gm)
 end
 
 windower.register_event('chat message', parse_chat)
-
 
 function check(index, itemId)
 	if res.items[itemId] then

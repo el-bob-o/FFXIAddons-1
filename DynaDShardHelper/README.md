@@ -65,6 +65,9 @@ This removes a drop from the drop list.
 Reloads drops from setting file and lots from lots file.
 
 # Version History
+1.0.8:
+- Check for item validity before adding it to treasure list since that 0D2 packet is received 8x upon zoning and possibly other times as well
+
 1.0.7:
 - fixed lots not appearing if another treasure dropped before lots were printed
 - changed testDrop function
