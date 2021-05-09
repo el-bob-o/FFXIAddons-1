@@ -149,7 +149,7 @@ function self_command(command)
 		end
 		print_throwing()
 	elseif args[1] == "setWS" and args[2] then
-		WS = args[2]
+		WS = string.sub(command, 7)
 		print_current_ws()
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then

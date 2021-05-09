@@ -13,8 +13,7 @@ MasterGearList = {
 		{ name = "Culminus", 			setList = { { job = "GEO", sets = { "CombatIdleDT", "Elemental" } } } },
 		{ name = "Sors Shield", 		setList = { { job = "GEO", sets = { "HealingFastcast", "Healing" } } } },
 		{ name = "Shijo", 				setList = { { job = "THF", sets = { } } } },
-		{ name = "Immolation Grip",		setList = { { job = "RUN", sets = { } } } },
-		{ name = "Balarama Grip",		setList = { { job = "RUN", sets = { } } } },
+		{ name = "Utu Grip",			setList = { { job = "RUN", sets = { } } } },
 	},
 	range = {
 		{ name = "Dunna", 				setList = { { job = "GEO", sets = { "CombatIdleDT", "Geomancy", "MACC" } } } },
@@ -31,12 +30,14 @@ MasterGearList = {
 		{ name = "Aurgelmir Orb", 		setList = { { job = "RUN", sets = { "Hybrid", "Dimidiation" } },
 													{ job = "THF", sets = { "Hybrid", "Rudra's Storm" } },
 													} },
+		{ name = "Knobkierrie", 		setList = { { job = "RUN", sets = { "Dimidiation" } } } },
 		{ name = "Seeth. Bomblet +1", 	setList = { { job = "RUN", sets = { "Resolution", "Requiescat", "Savage Blade" } },
 													{ job = "THF", sets = { "Requiescat", "Savage Blade" } },
 													} },
 		{ name = "Yetshila", 			setList = { { job = "THF", sets = { "Evisceration" } } } },
 		{ name = "Ghastly Tathlum +1",	setList = { { job = "THF", sets = { "Aeolian Edge" } },
 													{ job = "RUN", sets = { "Lunge" } },
+													{ job = "GEO", sets = { "Elemental" } },
 													} },
 	},
 	head = {
@@ -256,6 +257,10 @@ MasterGearList = {
 													} },
 		{ name = "Rufescent Ring",		setList = { { job = "RUN", sets = { "Resolution", "Requiescat", "Savage Blade" } },
 													{ job = "THF", sets = { "Requiescat", "Savage Blade" } }
+													} },
+		{ name = "Kishar Ring",			setList = { { job = "RUN", sets = { "Fastcast" } },
+													{ job = "GEO", sets = { "Fastcast", "MACC" } },
+													{ job = "SMN", sets = { "Fastcast", "MACC" } },
 													} },
 	},
 	back = {

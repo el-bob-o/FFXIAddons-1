@@ -350,7 +350,7 @@ function self_command(command)
 			send_command('input ' .. SJAction)
 		end
 	elseif args[1] == 'setWS' and args[2] then
-		WS = args[2]
+		WS = string.sub(command, 7)
 		print_current_ws()
 	elseif args[1] == 'resist' and args[2] then
 		if args[2] and args[3] and args[4] then
