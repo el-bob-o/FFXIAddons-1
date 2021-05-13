@@ -18,7 +18,9 @@ function get_sets()
 		
 	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
 	sets["Savage Blade"] = sets["STR_WS"]
+	sets["Circle Blade"] = sets["STR_WS"]
 	sets["Sanguine Blade"] = sets["MagicAtk"]
+	sets["Aeolian Edge"] = sets["MagicAtk"]
 	
 	print_current_ws()
 	print_mode()
