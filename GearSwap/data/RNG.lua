@@ -215,11 +215,15 @@ function get_preshot_set()
 end
 
 function update_rng_info()
-	ranger_info_hub.ammo_name = player.equipment.ammo
 	local items = windower.ffxi.get_items()
 	if items.equipment.ammo then
+		ranger_info_hub.ammo_name = player.equipment.ammo
 		local ammo_item = windower.ffxi.get_items(items.equipment.ammo_bag, items.equipment.ammo)
-		ranger_info_hub.ammo_count = ammo_item.count
+		if ammo_item then 
+			ranger_info_hub.ammo_count = ammo_item.count
+		else
+			ranger_info_hub.ammo_count = 0
+		end
 	else
 		ranger_info_hub.ammo_count = 0
 	end
@@ -240,22 +244,26 @@ function rng_action_helper(act)
 			end
 		end
 	elseif act.category == 2 then -- ranged attack
-		for k,v in pairs(act.targets) do
-			for k2, v2 in pairs(v.actions) do
-				ranger_info_hub.dmg = v2.param
-				if v2.message == 352 then 
-					ranger_info_hub.distance_correction = "..."
-				elseif v2.message == 576 then
-					ranger_info_hub.distance_correction = "Squarely."
-				elseif v2.message == 577 then
-					ranger_info_hub.distance_correction = "True!"
+		if act.actor_id == player.id then
+			for k,v in pairs(act.targets) do
+				for k2, v2 in pairs(v.actions) do
+					ranger_info_hub.dmg = v2.param
+					if v2.message == 352 then 
+						ranger_info_hub.distance_correction = "..."
+					elseif v2.message == 576 then
+						ranger_info_hub.distance_correction = "Squarely."
+					elseif v2.message == 577 then
+						ranger_info_hub.distance_correction = "True!"
+					end
 				end
 			end
 		end
 	elseif act.category == 3 then -- ws
-		for k,v in pairs(act.targets) do
-			for k2, v2 in pairs(v.actions) do
-				ranger_info_hub.dmg = v2.param
+		if act.actor_id == player.id then
+			for k,v in pairs(act.targets) do
+				for k2, v2 in pairs(v.actions) do
+					ranger_info_hub.dmg = v2.param
+				end
 			end
 		end
 	end

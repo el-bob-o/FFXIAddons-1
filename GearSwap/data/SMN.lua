@@ -106,6 +106,8 @@ BPs = {
 		},
 }
 
+MeritBPs = T{ "Meteor Strike", "Heavenly Strike", "Wind Blade", "Geocrush", "Thunderstorm", "Grand Fall" }
+
 BloodPactsInfo = [[${petName|none}
 ${info|}
 ]]
@@ -159,6 +161,10 @@ function get_sets()
 	Combat = false
 	StartedBPWard = false
 	StartedBPRage = false
+	StartedMeritBP = false
+	BuffBot = false
+	WardRecastId = 0
+	Buffs = {}
 	TimerFromPrecast = 1.25
 	
 	get_set_for_job("SMN", sets)
@@ -194,10 +200,17 @@ function precast(spell)
         end
 	elseif spell.type=="BloodPactRage" then
         if buffactive["Astral Conduit"] then
-			equip(sets["BPDmg"])
+			local setToUse = sets["BPDmg"]
+			if MeritBPs:contains(spell.name) then setToUse = set_combine(setToUse, sets["MeritBPBurst"]) end
+			equip(setToUse)
 		else
 			equip(sets["PrecastBP"])
 			StartedBPRage = true
+			if MeritBPs:contains(spell.name) then 
+				StartedMeritBP = true 
+			else 
+				StartedMeritBP = false
+			end
 			coroutine.schedule(check_pet_midcast, TimerFromPrecast)
         end
 	end
@@ -217,11 +230,16 @@ function aftercast(spell)
 	if StartedBPRage == false and StartedBPWard == false then -- don't equip idle set if still going to do a BP
 		equip_idle_set()
 	end
+	if spell.type =="BloodPactWard" and BuffBot then
+		WardRecastId = spell.recast_id
+	end
 end
 
 function check_pet_midcast()
 	if StartedBPRage then
-		equip(sets["BPDmg"])		
+		local setToUse = sets["BPDmg"]
+		if StartedMeritBP then setToUse = set_combine(setToUse, sets["MeritBPBurst"]) end
+		equip(setToUse)
 	elseif StartedBPWard then
 		equip(sets["SmnSkill"])	
 	end
@@ -380,7 +398,81 @@ function self_command(command)
 			Combat = true
 			equip_idle_set()
 		end
+	elseif args[1] == "buffbot" then
+		if BuffBot == true then
+			add_to_chat(122, "BuffBot off!")
+			BuffBot = false
+		else
+			add_to_chat(122, "BuffBot on!")
+			BuffBot = true
+		end
 	else
 		master_gear_list_command(args)
 	end
 end
+
+-- should probably change to windower.ffxi.get_player().buffs and check buffIds
+
+function buff_change(name,gain,buff_table)
+	Buffs[name] = gain
+	--add_to_chat(122, name)
+end
+
+BuffsBotCheck = T
+{
+	{ BuffName = "TP Bonus", PetName = "Shiva", BloodPactName = "Crystal Blessing", Check = true },
+	{ BuffName = "STR Boost", PetName = "Fenrir", BloodPactName = "Ecliptic Growl", Check = true },
+	{ BuffName = "Evasion Boost", PetName = "Fenrir", BloodPactName = "Ecliptic Howl", Check = true },
+	{ BuffName = "Haste", 	PetName = "Garuda", BloodPactName = "Hastega II", Check = true },
+	{ BuffName = "Enaero", PetName = "Siren", BloodPactName = "Katabatic Blades", Check = false },
+	{ BuffName = "Warcry", PetName = "Ifrit", BloodPactName = "Crimson Howl", Check = true },
+}
+
+FavorBot = 
+{ 	
+	{ BuffName = "Ifrit's Favor", PetName ="Ifrit", BloodPactName = nil, Check = true },
+}
+
+function summon_pet_or_do_bloodpact(pet_name, bp_name)
+	if pet.isvalid then
+		if pet.name ~= pet_name then
+			send_command('input /ja Release <me>')
+		elseif bp_name then
+			send_command('input /pet "' .. bp_name .. '" <me>')
+		end
+	else
+		send_command('input /ma ' .. pet_name .. ' <me>')
+	end
+end
+
+function check_buff(buff_name, pet_name, bloodpact_name)
+	if not Buffs[buff_name] then
+		summon_pet_or_do_bloodpact(pet_name, bloodpact_name)
+		return false
+	end
+	return true
+end
+
+windower.register_event('time change', function(old, new)
+	if BuffBot == true and party.count == 6 then
+		if player.mpp < 25 and player.sub_job == "RDM" then 
+			send_command('input /ja "Convert" <me>')
+			return
+		end
+		if WardRecastId == 0 or windower.ffxi.get_ability_recasts()[WardRecastId] == 0 then
+			if pet.isvalid and not Buffs["Avatar's Favor"] then
+				send_command('input /ja "Avatar\'s Favor" <me>')
+			end
+			for k,v in pairs(BuffsBotCheck) do
+				if v.Check then
+					if not check_buff(v.BuffName, v.PetName, v.BloodPactName) then return end
+				end
+			end
+			for k,v in pairs(FavorBot) do
+				if v.Check then
+					if not check_buff(v.BuffName, v.PetName, v.BloodPactName) then return end
+				end
+			end
+		end
+	end
+end)
