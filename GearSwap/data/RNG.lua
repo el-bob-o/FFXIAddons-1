@@ -54,8 +54,10 @@ function get_sets()
 	CPMode = false
 	Mode = 1
 	Flurry = 0
-	Buffs = {}
+	DoubleShot = false
+	HoverShot = false
 	last_shot_position = nil
+	cancel_haste = true
 	
 	get_set_for_job("RNG", sets)
 		
@@ -71,9 +73,10 @@ function get_sets()
 	sets["Trueflight"] = sets["MagicAtk"]
 	sets["Wildfire"] = sets["MagicAtk"]
 	sets["Savage Blade"] = sets["STR_Melee_WS"]	
-	sets["Last Stand"] = sets["AGI_Ranged_WS"]
+	sets["Last Stand"] = set_combine(sets["AGI_Ranged_WS"], sets["Fotia"])
 	
 	setup_text_window()
+	check_buffs()
 	update_rng_info()
 	
 	print_mode()
@@ -90,9 +93,14 @@ function precast(spell)
         if sets[spell.english] then
 			setToUse = sets[spell.english]
 		end
-		if player.tp < 3000 then
+		local maxTP = 3000
+		if player.equipment.range == "Fomalhaut" then
+			maxTP = 2500
+		end
+		if player.tp < maxTP then
 			setToUse = set_combine(setToUse, sets["TPBonus"])
 		end
+		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		equip(setToUse)
 	elseif sets[spell.english] then
         equip(sets[spell.english])
@@ -102,7 +110,8 @@ end
 function midcast(spell)
 	if spell.action_type == "Ranged Attack" then
 		local setToUse = sets["Midshot"]
-		if Buffs["Double Shot"] then setToUse = set_combine(setToUse, sets["Double Shot"]) end
+		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end
+		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		equip(setToUse)
 	end
 end
@@ -132,11 +141,7 @@ function status_change(new,old)
 end
  
 function buff_change(name,gain,buff_table)
-	if name == "Flurry" and not gain then 
-		Flurry = 0
-	else
-		Buffs[name] = gain
-	end
+	check_buffs()
 	update_rng_info()
 end
  
@@ -159,13 +164,9 @@ function self_command(command)
 	if args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
 			CPMode = true
 		elseif CPMode == true then
 			add_to_chat(122, "CP Mode off")
-			enable("back")
 			CPMode = false
 		end
 	elseif args[1] == "mode" then
@@ -187,6 +188,14 @@ function self_command(command)
 				Mode = 1
 			end
 			print_mode()
+		end
+	elseif args[1] == "cancelhaste" then
+		if cancel_haste == false then
+			add_to_chat(122, "Cancelling Haste Buffs")
+			cancel_haste = true
+		elseif cancel_haste == true then
+			add_to_chat(122, "Keeping Haste Buffs")
+			cancel_haste = false
 		end
 	else
 		master_gear_list_command(args)
@@ -211,6 +220,60 @@ function get_preshot_set()
 	if Flurry == 0 then return sets["Flurry0"]
 	elseif Flurry == 1 then return sets["Flurry1"]
 	else return sets["Flurry2"]
+	end
+end
+
+buff_ids = 
+T{
+	581, -- Flurry II
+	265, -- Flurry I
+	628, -- Hover Shot
+	433, -- Double Shot
+}
+
+function check_buffs()
+	local playerbuffs = windower.ffxi.get_player().buffs
+	local flurry_found = false
+	local hover_found = false
+	local double_found = false
+	for k, _buff_id in pairs(playerbuffs) do
+		if buff_ids:contains(_buff_id) then
+			if not flurry_found then
+				if _buff_id == 581 then 
+					Flurry = 2
+					flurry_found = true
+				elseif _buff_id == 265 then 
+					Flurry = 1
+					flurry_found = true
+				end
+			end
+			if not hover_found then
+				if _buff_id == 628 then 
+					HoverShot = true
+					hover_found = true
+				end
+			end
+			if not double_found then
+				if _buff_id == 433 then 
+					DoubleShot = true
+					double_found = true
+				end
+			end
+		end
+	end
+	if not flurry_found then Flurry = 0 end
+	if not hover_found then HoverShot = false end
+	if not double_found then DoubleShot = false end
+	if cancel_haste then
+		for k, _buff_id in pairs(playerbuffs) do
+			if _buff_id == 33 then 
+				cancel_buff(33)
+				break
+			elseif _buff_id == 580 then
+				cancel_buff(580)
+				break
+			end
+		end
 	end
 end
 
@@ -270,7 +333,7 @@ function rng_action_helper(act)
 end
 
 function update_hover_shot_info()
-	if Buffs["Hover Shot"] then
+	if HoverShot then
 		ranger_info_hub.distance = 0
 		local player = windower.ffxi.get_mob_by_target('me')
 		if player and last_shot_position ~= nil then
@@ -289,6 +352,10 @@ end
 
 function clear_last_shot_position()
 	last_shot_position = nil
+end
+
+function cancel_buff(id)
+	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
 
 windower.register_event('action', rng_action_helper)

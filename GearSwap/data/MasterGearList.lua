@@ -79,6 +79,7 @@ MasterGearList = {
 		{ name = "Pill. Bonnet +2",		setList = { { job = "THF", sets = { "Rudra's Storm", "Evisceration", "Savage Blade", "Requiescat" } } } },
 		{ name = "Arcadian Beret +1",	setList = { { job = "RNG", sets = { "Midshot" } } } },
 		{ name = "Orion Beret +1",		setList = { { job = "RNG", sets = { "Flurry2", "AGI_Ranged_WS" } } } },
+		{ name = "Amini Gapette +1",	setList = { { job = "RNG", sets = { "Flurry1" } } } },
 	},
 	neck = {
 		{ name = "Caller's Pendant",	setList = { { job = "SMN", sets = { "Idle" } } } },
@@ -100,6 +101,7 @@ MasterGearList = {
 			priority = 30 },
 		{ name = "Fotia Gorget",		setList = { { job = "RUN", sets = { "Resolution", "Requiescat" } },
 													{ job = "THF", sets = { "Evisceration", "Requiescat" } },
+													{ job = "RNG", sets = { "Fotia" } },
 													} },
 		{ name = "Erudit. Necklace",	setList = { { job = "THF", sets = { "Hybrid" } },
 													{ job = "NIN", sets = { "Hybrid" } },
@@ -262,7 +264,8 @@ MasterGearList = {
 													{ job = "NIN", sets = { "Hybrid" } },
 													} },
 		{ name = "Carmine Fin. Ga. +1",	setList = {	{ job = "RNG", sets = { "MagicAtk", "Midshot", "Flurry2" } },
-													} },									
+													} },
+		{ name = "Amini Glove. +1",		setList = {	{ job = "RNG", sets = { "Bounty Shot" } } } },
 	},
 	ring1 = {
 		{ name = "Vocane Ring +1",		setList = {	{ job = "SMN", sets = { "IdleDT" } },
@@ -285,9 +288,10 @@ MasterGearList = {
 		{ name = "Rajas Ring",			setList = { { job = "RUN", sets = { "Dimidiation", "Resolution", "Savage Blade" } },
 													{ job = "THF", sets = { "Rudra's Storm", "Savage Blade" } },
 													{ job = "NIN", sets = { "STR_WS", "DEX_WS" } },
+													{ job = "RNG", sets = { "Midshot" } },
 													} },
 		{ name = "Mummu Ring",			setList = { { job = "THF", sets = { "Evisceration" } } } },
-		{ name = "Dingir Ring",			setList = { { job = "RNG", sets = { "MagicAtk", "Midshot", "AGI_Ranged_WS" } },
+		{ name = "Dingir Ring",			setList = { { job = "RNG", sets = { "MagicAtk", "AGI_Ranged_WS" } },
 													} },
 	},
 	ring2 = {
@@ -324,7 +328,8 @@ MasterGearList = {
 													{ job = "SMN", sets = { "Fastcast", "MACC" } },
 													{ job = "NIN", sets = { "Fastcast" } },
 													} },
-		{ name = "Nekhen Ring",			setList = { { job = "RNG", sets = { "Midshot", "AGI_Ranged_WS" } } } },
+		{ name = "Apate Ring",			setList = { { job = "RNG", sets = { "Midshot", "AGI_Ranged_WS" } },
+													} },
 		-- { name = "Arvina Ringlet +1",	setList = { { job = "RNG", sets = { "MagicAtk" } } } },
 				 
 	},
@@ -390,6 +395,7 @@ MasterGearList = {
 		{ name = "Engraved Belt",		setList = { { job = "RUN", sets = { "DT" } } } },
 		{ name = "Fotia Belt",			setList = { { job = "RUN", sets = { "Resolution", "Requiescat" } },
 													{ job = "THF", sets = { "Evisceration", "Requiescat" } },
+													{ job = "RNG", sets = { "Fotia" } },
 													} },
 		{ name = "Sailfi Belt +1",		setList = { { job = "RUN", sets = { "Hybrid", "Savage Blade" } },
 													{ job = "THF", sets = { "Hybrid", "Savage Blade" } },
@@ -424,11 +430,12 @@ MasterGearList = {
 		{ name = "Herculean Trousers",	setList = { { job = "RUN", sets = { "Dimidiation", "Savage Blade" } },
 													{ job = "THF", sets = { "Rudra's Storm", "Savage Blade", "Requiescat" } },
 													{ job = "NIN", sets = { "Hybrid" } },
+													{ job = "RNG", sets = { "Midshot" } },
 													},
 			priority = 38 },
 		{ name = "Meg. Chausses +2",	setList = { { job = "RUN", sets = { "Hybrid", "Resolution" } },
 													{ job = "THF", sets = { "Hybrid" } },
-													{ job = "RNG", sets = { "Hybrid", "Midshot", "AGI_Ranged_WS" } },
+													{ job = "RNG", sets = { "Hybrid", "AGI_Ranged_WS" } },
 													},
 			priority = 35 },
 		{ name = "Pill. Culottes +2",	setList = { { job = "THF", sets = { "Evisceration" } } } },
@@ -477,6 +484,7 @@ MasterGearList = {
 													{ job = "RNG", sets = { "Movement" } }
 													} },
 		{ name = "Hachi. Kyahan +1", 	setList = { { job = "NIN", sets = { "Movement" } } } },
-		{ name = "Meg. Jam. +2", 		setList = { { job = "RNG", sets = { "Flurry2", "AGI_Ranged_WS" } } } },
+		{ name = "Meg. Jam. +2", 		setList = { { job = "RNG", sets = { "Flurry1", "AGI_Ranged_WS" } } } },
+		{ name = "Arcadian Socks +1",	setList = { { job = "RNG", sets = { "Flurry2" } } } },
 	}
 }
