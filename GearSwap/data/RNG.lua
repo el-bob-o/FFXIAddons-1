@@ -70,10 +70,12 @@ function get_sets()
 	sets["Flurry1"] = set_combine(sets["Flurry2"], sets["Flurry1"])
 	sets["Flurry0"] = set_combine(sets["Flurry1"], sets["Flurry0"])
 	
+	sets["Hot Shot"] = sets["MagicAtk"]
 	sets["Trueflight"] = sets["MagicAtk"]
 	sets["Wildfire"] = sets["MagicAtk"]
 	sets["Savage Blade"] = sets["STR_Melee_WS"]	
 	sets["Last Stand"] = set_combine(sets["AGI_Ranged_WS"], sets["Fotia"])
+	sets["Ruinator"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
 	
 	setup_text_window()
 	check_buffs()
@@ -94,13 +96,19 @@ function precast(spell)
 			setToUse = sets[spell.english]
 		end
 		local maxTP = 3000
-		if player.equipment.range == "Fomalhaut" then
-			maxTP = 2500
+		if player.equipment.range == "Fomalhaut" and spell.skill == "Marksmanship" then
+			maxTP = maxTP - 500
+		end
+		if player.sub_job == "WAR" then
+			maxTP = maxTP - 200
 		end
 		if player.tp < maxTP then
 			setToUse = set_combine(setToUse, sets["TPBonus"])
 		end
 		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
+		if spell.element == world.weather_element or spell.element == world.day_element then 
+			setToUse = set_combine(setToUse, sets["WeatherObi"])
+		end
 		equip(setToUse)
 	elseif sets[spell.english] then
         equip(sets[spell.english])
