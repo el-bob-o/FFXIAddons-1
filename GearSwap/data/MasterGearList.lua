@@ -414,6 +414,7 @@ MasterGearList = {
 													{ job = "NIN", sets = { "STR_WS", "DEX_WS" } },
 													} },
 		{ name = "Tellen Belt",			setList = { { job = "RNG", sets = { "Midshot", "AGI_Ranged_WS" } } } },
+		{ name = "Ponente Sash",		setList = { { job = "RNG", sets = { "Flurry2" } } } },
 	},
 	legs = {
 		{ name = "Assid. Pants +1", 	setList = { { job = "SMN", sets = { "Idle" } },
