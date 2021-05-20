@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.0'
+_addon.version = '1.0.1'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -279,7 +279,7 @@ function do_player_turn()
 	end
 	if not selected_option then -- just move
 		if game_board.area2 >= 1 then
-			if game_board.area1 == 0 and game_board.area3 == 0 and game_board.area5 == 0
+			if game_board.area4 ~= 0 and game_board.area3 == 0 and game_board.area5 == 0
 			and game_board.area6 == 0 and game_board.area7 == 0 and game_board.area8 == 0 then
 				navigate_to_menu_option(4)
 				selected_option = true
@@ -352,7 +352,6 @@ function get_mandies_from_area(area)
 end
 
 function put_mandies_in_next_area(right, area)
-	if debugging then notice("put_mandies_in_next_area " .. tostring(right) .. " " .. area) end
 	if area == 5 and right then
 		if not player_turn then
 			add_mandy_to_area(6)
@@ -454,13 +453,11 @@ function navigate_to_menu_option(option_index, override_delay)
 	local times_to_press_down = option_index - 1
 	if times_to_press_down >= 1 then 
 		for i = 1, times_to_press_down, 1 do
-			if debugging then notice("Press down") end
 			table.insert(coroutines, coroutine.schedule(set_key_down_down, next_delay))
 			table.insert(coroutines, coroutine.schedule(set_key_down_up, next_delay + 0.1))
 			next_delay = next_delay + delay 
 		end	
 	end
-	if debugging then notice("Press enter") end
 	table.insert(coroutines, coroutine.schedule(set_key_enter_down, next_delay))
 	table.insert(coroutines, coroutine.schedule(set_key_enter_up, next_delay + 0.1))
 end

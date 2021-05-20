@@ -30,5 +30,9 @@ Toggles between printing debug messages to console or not. Default is off.
 
 # Version History
 
+1.0.1:
+- Fix some logic where tried to play area 4 when only mandy left is in area 2
+- Less debug spam
+
 1.0.0: 
 - First version.
