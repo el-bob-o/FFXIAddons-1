@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.1'
+_addon.version = '1.0.2'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -8,10 +8,14 @@ require('logger')
 
 debugging = false
 
-npc_id = 17740023 -- port bastok chacharoon
-menu_id = 686 -- start menu
-game_menu_id = 688
-delay = 0.5
+npc_ids = 
+{
+	[230] = { npc_id = 17719722, menu_id = 3624, game_menu_id = 3626 }, -- South Sandoria
+	[235] = { npc_id = 17740023, menu_id = 686, game_menu_id = 688 }, -- Bastok Markets
+	[238] = { npc_id = 17752429, menu_id = 1166, game_menu_id = 1168 }, -- Windurst Waters
+}
+
+delay_between_keypress = 0.5
 
 area_1_option_index = 3
 area_2_option_index = 19
@@ -43,6 +47,7 @@ ack_delay = 1
 waiting_for_ack = nil
 time_to_wait_for_ack = 5
 coroutines = {}
+current_zone_id = 0
 
 windower.register_event('addon command', function(...)
 	local args = {...}
@@ -75,32 +80,37 @@ windower.register_event('incoming chunk', function(id, data)
 		if id == 0x34 then
 			local p = packets.parse('incoming',data)
 			if p then
-				if p['NPC'] == npc_id then
-					if debugging then notice("Got menu packet menu id " .. p['Menu ID']) end
-					if game_state == 0 then
-						if p['Menu ID'] == game_menu_id then
-							if debugging then notice("Game State Start") end
-							game_state = 1
-							reset_state()
-						end
-					elseif game_state == 2 then
-						if p['Menu ID'] == menu_id then
-							for k, v in pairs(coroutines) do
-								coroutine.close(v)
+				current_zone_id = p['Zone']
+				if npc_ids[current_zone_id] then 
+					if p['NPC'] == npc_ids[current_zone_id].npc_id then
+						if debugging then notice("Got menu packet menu id " .. p['Menu ID']) end
+						if game_state == 0 then
+							if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
+								if debugging then notice("Game State Start") end
+								game_state = 1
+								reset_state()
 							end
-							coroutines = {}
-							notice("Doing " .. times_to_do .. " time/s.")
-							game_state = 0
-							reset_state()
-							navigate_to_menu_option(1, 3)
+						elseif game_state == 2 then
+							if p['Menu ID'] == npc_ids[current_zone_id].menu_id then
+								for k, v in pairs(coroutines) do
+									coroutine.close(v)
+								end
+								coroutines = {}
+								notice("Doing " .. times_to_do .. " time/s.")
+								game_state = 0
+								reset_state()
+								navigate_to_menu_option(1, 3)
+							end
 						end
 					end
+				elseif debugging then
+					notice("Couldn't find zone_id defined in npc_ids " .. current_zone_id)
 				end
 			end
 		elseif id == 0x02A then 
 			local p = packets.parse('incoming',data)
 			if p then
-				if p["Player"] == npc_id then -- game ended
+				if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
 					game_state = 2
 					times_to_do = times_to_do - 1
 					if debugging then notice("Game Ended") end
@@ -130,32 +140,34 @@ windower.register_event('outgoing chunk', function(id, original, modified, injec
 		if id == 0x5b then
 			local p = packets.parse("outgoing", original)
 			if p then
-				if p['Menu ID'] == game_menu_id then
-					if p['Option Index'] == area_1_option_index then
-						update_game_board(1)
-					elseif p['Option Index'] == area_2_option_index then
-						update_game_board(2)
-					elseif p['Option Index'] == area_3_option_index then
-						update_game_board(3)
-					elseif p['Option Index'] == area_4_option_index then
-						update_game_board(4)
-					elseif p['Option Index'] == area_5_option_index then
-						update_game_board(5)
-					elseif p['Option Index'] == area_6_option_index then
-						update_game_board(6)
-					elseif p['Option Index'] == area_7_option_index then
-						update_game_board(7)
-					elseif p['Option Index'] == area_8_option_index then
-						update_game_board(8)
-					elseif p['Option Index'] == ack then
-						if debugging then notice("Ack") end
-						waiting_for_ack = nil
-						if player_turn then 
-							if debugging then notice("scheduling do_player_turn in " .. ack_delay) end
-							coroutine.schedule(do_player_turn, ack_delay)
+				if npc_ids[current_zone_id] then 
+					if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
+						if p['Option Index'] == area_1_option_index then
+							update_game_board(1)
+						elseif p['Option Index'] == area_2_option_index then
+							update_game_board(2)
+						elseif p['Option Index'] == area_3_option_index then
+							update_game_board(3)
+						elseif p['Option Index'] == area_4_option_index then
+							update_game_board(4)
+						elseif p['Option Index'] == area_5_option_index then
+							update_game_board(5)
+						elseif p['Option Index'] == area_6_option_index then
+							update_game_board(6)
+						elseif p['Option Index'] == area_7_option_index then
+							update_game_board(7)
+						elseif p['Option Index'] == area_8_option_index then
+							update_game_board(8)
+						elseif p['Option Index'] == ack then
+							if debugging then notice("Ack") end
+							waiting_for_ack = nil
+							if player_turn then 
+								if debugging then notice("scheduling do_player_turn in " .. ack_delay) end
+								coroutine.schedule(do_player_turn, ack_delay)
+							end
+						elseif p['Option Index'] == quit_option_index then
+							game_state = 2
 						end
-					elseif p['Option Index'] == quit_option_index then
-						game_state = 2
 					end
 				end
 			end
@@ -455,7 +467,7 @@ function navigate_to_menu_option(option_index, override_delay)
 		for i = 1, times_to_press_down, 1 do
 			table.insert(coroutines, coroutine.schedule(set_key_down_down, next_delay))
 			table.insert(coroutines, coroutine.schedule(set_key_down_up, next_delay + 0.1))
-			next_delay = next_delay + delay 
+			next_delay = next_delay + delay_between_keypress 
 		end	
 	end
 	table.insert(coroutines, coroutine.schedule(set_key_enter_down, next_delay))

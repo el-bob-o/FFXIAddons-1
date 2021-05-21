@@ -4,7 +4,7 @@ This is for automating the Mandragora Mania mini game. This only reads packets a
 
 # How to Use
 
-1. Talk to Chacharoon in Bastok Markets (only tested on this npc, unknown if other npcs in other cities have same ids or not)
+1. Talk to Chacharoon
 2. Make sure you go first in the settings (because I couldn't be bothered to find out how to figure this out from packets)
 3. Go to the player selection sub menu (I couldn't find an incoming or outgoing packet when I went between the main menu and player selection sub menu)
 4. //mmbot start <number>
@@ -29,6 +29,8 @@ Will stop the automation.
 Toggles between printing debug messages to console or not. Default is off.
 
 # Version History
+1.0.2:
+- Made it work with Sandoria and Windurst NPCs.
 
 1.0.1:
 - Fix some logic where tried to play area 4 when only mandy left is in area 2
