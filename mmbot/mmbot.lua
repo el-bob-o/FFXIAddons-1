@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.2'
+_addon.version = '1.0.3'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -113,6 +113,7 @@ windower.register_event('incoming chunk', function(id, data)
 				if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
 					game_state = 2
 					times_to_do = times_to_do - 1
+					reset_state()
 					if debugging then notice("Game Ended") end
 				end
 			end

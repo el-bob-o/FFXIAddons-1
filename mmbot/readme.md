@@ -29,12 +29,15 @@ Will stop the automation.
 Toggles between printing debug messages to console or not. Default is off.
 
 # Version History
+1.0.3:
+- Fix issue with state not resetting properly when it's the last time.
+
 1.0.2:
 - Made it work with Sandoria and Windurst NPCs.
 
 1.0.1:
-- Fix some logic where tried to play area 4 when only mandy left is in area 2
-- Less debug spam
+- Fix some logic where tried to play area 4 when only mandy left is in area 2.
+- Less debug spam.
 
 1.0.0: 
 - First version.
