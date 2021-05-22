@@ -114,7 +114,7 @@ windower.register_event('incoming chunk', function(id, data)
 						elseif p['Menu ID'] == npc_ids[current_zone_id].menu_id and times_to_do >= 1 and game_state == 2 then
 							reset_key_coroutine_and_state()
 							notice("Doing " .. times_to_do .. " time/s.")
-							navigate_to_menu_option(1, 3)
+							navigate_to_menu_option(1, 3, true)
 						end
 					end
 				end
@@ -347,6 +347,17 @@ function update_game_board(area_selected)
 		player_turn = not player_turn 
 		if debugging then notice("Player Turn: " .. tostring(player_turn)) end
 	end
+	if player_turn then
+		if game_board.area1 == 0 and game_board.area2 == 0 and game_board.area3 == 0 and game_board.area4 == 0 and game_board.area5 == 0 then
+			game_state = 2
+			if debugging then notice("Game Ended. Player has no more moves") end
+		end
+	else
+		if game_board.area6 == 0 and game_board.area4 == 0 and game_board.area7 == 0 and game_board.area2 == 0 and game_board.area8 == 0 then
+			game_state = 2
+			if debugging then notice("Game Ended. Opponent has no more moves") end
+		end
+	end
 end
 
 function get_mandies_from_area(area)
@@ -476,10 +487,10 @@ function set_key_enter_up(from_reset)
 	end
 end
 
-function navigate_to_menu_option(option_index, override_delay)
+function navigate_to_menu_option(option_index, override_delay, from_main_menu)
 	reset_key_coroutine_and_state()
 	if debugging then notice("Navigate to " .. option_index) end
-	navigation_finished = false
+	if not from_main_menu then navigation_finished = false end
 	local next_delay = 1
 	if override_delay then next_delay = override_delay end
 	local times_to_press_down = option_index - 1
