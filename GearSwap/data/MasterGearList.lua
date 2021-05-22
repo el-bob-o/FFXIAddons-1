@@ -212,6 +212,7 @@ MasterGearList = {
 													{ job = "GEO", sets = { "Adoulin" } },
 													{ job = "SMN", sets = { "Adoulin" } },
 													{ job = "NIN", sets = { "Adoulin" } },
+													{ job = "RNG", sets = { "Adoulin" } },
 													} },
 		{ name = "Futhark Coat +3", 	setList = { { job = "RUN", sets = { "DT", "Elemental Sforzo", "Liement", "IdleRegen", "Dimidiation", "Savage Blade", "Resolution", 																	  "Requiescat" } } },
 			priority = 119 },
@@ -373,7 +374,7 @@ MasterGearList = {
 		{ name = "Belenus's Cape",		setList = { { job = "RNG", sets = { "Midshot", "Doubleshot", "IdleRegen" } } },
 			augments={'AGI+20','Rng.Acc.+20 Rng.Atk.+20','AGI+10','"Store TP"+10','"Regen"+5',} },
 		back={ name="Belenus's Cape",  	setList = { { job = "RNG", sets = { "AGI_Ranged_WS", "MagicAtk", "STR_Melee_WS" } } },
-			augments={'AGI+20','Rng.Acc.+20 Rng.Atk.+20','Weapon skill damage +10%',} },
+			augments={'AGI+20','Rng.Acc.+20 Rng.Atk.+20','AGI+10','Weapon skill damage +10%',} },
 	},
 	waist = {
 		{ name = "Lucidity Sash", 		setList = { { job = "SMN", sets = { "PrecastBP", "SmnSkill" } } } },
