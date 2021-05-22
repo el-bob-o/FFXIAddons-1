@@ -44,6 +44,7 @@ Toggles between printing debug messages to console or not. Default is off.
 1.0.4:
 - Will retry an action if for some reason a wrong action is performed (clicking empty area)
 - Can change the various delays. See setdelay command
+- Fix more state problems
 
 1.0.3:
 - Fix issue with state not resetting properly when it's the last time.

@@ -99,46 +99,36 @@ windower.register_event('addon command', function(...)
 end)
 
 windower.register_event('incoming chunk', function(id, data)
-	if times_to_do >= 1 then
-		if id == 0x34 then
-			local p = packets.parse('incoming',data)
-			if p then
-				current_zone_id = p['Zone']
-				if npc_ids[current_zone_id] then 
-					if p['NPC'] == npc_ids[current_zone_id].npc_id then
-						if debugging then notice("Got menu packet menu id " .. p['Menu ID']) end
-						if game_state == 0 then
-							if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
-								if debugging then notice("Game State Start") end
-								game_state = 1
-								reset_state()
-							end
-						elseif game_state == 2 then
-							if p['Menu ID'] == npc_ids[current_zone_id].menu_id then
-								for k, v in pairs(coroutines) do
-									coroutine.close(v)
-								end
-								coroutines = {}
-								notice("Doing " .. times_to_do .. " time/s.")
-								game_state = 0
-								reset_state()
-								navigate_to_menu_option(1, 3)
-							end
+	if id == 0x34 then
+		local p = packets.parse('incoming',data)
+		if p then
+			current_zone_id = p['Zone']
+			if npc_ids[current_zone_id] then 
+				if p['NPC'] == npc_ids[current_zone_id].npc_id then
+					if debugging then notice("Got menu packet menu id " .. p['Menu ID']) end
+					if game_state == 0 or game_state == 2 then
+						if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
+							if debugging then notice("Game State Start") end
+							game_state = 1
+							reset_state()
+						elseif p['Menu ID'] == npc_ids[current_zone_id].menu_id and times_to_do >= 1 and game_state == 2 then
+							reset_key_coroutine_and_state()
+							notice("Doing " .. times_to_do .. " time/s.")
+							navigate_to_menu_option(1, 3)
 						end
 					end
-				elseif debugging then
-					notice("Couldn't find zone_id defined in npc_ids " .. current_zone_id)
 				end
+			elseif debugging then
+				notice("Couldn't find zone_id defined in npc_ids " .. current_zone_id)
 			end
-		elseif id == 0x02A then 
-			local p = packets.parse('incoming',data)
-			if p then
-				if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
-					game_state = 2
-					times_to_do = times_to_do - 1
-					reset_state()
-					if debugging then notice("Game Ended") end
-				end
+		end
+	elseif id == 0x02A then 
+		local p = packets.parse('incoming',data)
+		if p then
+			if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
+				game_state = 2
+				times_to_do = times_to_do - 1
+				if debugging then notice("Game Ended") end
 			end
 		end
 	end
