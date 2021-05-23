@@ -313,8 +313,10 @@ function rng_action_helper(act)
 			if v.id == player.id then
 				if act.param == 845 or act.param == 846 then -- flurry
 					if act.actor_id == actor_started_flurry then
-						Flurry = flurry_started
-						update_rng_info()
+						if flurry_started > Flurry then 
+							Flurry = flurry_started
+							update_rng_info()
+						end
 					end
 				end
 			end
