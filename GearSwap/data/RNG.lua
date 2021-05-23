@@ -236,20 +236,10 @@ T{
 
 function check_buffs()
 	local playerbuffs = windower.ffxi.get_player().buffs
-	local flurry_found = false
 	local hover_found = false
 	local double_found = false
 	for k, _buff_id in pairs(playerbuffs) do
 		if buff_ids:contains(_buff_id) then
-			if not flurry_found then
-				if _buff_id == 581 then 
-					Flurry = 2
-					flurry_found = true
-				elseif _buff_id == 265 then 
-					Flurry = 1
-					flurry_found = true
-				end
-			end
 			if not hover_found then
 				if _buff_id == 628 then 
 					HoverShot = true
@@ -264,7 +254,6 @@ function check_buffs()
 			end
 		end
 	end
-	if not flurry_found then Flurry = 0 end
 	if not hover_found then HoverShot = false end
 	if not double_found then DoubleShot = false end
 	if cancel_haste then
@@ -296,8 +285,41 @@ function update_rng_info()
 	ranger_info_hub.flurry = Flurry
 end
 
+function buff_change(name, gain, buff_details)
+	if name == "Flurry" and not gain then
+		Flurry = 0
+	end
+	check_buffs()
+	update_rng_info()
+end
+
+actor_started_flurry = 0
+flurry_started = 0
+
 function rng_action_helper(act)
-	if act.category == 2 then -- ranged attack
+	if act.category == 8 then
+		for k, v in pairs(act.targets) do
+			if v.id == player.id then
+				actor_started_flurry = act.actor_id
+				for k2, v2 in pairs(v.actions) do
+					if v2.param == 845 then flurry_started = 1
+					elseif v2.param == 846 then flurry_started = 2
+					end
+				end
+			end
+		end
+	elseif act.category == 4 then -- finish casting spell
+		for k, v in pairs(act.targets) do
+			if v.id == player.id then
+				if act.param == 845 or act.param == 846 then -- flurry
+					if act.actor_id == actor_started_flurry then
+						Flurry = flurry_started
+						update_rng_info()
+					end
+				end
+			end
+		end
+	elseif act.category == 2 then -- ranged attack
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
 				for k2, v2 in pairs(v.actions) do
@@ -349,38 +371,6 @@ function cancel_buff(id)
 	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
 
-function init()
-	check_buffs()
-	update_rng_info()
-end
-
-function gain_buff(id)
-	if id == 845 then Flurry = 1
-	elseif id == 846 then Flurry = 2
-	elseif id == 628 then HoverShot = true
-	elseif id == 433 then DoubleShot = true
-	elseif cancel_haste then
-		if id == 33 then 
-			cancel_buff(33)
-		elseif id == 580 then
-			cancel_buff(580)
-		end
-	end
-	update_rng_info()
-end
-
-function lose_buff(id)
-	if id == 845 then Flurry = 0
-	elseif id == 846 then Flurry = 0
-	elseif id == 628 then HoverShot = false
-	elseif id == 433 then DoubleShot = false
-	end
-	update_rng_info()
-end
-
 windower.register_event('action', rng_action_helper)
 windower.register_event('prerender', update_hover_shot_info)
 windower.register_event('target change', clear_last_shot_position)
-windower.register_event('login', init)
-windower.register_event('gain buff', gain_buff)
-windower.register_event('lose buff', lose_buff)
