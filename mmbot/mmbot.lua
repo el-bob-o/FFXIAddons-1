@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.3'
+_addon.version = '1.0.4'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -16,6 +16,7 @@ npc_ids =
 }
 
 delay_between_keypress = 0.5
+delay_between_key_down_and_up = 0.1
 
 area_1_option_index = 3
 area_2_option_index = 19
@@ -30,7 +31,7 @@ quit_option_index = 243
 
 zone = nil -- get zone from the incoming and use it for outgoing
 
-game_state = 0 -- 0 = init, 1 = started
+game_state = 0 -- 0 = init, 1 = started, 2 = finished
 player_turn = true -- assume player go first
 game_board = {
 	area1 = 3,
@@ -48,6 +49,7 @@ waiting_for_ack = nil
 time_to_wait_for_ack = 5
 coroutines = {}
 current_zone_id = 0
+navigation_finished = false
 
 windower.register_event('addon command', function(...)
 	local args = {...}
@@ -67,61 +69,73 @@ windower.register_event('addon command', function(...)
 		end
 	elseif args[1] == "stop" then
 		times_to_do = 0
+		game_state = 2
+		reset_state()
 		notice("Stopping.")
-		for k, v in pairs(coroutines) do
-			coroutine.close(v)
+		reset_key_coroutine_and_state()
+	elseif args[1] == "setdelay" and arg[2] and arg[3] then
+		local number = tonumber(args[3])
+		if number then
+			if args[2] == "keypress" then
+				delay_between_keypress = number
+				notice("Delay Between Keypress:" .. delay_between_keypress)
+			elseif args[2] == "keydownup" then
+				delay_between_key_down_and_up = number
+				notice("Delay Between Key Down and Up:" .. delay_between_key_down_and_up)
+			elseif args[2] == "ack" then
+				ack_delay = number
+				notice("Delay After Ack:" .. ack_delay)
+			elseif args[2] == "waitforack" then
+				time_to_wait_for_ack = number
+				notice("Wait For Ack:" .. time_to_wait_for_ack)
+			end
 		end
-		coroutines = {}
+	elseif args[1] == "help" then
+		notice("//mmbot start <number>: Starts Automating for <number> of games")
+		notice("//mmbot stop: Stops automation")
+		notice("//mmbot setdelay <keypress / keydownup / ack / waitforack> <number>: Configures the delay for the various events")
+		notice("//mmbot debug: Toggles debug output")
 	end
 end)
 
 windower.register_event('incoming chunk', function(id, data)
-	if times_to_do >= 1 then
-		if id == 0x34 then
-			local p = packets.parse('incoming',data)
-			if p then
-				current_zone_id = p['Zone']
-				if npc_ids[current_zone_id] then 
-					if p['NPC'] == npc_ids[current_zone_id].npc_id then
-						if debugging then notice("Got menu packet menu id " .. p['Menu ID']) end
-						if game_state == 0 then
-							if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
-								if debugging then notice("Game State Start") end
-								game_state = 1
-								reset_state()
-							end
-						elseif game_state == 2 then
-							if p['Menu ID'] == npc_ids[current_zone_id].menu_id then
-								for k, v in pairs(coroutines) do
-									coroutine.close(v)
-								end
-								coroutines = {}
-								notice("Doing " .. times_to_do .. " time/s.")
-								game_state = 0
-								reset_state()
-								navigate_to_menu_option(1, 3)
-							end
+	if id == 0x34 then
+		local p = packets.parse('incoming',data)
+		if p then
+			current_zone_id = p['Zone']
+			if npc_ids[current_zone_id] then 
+				if p['NPC'] == npc_ids[current_zone_id].npc_id then
+					if debugging then notice("Got menu packet menu id " .. p['Menu ID']) end
+					if game_state == 0 or game_state == 2 then
+						if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
+							if debugging then notice("Game State Start") end
+							game_state = 1
+							reset_state()
+						elseif p['Menu ID'] == npc_ids[current_zone_id].menu_id and times_to_do >= 1 and game_state == 2 then
+							reset_key_coroutine_and_state()
+							notice("Doing " .. times_to_do .. " time/s.")
+							navigate_to_menu_option(1, 3, true)
 						end
 					end
-				elseif debugging then
-					notice("Couldn't find zone_id defined in npc_ids " .. current_zone_id)
 				end
+			elseif debugging then
+				notice("Couldn't find zone_id defined in npc_ids " .. current_zone_id)
 			end
-		elseif id == 0x02A then 
-			local p = packets.parse('incoming',data)
-			if p then
-				if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
-					game_state = 2
-					times_to_do = times_to_do - 1
-					reset_state()
-					if debugging then notice("Game Ended") end
-				end
+		end
+	elseif id == 0x02A then 
+		local p = packets.parse('incoming',data)
+		if p then
+			if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
+				game_state = 2
+				times_to_do = times_to_do - 1
+				if debugging then notice("Game Ended") end
 			end
 		end
 	end
 end)
 
 function reset_state()
+	if debugging then notice("reset_state") end
 	player_turn = true
 	game_board = {
 		area1 = 3,
@@ -143,6 +157,7 @@ windower.register_event('outgoing chunk', function(id, original, modified, injec
 			if p then
 				if npc_ids[current_zone_id] then 
 					if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
+						navigation_finished = false
 						if p['Option Index'] == area_1_option_index then
 							update_game_board(1)
 						elseif p['Option Index'] == area_2_option_index then
@@ -177,7 +192,7 @@ windower.register_event('outgoing chunk', function(id, original, modified, injec
 end)
 
 function do_player_turn()
-	if not player_turn then return end
+	if game_state ~= 1 or not player_turn then return end
 	if debugging then notice("Do Player Turn") end
 	local selected_option = false
 	if game_board.area5 == 1 then -- multiple turns
@@ -332,6 +347,17 @@ function update_game_board(area_selected)
 		player_turn = not player_turn 
 		if debugging then notice("Player Turn: " .. tostring(player_turn)) end
 	end
+	if player_turn then
+		if game_board.area1 == 0 and game_board.area2 == 0 and game_board.area3 == 0 and game_board.area4 == 0 and game_board.area5 == 0 then
+			game_state = 2
+			if debugging then notice("Game Ended. Player has no more moves") end
+		end
+	else
+		if game_board.area6 == 0 and game_board.area4 == 0 and game_board.area7 == 0 and game_board.area2 == 0 and game_board.area8 == 0 then
+			game_state = 2
+			if debugging then notice("Game Ended. Opponent has no more moves") end
+		end
+	end
 end
 
 function get_mandies_from_area(area)
@@ -371,6 +397,7 @@ function put_mandies_in_next_area(right, area)
 			area = 6
 		else
 			area = -1
+			if debugging then notice("Player scored") end
 		end
 		return not right, area
 	elseif area == 8 and not right then
@@ -378,7 +405,8 @@ function put_mandies_in_next_area(right, area)
 			add_mandy_to_area(1)
 			area = 1
 		else 
-			area = -2 
+			area = -2
+			if debugging then notice("Opponent scored") end
 		end
 		return not right, area
 	else
@@ -451,28 +479,48 @@ function set_key_enter_down()
 	windower.send_command('setkey enter down')
 end
 
-function set_key_enter_up()
+function set_key_enter_up(from_reset)
 	windower.send_command('setkey enter up')
+	if not from_reset then
+		check_for_0x5b_time = os.time() + time_to_wait_for_ack
+		navigation_finished = true
+	end
 end
 
-function navigate_to_menu_option(option_index, override_delay)
-	for k, v in pairs(coroutines) do
-		coroutine.close(v)
-	end
-	coroutines = {}
+function navigate_to_menu_option(option_index, override_delay, from_main_menu)
+	reset_key_coroutine_and_state()
 	if debugging then notice("Navigate to " .. option_index) end
+	if not from_main_menu then navigation_finished = false end
 	local next_delay = 1
 	if override_delay then next_delay = override_delay end
 	local times_to_press_down = option_index - 1
 	if times_to_press_down >= 1 then 
 		for i = 1, times_to_press_down, 1 do
 			table.insert(coroutines, coroutine.schedule(set_key_down_down, next_delay))
-			table.insert(coroutines, coroutine.schedule(set_key_down_up, next_delay + 0.1))
+			table.insert(coroutines, coroutine.schedule(set_key_down_up, next_delay + delay_between_key_down_and_up))
 			next_delay = next_delay + delay_between_keypress 
 		end	
 	end
 	table.insert(coroutines, coroutine.schedule(set_key_enter_down, next_delay))
-	table.insert(coroutines, coroutine.schedule(set_key_enter_up, next_delay + 0.1))
+	table.insert(coroutines, coroutine.schedule(set_key_enter_up, next_delay + delay_between_key_down_and_up))	
+end
+
+function reset_key_coroutine_and_state()
+	for k, v in pairs(coroutines) do
+		coroutine.close(v)
+	end
+	coroutines = {}
+	set_key_enter_up(true)
+	set_key_down_up()
+	navigation_finished = false
+end
+
+function set_key_left_down()
+	windower.send_command('setkey left down')
+end
+
+function set_key_left_up()
+	windower.send_command('setkey left up')
 end
 
 windower.register_event('prerender', function()
@@ -480,5 +528,17 @@ windower.register_event('prerender', function()
 		if debugging then notice("Waited more than " .. time_to_wait_for_ack .. " seconds, doing player turn") end
 		waiting_for_ack = nil
 		do_player_turn()
+	elseif navigation_finished and os.time() > check_for_0x5b_time then
+		if debugging then notice("No action detected, redoing action") end
+		reset_key_coroutine_and_state()
+		local next_delay = 0
+		-- reset to first item
+		table.insert(coroutines, coroutine.schedule(set_key_left_down, next_delay))
+		table.insert(coroutines, coroutine.schedule(set_key_left_up, next_delay + delay_between_key_down_and_up))
+		next_delay = next_delay + delay_between_keypress
+		table.insert(coroutines, coroutine.schedule(set_key_left_down, next_delay))
+		table.insert(coroutines, coroutine.schedule(set_key_left_up, next_delay + delay_between_key_down_and_up))
+		next_delay = next_delay + delay_between_keypress
+		coroutine.schedule(do_player_turn, next_delay)
 	end
 end)

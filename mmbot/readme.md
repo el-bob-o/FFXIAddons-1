@@ -24,11 +24,28 @@ Will automate through 20 games.
 
 Will stop the automation.
 
+## mmbot setdelay <keypress / keydownup / ack / waitforack> <number>
+
+Configures the delay for the various events
+
+keypress is the delay between a key down and up event and the next key down and up event.
+
+keydownup is the delay between a key down and key up event.
+
+ack is the delay between sending out an ack packet and the bot trying to take a turn
+
+waitforack is the delay the bot will wait if no ack packet is sent (usually when a turn doesn't update the score)
+
 ## mmbot debug 
 
 Toggles between printing debug messages to console or not. Default is off.
 
 # Version History
+1.0.4:
+- Will retry an action if for some reason a wrong action is performed (clicking empty area)
+- Can change the various delays. See setdelay command
+- Fix more state problems
+
 1.0.3:
 - Fix issue with state not resetting properly when it's the last time.
 
