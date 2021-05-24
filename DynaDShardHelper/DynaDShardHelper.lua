@@ -1,6 +1,6 @@
 _addon.name = 'DynaD Shard Helper'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.8'
+_addon.version = '1.0.9'
 _addon.commands = {'ddsh'}
 
 packets = require('packets')
@@ -49,7 +49,7 @@ end)
 windower.register_event('incoming chunk', function(id, data)
     if id == 0x0D2 then
         local treasure = packets.parse('incoming', data)
-		if res.items[tresure.Item] then
+		if res.items[treasure.Item] then
 			table.insert(treasures, treasure)
 			got_treasure = true
 		end
