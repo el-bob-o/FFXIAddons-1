@@ -62,10 +62,11 @@ function get_sets()
 	get_set_for_job("RNG", sets)
 		
 	Modes = { 
-		{ name = "Hybrid", set = sets["Hybrid"] }
+		{ name = "RangedIdleDT", set = sets["RangedIdleDT"] },
+		{ name = "MeleeHybrid", set = sets["MeleeHybrid"] },
 	}
 		
-	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
+	sets.Idle = set_combine(sets["RangedIdleDT"], sets["IdleRegen"], sets["Movement"])
 	
 	sets["Flurry1"] = set_combine(sets["Flurry2"], sets["Flurry1"])
 	sets["Flurry0"] = set_combine(sets["Flurry1"], sets["Flurry0"])
@@ -271,7 +272,7 @@ end
 
 function update_rng_info()
 	local items = windower.ffxi.get_items()
-	if items.equipment.ammo then
+	if items.equipment.ammo and string.len(items.equipment.ammo) > 0 then
 		ranger_info_hub.ammo_name = player.equipment.ammo
 		local ammo_item = windower.ffxi.get_items(items.equipment.ammo_bag, items.equipment.ammo)
 		if ammo_item then 
@@ -365,14 +366,9 @@ function update_hover_shot_info()
 	end
 end
 
-function clear_last_shot_position()
-	last_shot_position = nil
-end
-
 function cancel_buff(id)
 	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
 
 windower.register_event('action', rng_action_helper)
 windower.register_event('prerender', update_hover_shot_info)
-windower.register_event('target change', clear_last_shot_position)
