@@ -14,7 +14,7 @@ This is for automating the Mandragora Mania mini game. This only reads packets a
 
 use //mmbot to send commands
 
-## mmbot start <number>
+## mmbot start (number)
 
 > mmbot start 20
 
@@ -24,7 +24,7 @@ Will automate through 20 games.
 
 Will stop the automation.
 
-## mmbot setdelay <keypress / keydownup / ack / waitforack> <number>
+## mmbot setdelay (keypress / keydownup / ack / waitforack) (number)
 
 Configures the delay for the various events
 
@@ -41,6 +41,10 @@ waitforack is the delay the bot will wait if no ack packet is sent (usually when
 Toggles between printing debug messages to console or not. Default is off.
 
 # Version History
+1.0.5:
+- Need to handle repeated outgoing packets, as they will mess up the game state
+- Fix another infinite loop situation
+	
 1.0.4:
 - Will retry an action if for some reason a wrong action is performed (clicking empty area)
 - Can change the various delays. See setdelay command

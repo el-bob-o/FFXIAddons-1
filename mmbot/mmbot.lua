@@ -1,10 +1,11 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.4'
+_addon.version = '1.0.5'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
 require('logger')
+socket = require('socket')
 
 debugging = false
 
@@ -50,6 +51,8 @@ time_to_wait_for_ack = 5
 coroutines = {}
 current_zone_id = 0
 navigation_finished = false
+time_between_0x5b = 1
+last_0x5b_time = 0
 
 windower.register_event('addon command', function(...)
 	local args = {...}
@@ -98,6 +101,10 @@ windower.register_event('addon command', function(...)
 	end
 end)
 
+function trade_key()
+	windower.send_command('input /targetnpc; wait 0.1; input /item "dial key #fo" <t>')
+end
+
 windower.register_event('incoming chunk', function(id, data)
 	if id == 0x34 then
 		local p = packets.parse('incoming',data)
@@ -128,6 +135,7 @@ windower.register_event('incoming chunk', function(id, data)
 			if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
 				game_state = 2
 				times_to_do = times_to_do - 1
+				navigation_finished = false
 				if debugging then notice("Game Ended") end
 			end
 		end
@@ -148,33 +156,18 @@ function reset_state()
 		area8 = 3,
 	}
 	waiting_for_ack = nil
+	navigation_finished = false
 end
 
 windower.register_event('outgoing chunk', function(id, original, modified, injected, blocked)
+	if injected or blocked then return end
 	if times_to_do >= 1 then
 		if id == 0x5b then
 			local p = packets.parse("outgoing", original)
 			if p then
 				if npc_ids[current_zone_id] then 
 					if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id then
-						navigation_finished = false
-						if p['Option Index'] == area_1_option_index then
-							update_game_board(1)
-						elseif p['Option Index'] == area_2_option_index then
-							update_game_board(2)
-						elseif p['Option Index'] == area_3_option_index then
-							update_game_board(3)
-						elseif p['Option Index'] == area_4_option_index then
-							update_game_board(4)
-						elseif p['Option Index'] == area_5_option_index then
-							update_game_board(5)
-						elseif p['Option Index'] == area_6_option_index then
-							update_game_board(6)
-						elseif p['Option Index'] == area_7_option_index then
-							update_game_board(7)
-						elseif p['Option Index'] == area_8_option_index then
-							update_game_board(8)
-						elseif p['Option Index'] == ack then
+						if p['Option Index'] == ack then
 							if debugging then notice("Ack") end
 							waiting_for_ack = nil
 							if player_turn then 
@@ -183,6 +176,33 @@ windower.register_event('outgoing chunk', function(id, original, modified, injec
 							end
 						elseif p['Option Index'] == quit_option_index then
 							game_state = 2
+						else
+							-- sometimes got multiple packets for some reason, so will mess up the board
+							-- there should be more than 1 second between these board move messages
+							local socket_time = socket.gettime()
+							if socket_time - last_0x5b_time >= time_between_0x5b then
+								last_0x5b_time = socket.gettime()
+								navigation_finished = false
+								if p['Option Index'] == area_1_option_index then
+									update_game_board(1)
+								elseif p['Option Index'] == area_2_option_index then
+									update_game_board(2)
+								elseif p['Option Index'] == area_3_option_index then
+									update_game_board(3)
+								elseif p['Option Index'] == area_4_option_index then
+									update_game_board(4)
+								elseif p['Option Index'] == area_5_option_index then
+									update_game_board(5)
+								elseif p['Option Index'] == area_6_option_index then
+									update_game_board(6)
+								elseif p['Option Index'] == area_7_option_index then
+									update_game_board(7)
+								elseif p['Option Index'] == area_8_option_index then
+									update_game_board(8)
+								end
+							else
+								if debugging then notice("Not updating board since only " .. socket_time - last_0x5b_time .. "s have passed.") end
+							end
 						end
 					end
 				end
@@ -308,7 +328,7 @@ function do_player_turn()
 	if not selected_option then -- just move
 		if game_board.area2 >= 1 then
 			if game_board.area4 ~= 0 and game_board.area3 == 0 and game_board.area5 == 0
-			and game_board.area6 == 0 and game_board.area7 == 0 and game_board.area8 == 0 then
+			and game_board.area7 == 0 and game_board.area8 == 0 then
 				navigate_to_menu_option(4)
 				selected_option = true
 			else
