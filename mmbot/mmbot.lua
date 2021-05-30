@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.6'
+_addon.version = '1.0.7'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -76,7 +76,7 @@ windower.register_event('addon command', function(...)
 		reset_state()
 		notice("Stopping.")
 		reset_key_coroutine_and_state()
-	elseif args[1] == "setdelay" and arg[2] and arg[3] then
+	elseif args[1] == "setdelay" and args[2] and args[3] then
 		local number = tonumber(args[3])
 		if number then
 			if args[2] == "keypress" then

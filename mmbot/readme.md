@@ -41,6 +41,9 @@ waitforack is the delay the bot will wait if no ack packet is sent (usually when
 Toggles between printing debug messages to console or not. Default is off.
 
 # Version History
+1.0.7:
+- fix setdelay function
+
 1.0.6:
 - Should probably clear everything if logout
 
