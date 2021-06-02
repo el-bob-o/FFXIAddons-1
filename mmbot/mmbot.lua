@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.0.7'
+_addon.version = '1.1.0'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -54,6 +54,9 @@ navigation_finished = false
 time_between_0x5b = 1
 last_0x5b_time = 0
 
+items_to_buy = 0
+current_buy_count = 0
+
 windower.register_event('addon command', function(...)
 	local args = {...}
 	if args[1] == "debug" then
@@ -93,6 +96,18 @@ windower.register_event('addon command', function(...)
 				notice("Wait For Ack:" .. time_to_wait_for_ack)
 			end
 		end
+	elseif args[1] == "buyitem" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			current_buy_count = 1
+			items_to_buy = number
+			notice("Buying " .. items_to_buy .. " items")
+			local start_delay = 0
+			for i = 1, items_to_buy, 1 do
+				table.insert(coroutines, buy_item.schedule(buy_item, start_delay, start_delay))
+				start_delay = start_delay + delay_between_keypress * 3
+			end
+		end
 	elseif args[1] == "help" then
 		notice("//mmbot start <number>: Starts Automating for <number> of games")
 		notice("//mmbot stop: Stops automation")
@@ -100,6 +115,18 @@ windower.register_event('addon command', function(...)
 		notice("//mmbot debug: Toggles debug output")
 	end
 end)
+
+function buy_item(delay)
+	local start_delay = delay + 1
+	table.insert(coroutines, navigate_to_menu_option.schedule(set_key_enter_down, start_delay))
+	table.insert(coroutines, coroutine.schedule(set_key_enter_up, start_delay + delay_between_key_down_and_up))
+	start_delay = start_delay + delay_between_keypress
+	table.insert(coroutines, coroutine.schedule(set_key_left_down, start_delay))
+	table.insert(coroutines, coroutine.schedule(set_key_left_up, start_delay + delay_between_key_down_and_up))
+	start_delay = start_delay + delay_between_keypress
+	table.insert(coroutines, navigate_to_menu_option.schedule(set_key_enter_down, start_delay))
+	table.insert(coroutines, coroutine.schedule(set_key_enter_up, start_delay + delay_between_key_down_and_up))
+end
 
 windower.register_event('incoming chunk', function(id, data)
 	if id == 0x34 then
@@ -125,14 +152,16 @@ windower.register_event('incoming chunk', function(id, data)
 				notice("Couldn't find zone_id defined in npc_ids " .. current_zone_id)
 			end
 		end
-	elseif id == 0x02A then 
-		local p = packets.parse('incoming',data)
-		if p then
-			if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
-				game_state = 2
-				times_to_do = times_to_do - 1
-				navigation_finished = false
-				if debugging then notice("Game Ended") end
+	elseif id == 0x02A then
+		if npc_ids[current_zone_id] then
+			local p = packets.parse('incoming',data)
+			if p then
+				if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
+					game_state = 2
+					times_to_do = times_to_do - 1
+					navigation_finished = false
+					if debugging then notice("Game Ended") end
+				end
 			end
 		end
 	end
@@ -284,7 +313,7 @@ function do_player_turn()
 			elseif game_board.area3 >= 7 then
 				navigate_to_menu_option(3)
 				selected_option = true
-			elseif game_board.area4 ~= 2 then
+			elseif game_board.area4 ~= 3 then
 				navigate_to_menu_option(2)
 				selected_option = true
 			end

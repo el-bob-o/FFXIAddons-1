@@ -40,7 +40,15 @@ waitforack is the delay the bot will wait if no ack packet is sent (usually when
 
 Toggles between printing debug messages to console or not. Default is off.
 
+## mmbot buyitem (number)
+
+Make sure your cursor is on the item you want to buy, then enter the command with the number you want to buy. This sends an enter input, then left arrow key input, and finally another enter input to select the item and then select yes.
+
 # Version History
+1.1.0:
+- add buyitem function
+- fix game logic so that it doesn't try to block opponent multiple turn when area 2 has 2 and area 4 has 3.
+	
 1.0.7:
 - fix setdelay function
 
