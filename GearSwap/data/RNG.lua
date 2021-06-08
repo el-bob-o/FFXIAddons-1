@@ -1,4 +1,5 @@
 include("MasterGearList.lua")
+include('THHelper.lua')
 texts = require('texts')
 
 ranger_info = [[${ammo_name}:${ammo_count}
@@ -74,15 +75,20 @@ function get_sets()
 	sets["Hot Shot"] = set_combine(sets["MagicAtk"], sets["Fotia"])
 	sets["Trueflight"] = sets["MagicAtk"]
 	sets["Wildfire"] = sets["MagicAtk"]
+	sets["Aeolian Edge"] = set["MagicAtk"]
 	sets["Savage Blade"] = sets["STR_Melee_WS"]	
 	sets["Last Stand"] = set_combine(sets["AGI_Ranged_WS"], sets["Fotia"])
 	sets["Ruinator"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
+	sets["Decimation"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
+	
+	sets["Bounty Shot"] = set_combine(sets["TH"], sets["Bounty Shot"])
 	
 	setup_text_window()
 	check_buffs()
-	update_rng_info()
+	update_rng_info()	
 	
 	print_mode()
+	print_th_mode()
 	send_command('@input /macro book 7')
 end
  
@@ -144,7 +150,9 @@ end
 function status_change(new,old)
 	if new == 'Engaged' then
 		equip(Modes[Mode].set)
+		on_status_change_for_th(new, old)
 	elseif T{'Idle','Resting'}:contains(new) then
+		on_status_change_for_th(new, old)
 		equip(sets.Idle)
     end
 end
@@ -201,6 +209,12 @@ function self_command(command)
 			add_to_chat(122, "Keeping Haste Buffs")
 			cancel_haste = false
 		end
+	elseif args[1] == "thtagged" then
+		if player.status == "Engaged" then
+			equip(Modes[Mode].set)
+		end
+	elseif args[1] == "th" then
+		parse_th_command(args)
 	else
 		master_gear_list_command(args)
 	end
@@ -370,5 +384,10 @@ function cancel_buff(id)
 	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
 
+function clear_last_shot_position()
+	last_shot_position = nil
+end
+
 windower.register_event('action', rng_action_helper)
 windower.register_event('prerender', update_hover_shot_info)
+windower.register_event('zone change', clear_last_shot_position)

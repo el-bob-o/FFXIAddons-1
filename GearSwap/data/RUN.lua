@@ -98,15 +98,11 @@ function get_sets()
 	}
 	
 	get_set_for_job("RUN", sets)
-		
-	sets.ShellVTank = set_combine(sets["DT"], sets["PDT"])
-	sets.NoBuffTank = set_combine(sets["DT"], sets["MDT"])	
-	sets.ShellVHybrid = set_combine(sets.ShellVTank, sets["Hybrid"])
-	sets.NoBuffHybrid = set_combine(sets.NoBuffTank, sets["Hybrid"])
 	
 	Modes = { 
-		{ name = "Hybrid", hybrid = true },
-		{ name = "Tank", hybrid = false },
+		{ name = "Hybrid", set = sets["Hybrid"] },
+		{ name = "Tank_Physical", set = set_combine(sets["Hybrid"], sets["Tank_Physical"]) },
+		{ name = "Tank_Magical", set = set_combine(sets["Hybrid"], sets["Tank_Magical"]) },
 	}
 	
 	sets["Swipe"] = sets["Lunge"]
@@ -114,12 +110,16 @@ function get_sets()
 	sets["Frostbite"] = sets["Lunge"]
 	sets["Freezebite"] = sets["Lunge"]
 	sets["Herculean Slash"] = sets["Lunge"]
-	sets["Shockwave"] = sets["Resolution"]
+	sets["Shockwave"] = sets["STR_WS"]
+	sets["Resolution"] = set_combine(sets["STR_WS"], sets["Fotia"])
+	sets["Savage Blade"] = set_combine(sets["STR_WS"])
+	sets["Requeiscat"] = set_combine(sets["MND_WS"], sets["Fotia"])
+	sets["Dimidiation"] = set_combine(sets["DEX_WS"], sets["WSD"])
 	
 	sets.FastcastEnhancing = set_combine(sets["Fastcast"], sets["FastcastEnhancing"])
 	sets.EnhancingRegen = set_combine(sets["EnhancingAny"], sets["EnhancingRegen"])
 	sets.EnhancingPhalanx = set_combine(sets["EnhancingAny"], sets["EnhancingPhalanx"])
-	sets.Idle = set_combine(sets["Movement"], sets["IdleRegen"])
+	sets.Idle = set_combine(sets["Hybrid"], sets["Tank_Magical"], sets["Movement"], sets["IdleRegen"])
 	
 	subjob_check(player.sub_job)
 	print_mode()
@@ -181,7 +181,7 @@ function midcast(spell)
 				setToUse = sets["EnhancingAny"]
 			end
 		else
-			setToUse = get_set()		
+			setToUse = Modes[Mode].set
 		end
 		if equipEmnity then
 			equip(set_combine(setToUse, sets["Emnity"]))
@@ -193,7 +193,7 @@ end
  
 function aftercast(spell)
     if player.status=='Engaged' or Combat then
-        equip(get_set())
+        equip(Modes[Mode].set)
     else
         equip(sets.Idle)
     end
@@ -204,7 +204,7 @@ function status_change(new,old)
 		on_status_change_for_th(new, old)
 		equip(sets.Idle)
     elseif new == 'Engaged' then
-		equip(get_set())
+		equip(Modes[Mode].set)
 		on_status_change_for_th(new, old)
     end
 end
@@ -216,13 +216,13 @@ end
 windower.register_event('zone change', function()
 	if world.area:contains("Adoulin") then
 		if Combat then
-			equip(get_set())
+			equip(Modes[Mode].set)
 		else
 			equip(set_combine(sets.Idle, sets["Adoulin"]))
 		end
 	else
 		if Combat then
-			equip(get_set())
+			equip(Modes[Mode].set)
 		else
 			equip(sets.Idle)
 		end
@@ -255,7 +255,7 @@ function self_command(command)
 			Combat = false
 		else
 			add_to_chat(122, "Combat on!")
-			equip(get_set())
+			equip(Modes[Mode].set)
 			Combat = true
 		end
 	elseif args[1] == 'kite' then
@@ -393,7 +393,7 @@ function self_command(command)
 		end
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
-			equip(get_set())
+			equip(Modes[Mode].set)
 		end
 	else
 		master_gear_list_command(args)
@@ -463,22 +463,4 @@ function check_emnity(type, spellName)
 		end
 	end
 	return false
-end
-
-function get_set()
-	local setToUse = nil
-	if Modes[Mode].hybrid then
-		if Buffs["Shell"] then
-			setToUse = sets.ShellVHybrid
-		else
-			setToUse = sets.NoBuffHybrid
-		end
-	else
-		if Buffs["Shell"] then
-			setToUse = sets.ShellVTank
-		else
-			setToUse = sets.NoBuffTank
-		end
-	end
-	return setToUse
 end

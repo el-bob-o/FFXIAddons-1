@@ -46,7 +46,7 @@ end
 function master_gear_list_command(args)
 	if args[1] == "countgear" then
 		count_gear(args)
-	elseif args[1] == "extragear" and args[2] then
+	elseif args[1] == "extragear" then
 		print_extra_gear_not_in_master_list(args)
 	elseif args[1] == "missinggear" and args[2] then
 		print_missing_gear(args)
@@ -172,7 +172,8 @@ end
 
 function print_extra_gear_not_in_master_list(args)
 	add_to_chat(122, "Extra Gear")
-	local filter = args[2]:split(',')
+	local filter = nil 
+	if args[2] then filter = args[2]:split(',') end
 	local masterGearList = get_list_of_gear_in_master_list(filter)
 	local extra = get_list_of_extra_gear(masterGearList)	
 	for bagId, itemList in pairs(extra) do

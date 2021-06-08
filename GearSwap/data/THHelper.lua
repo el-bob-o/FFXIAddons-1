@@ -1,4 +1,7 @@
--- declare a sets.TH and call on_status_change_for_th from your gearswap status change
+-- 1. declare a sets.TH 
+-- 2. call on_status_change_for_th from your gearswap status change
+-- 3. parse thtagged command to equip back your normal set
+-- 4. parse th command and pass arguments to parse_th_command()
 -- set AmmoDisabled to true if you need to use a ranged weapon and your TH set has an ammo item
 
 MobsTagged = {}

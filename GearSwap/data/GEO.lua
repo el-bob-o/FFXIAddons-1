@@ -21,6 +21,7 @@ function get_sets()
 		
 	Modes = { 
 		{ name = "CombatIdleDT", set = sets["CombatIdleDT"]},
+		{ name = "Melee", set = sets["Melee"]},
 	}
  
 	sets["Shining Strike"] = sets["Elemental"]
@@ -47,8 +48,12 @@ function precast(spell)
 			equip(sets["Fastcast"])
 		end
 	elseif spell.type=="WeaponSkill" then
-        if sets[spell.english] then 
-			equip(sets[spell.english])
+        if sets[spell.english] then
+			local setToUse = sets[spell.english]
+			if spell.element == world.weather_element or spell.element == world.day_element then 
+				setToUse = set_combine(setToUse, sets["WeatherObi"])
+			end
+			equip(setToUse)
 		end
     end
 end
