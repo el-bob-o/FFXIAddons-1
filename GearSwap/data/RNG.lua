@@ -81,8 +81,6 @@ function get_sets()
 	sets["Ruinator"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
 	sets["Decimation"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
 	
-	sets["Bounty Shot"] = set_combine(sets["TH"], sets["Bounty Shot"])
-	
 	setup_text_window()
 	check_buffs()
 	update_rng_info()	

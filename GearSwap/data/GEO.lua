@@ -28,6 +28,9 @@ function get_sets()
 	sets["Seraph Strike"] = sets["Elemental"]
 	sets["Flash Nova"] = sets["Elemental"]
 	sets["Cataclysm"] = sets["Elemental"]
+	sets["Hexa Strike"] = set_combine(sets["Melee"], sets["STR_Melee_WS"], sets["Fotia"])
+	sets["Black Halo"] = sets["Melee"]
+	sets["Exudation"] = sets["Melee"]
 	 
 	send_command('@input /macro book 3;wait 1;input /macro set 1')
 	print_mode()
@@ -52,6 +55,10 @@ function precast(spell)
 			local setToUse = sets[spell.english]
 			if spell.element == world.weather_element or spell.element == world.day_element then 
 				setToUse = set_combine(setToUse, sets["WeatherObi"])
+			end
+			local maxTP = 3000
+			if player.tp < maxTP then
+				setToUse = set_combine(setToUse, sets["TPBonus"])
 			end
 			equip(setToUse)
 		end
