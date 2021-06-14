@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.2'
+_addon.version  = '0.3'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -9,6 +9,13 @@ require('logger')
 require('coroutine')
 packets = require('packets')
 res = require('resources')
+config = require('config')
+
+local default_settings = {
+	["displacers"] = 5,
+}
+
+local settings = config.load(default_settings)
 
 local bags = {
     'inventory',
@@ -29,6 +36,14 @@ local cells = {
     ['Cobalt Cell'] = 3434,
     ['Rubicund Cell'] = 3435,
     ['Phase Displacer'] = 3853,
+}
+
+local phase_cell_options = {
+	[1] = 17,
+	[2] = 33,
+	[3] = 49,
+	[4] = 65,
+ 	[5] = 81,
 }
 
 local voidwatch_officers = {
@@ -99,7 +114,7 @@ local function trade_cells()
         local remaining = {
             cobalt = 1,
             rubicund = 1,
-            phase = 5,
+            phase = settings["displacers"],
         }
         local idx = 1
         local n = 0
@@ -156,11 +171,23 @@ local function handle_command(...)
 				log("Number must be between 1 and 99")
 			end
 		end
+	elseif args[1] == "setp" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			if number >= 1 and number <= 5 then
+				settings["displacers"] = number
+				config.save(settings)
+				log("Using " .. number .. " of phase displacers each fight.")
+			else
+				log("Number must be between 1 and 5")
+			end
+		end
     else
         notice('//vw t: trade cells and displacers and start fight')
 		notice('//vw bc: buy 12 cobalt cells from nearby Voidwatch Officer')
 		notice('//vw br: buy 12 rubicund cells from nearby Voidwatch Officer')
 		notice('//vw bp (number): buy (number) phase displacers from Ardrick')
+		notice('//vw setp (number): set number of phase displacers to use')
     end
 end
 
@@ -171,7 +198,7 @@ local function start_fight()
             ['Target Index'] = npc_index,
 			['Menu ID'] = menu_id,
 			['Zone'] = zone,
-			['Option Index'] = 0x51,
+			['Option Index'] = phase_cell_options[settings["displacers"]],
 			['_unknown1'] = 0,
 		})
 	packets.inject(p)
