@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.5.1'
+_addon.version  = '0.6.0'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -15,11 +15,12 @@ interact_distance_square = 5*5
 
 local default_settings = {
 	["displacers"] = 5,
+	["cobalt"] = 1,
+	["rubicund"] = 1,
 	["autoloop"] = false,
 	["autosell"] = false,
 	["autows"] = false,
 	["WS"] = "Evisceration",
-	["ensurecellsanddisplacers"] = true,
 	["converttocell"] = false,
 }
 
@@ -85,6 +86,7 @@ local wait_for_box_spawn = false
 local wait_for_rift_spawn = false
 local use_cleric = false
 local started = false
+local running = false
 
 local function leader()
     local self = windower.ffxi.get_player()
@@ -163,6 +165,7 @@ local function reset(new_id, old_id)
 	wait_for_rift_spawn = false
 	use_cleric = false
 	started = false
+	running = false
 end
 
 local function trade_cells()
@@ -175,8 +178,8 @@ local function trade_cells()
             ['Target Index'] = npc.index,
         })
         local remaining = {
-            cobalt = 1,
-            rubicund = 1,
+            cobalt = settings["cobalt"],
+            rubicund = settings["rubicund"],
             phase = settings["displacers"],
         }
         local idx = 1
@@ -211,7 +214,7 @@ local function trade_cells()
                 n = n + count
             end
         end
-		if settings["ensurecellsanddisplacers"] and n ~= 2 + settings['displacers'] then
+		if n ~= settings['cobalt'] + settings['rubicund'] + settings['displacers'] then
 			log("not enough cells/displacers")
 			reset()
 			return
@@ -508,7 +511,11 @@ local function parse_action(action)
 							elseif player.vitals.tp >= 1000 then
 								do_ws()
 							end
-						elseif action.actor_id == player.id and action.category == 1 then 
+						elseif action.actor_id == player.id and action.category == 1 then
+							if running then 
+								running = false
+								windower.ffxi.run(false)
+							end
 							if mob_stun_moves[player_target.name] and can_stun then
 								if player.vitals.tp >= 1000 then
 									if player_target.hpp >= 80 or player_target.hpp <= 15 then
@@ -563,6 +570,16 @@ end
 
 local function on_load()
 	check_stun()
+end
+
+local function parse_action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
+	if message_id == 5 then -- can't see target
+		face_target()
+	elseif message_id == 4 or message_id == 78 then -- out of range
+		face_target()
+		running = true
+		windower.ffxi.run(true)
+	end
 end
 
 local function handle_command(...)
@@ -645,16 +662,36 @@ local function handle_command(...)
 	elseif args[1] == "usecleric" then
 		use_cleric = have_temp_item(5395)
 		log("Using Cleric Drink next opportunity: " .. tostring(use_cleric))
-	elseif args[1] == "ensurecells" then
-		settings['ensurecellsanddisplacers'] = not settings['ensurecellsanddisplacers']
-		config.save(settings)
-		log("Ensure cell and displacer use has changed to " .. tostring(settings['ensurecellsanddisplacers']))
+	elseif args[1] == "setc" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			if number >= 0 and number <= 1 then
+				settings["cobalt"] = number
+				config.save(settings)
+				log("Using " .. number .. " cobalt cell each fight.")
+			else
+				log("Number must be between 0 and 1")
+			end
+		end
+	elseif args[1] == "setr" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			if number >= 0 and number <= 1 then
+				settings["rubicund"] = number
+				config.save(settings)
+				log("Using " .. number .. " rubicund cell each fight.")
+			else
+				log("Number must be between 0 and 1")
+			end
+		end
     else
         notice('//vw t: trade cells and displacers and start fight')
 		notice('//vw bc (number): buy number * 12 cobalt cells from nearby Voidwatch Officer')
 		notice('//vw br (number): buy number * 12 rubicund cells from nearby Voidwatch Officer')
 		notice('//vw bp (number): buy (number) phase displacers from Ardrick')
 		notice('//vw setp (number): set number of phase displacers to use')
+		notice('//vw setc (number): set number of cobalt cells to use')
+		notice('//vw setr (number): set number of rubicund cells to use')
 		notice('//vw autosell: toggles whether to auto sell drops or not. Uses //sparky purge.')
 		notice('//vw autoloop: toggles whether to auto loop or not.')
 		notice('//vw autows: toggles whether to auto WS or not.')
@@ -670,3 +707,4 @@ windower.register_event('zone change', zone_change)
 windower.register_event('action', parse_action)
 windower.register_event('gain buff', gain_buff)
 windower.register_event('load', on_load)
+windower.register_event('action message', parse_action_message)
