@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.4'
+_addon.version  = '0.5'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -18,10 +18,9 @@ local default_settings = {
 	["autoloop"] = false,
 	["autosell"] = false,
 	["autows"] = false,
-	["noknockback"] = false,
-	["sellitems"] = {  },
 	["WS"] = "Evisceration",
-	["converttocell"] = false
+	["ensurecellsanddisplacers"] = true,
+	["converttocell"] = false,
 }
 
 local settings = config.load(default_settings)
@@ -70,12 +69,22 @@ local voidwatch_officers = {
 }
 
 local voidwatch_mobs = T{
-	"Ig-Alima",
+	"Ig-Alima", "Botulus Rex", "Aello", "Uptala", "Qilin", "Bismarck", "Morta", "Kaggen", "Akvan", "Pil"
 }
 
 local mob_stun_moves = {
-	["Ig-Alima"] = T{ "Oblivion's Mantle", "Dread Spikes" }
+	["Ig-Alima"] = T{ "Oblivion's Mantle", "Dread Spikes" },
 }
+
+-- state vars
+local wait_for_adrick_0x34 = false
+local wait_for_box_0x34 = false
+local wait_for_officer_0x34 = false
+local wait_for_rift_0x34 = false
+local wait_for_box_spawn = false
+local wait_for_rift_spawn = false
+local use_cleric = false
+local started = false
 
 local function leader()
     local self = windower.ffxi.get_player()
@@ -202,9 +211,8 @@ local function trade_cells()
                 n = n + count
             end
         end
-		if n ~= 2 + settings['displacers'] then
-			if n <= 2 then log("not enough cells")
-			else log("not enough displacers") end
+		if settings["ensurecellsanddisplacers"] and n ~= 2 + settings['displacers'] then
+			log("not enough cells/displacers")
 			reset()
 			return
 		end
@@ -484,38 +492,40 @@ local function parse_action(action)
 				local player_target = windower.ffxi.get_mob_by_index(player.target_index)
 				if player_target then
 					if settings['autows'] then
-						if mob.id == player_target.id and settings['autows'] then
+						if mob.id == player_target.id and mob_stun_moves[mob.name] and can_stun then
+							local need_to_stun = false
 							if action.category == 7 and action.param == 24931 then
-								if not mob_stun_moves[mob.name]:contains(res.monster_abilities[action.targets[1].actions[1].param].name) then
-									if use_cleric then
-										use_cleric = false
-										windower.send_command("input /item \"Cleric's Drink\" <me>")
-									elseif player.vitals.tp >= 1000 then
-										do_ws()
-									end
-								end
+								need_to_stun = mob_stun_moves[mob.name]:contains(res.monster_abilities[action.targets[1].actions[1].param].name)
 							elseif action.category == 8 and action.param == 24931 then
-								if not mob_stun_moves[mob.name]:contains(res.spells[action.targets[1].actions[1].param].name) then
-									if use_cleric then
-										use_cleric = false
-										windower.send_command("input /item \"Cleric's Drink\" <me>")
-									elseif player.vitals.tp >= 1000 then
-										do_ws()
-									end
-								end
+								need_to_stun = mob_stun_moves[mob.name]:contains(res.spells[action.targets[1].actions[1].param].name)
 							end
-						elseif action.actor_id == player.id and action.category == 1 and player.vitals.tp >= 1000 then
-							if mob_stun_moves[player_target.name] then
-								if player_target.hpp >= 80 or player_target.hpp <= 15 then
-									do_ws()
-								else
-									local recasts = windower.ffxi.get_spell_recasts()
-									if recasts[252] > 2 then -- ws if stun got recast
+							if need_to_stun then
+								windower.send_command("input /ma Stun <t>")
+							elseif use_cleric then
+								use_cleric = false
+								windower.send_command("input /item \"Cleric's Drink\" <me>")
+							elseif player.vitals.tp >= 1000 then
+								do_ws()
+							end
+						elseif action.actor_id == player.id and action.category == 1 then 
+							if mob_stun_moves[player_target.name] and can_stun then
+								if player.vitals.tp >= 1000 then
+									if player_target.hpp >= 80 or player_target.hpp <= 15 then
 										do_ws()
+									else
+										local recasts = windower.ffxi.get_spell_recasts()
+										if recasts[252] > 2 then -- ws if stun got recast
+											do_ws()
+										end
 									end
 								end
 							else
-								do_ws()
+								if use_cleric then
+									use_cleric = false
+									windower.send_command("input /item \"Cleric's Drink\" <me>")
+								elseif player.vitals.tp >= 1000 then
+									do_ws()
+								end
 							end
 						end
 					end
@@ -538,6 +548,20 @@ local function gain_buff(id)
 			end
 		end
 	end
+end
+
+local function check_stun()
+	local player = windower.ffxi.get_player()
+	can_stun = player.sub_job == "BLM" or player.sub_job == "DRK" or player.main_job == "BLM" or player.main_job == "DRK"
+end
+
+local function zone_change()
+	check_stun()
+	reset()
+end
+
+local function on_load()
+	check_stun()
 end
 
 local function handle_command(...)
@@ -581,12 +605,12 @@ local function handle_command(...)
 	elseif args[1] == "setp" and args[2] then
 		local number = tonumber(args[2])
 		if number then
-			if number >= 1 and number <= 5 then
+			if number >= 0 and number <= 5 then
 				settings["displacers"] = number
 				config.save(settings)
 				log("Using " .. number .. " of phase displacers each fight.")
 			else
-				log("Number must be between 1 and 5")
+				log("Number must be between 0 and 5")
 			end
 		end
 	elseif args[1] == "autosell" then
@@ -611,6 +635,7 @@ local function handle_command(...)
 		config.save(settings)
 		log("WS changed to " .. settings['WS'])
 	elseif args[1] == "stop" then
+		log('stopping')
 		reset()
 	elseif args[1] == "converttocell" then
 		settings['converttocell'] = not settings['converttocell']
@@ -619,6 +644,10 @@ local function handle_command(...)
 	elseif args[1] == "usecleric" then
 		use_cleric = have_temp_item(5395)
 		log("Using Cleric Drink next opportunity: " .. tostring(use_cleric))
+	elseif args[1] == "ensurecells" then
+		settings['ensurecellsanddisplacers'] = not settings['ensurecellsanddisplacers']
+		config.save(settings)
+		log("Ensure cell and displacer use has changed to " .. tostring(settings['ensurecellsanddisplacers']))
     else
         notice('//vw t: trade cells and displacers and start fight')
 		notice('//vw bc (number): buy number * 12 cobalt cells from nearby Voidwatch Officer')
@@ -636,6 +665,7 @@ end
 
 windower.register_event('addon command', handle_command)
 windower.register_event('incoming chunk', parse_incoming)
-windower.register_event('zone change', reset)
+windower.register_event('zone change', zone_change)
 windower.register_event('action', parse_action)
 windower.register_event('gain buff', gain_buff)
+windower.register_event('load', on_load)
