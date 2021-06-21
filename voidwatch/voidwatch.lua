@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.5'
+_addon.version  = '0.5.1'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -231,7 +231,6 @@ end
 
 local function start_fight()
 	log('start fight')
-	wait_for_box_spawn = true
 	local p = packets.new('outgoing', 0x5b, {
             ['Target'] = npc_id,
             ['Target Index'] = npc_index,
@@ -424,6 +423,8 @@ local function parse_incoming(id, data)
 			local mob = windower.ffxi.get_mob_by_index(p['Index'])
 			if mob and voidwatch_mobs:contains(mob.name) then
 				log("mob spawn")
+				wait_for_rift_spawn = false
+				wait_for_box_spawn = true
 				windower.send_command('wait 1; input /target <bt>; wait 0.2; input /attack')
 				coroutine.schedule(face_target, 1.5)
 			end
