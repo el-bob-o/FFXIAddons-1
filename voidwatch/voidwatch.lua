@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.7.2'
+_addon.version  = '0.7.3'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -442,7 +442,7 @@ local function parse_incoming(id, data)
 				need_to_attack_crap = false
 				crap_id = nil
 				wait_for_box_spawn = true
-				windower.send_command('wait 1; input /target <bt>; wait 0.2; input /attack')
+				windower.send_command('wait 1; input /target <bt>; wait 0.2; input /attack on')
 				coroutine.schedule(face_target, 1.5)
 			end
 		elseif id == 0xe then
@@ -556,6 +556,8 @@ local function parse_action(action)
 								if use_cleric then
 									use_cleric = false
 									windower.send_command("input /item \"Cleric's Drink\" <me>")
+								elseif player_target.hpp <= 15 and player.vitals.tp >= 1000 then
+									do_ws()
 								elseif player.vitals.tp >= settings["autowstp"] then
 									do_ws()
 								end
@@ -571,9 +573,11 @@ local function parse_action(action)
 							if player_target and player_target.id == mob.id then
 								log('attack interruptor')
 								need_to_attack_crap = true
-								windower.send_command("wait 1; input /attack")
+								windower.send_command("wait 2; input /attack on")
 							end
 						end
+					elseif wait_for_box_spawn then
+						windower.send_command("wait 2; input /attack on")
 					end
 				end
 			end
