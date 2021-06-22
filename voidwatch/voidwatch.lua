@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.7.3'
+_addon.version  = '0.7.4'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -23,6 +23,7 @@ local default_settings = {
 	["autowstp"] = 1000,
 	["WS"] = "Evisceration",
 	["converttocell"] = false,
+	["warpwhendone"] = false
 }
 
 local settings = config.load(default_settings)
@@ -86,12 +87,10 @@ local wait_for_rift_0x34 = false
 local wait_for_box_spawn = false
 local wait_for_rift_spawn = false
 local wait_for_boss_spawn = false
-local wait_for_crap_to_die = false
-local need_to_attack_crap = false
-local crap_id = nil
 local use_cleric = false
 local started = false
 local running = false
+local interrupted = false
 
 local function leader()
     local self = windower.ffxi.get_player()
@@ -169,12 +168,10 @@ local function reset(new_id, old_id)
 	wait_for_box_spawn = false
 	wait_for_rift_spawn = false
 	wait_for_boss_spawn = false
-	wait_for_crap_to_die = false
-	need_to_attack_crap = false
-	crap_id = nil
 	use_cleric = false
 	started = false
 	running = false
+	interrupted = false
 end
 
 local function trade_cells()
@@ -226,6 +223,7 @@ local function trade_cells()
 		if n ~= settings['cobalt'] + settings['rubicund'] + settings['displacers'] then
 			log("not enough cells/displacers")
 			reset()
+			windower.send_command('input /item "Instant Warp" <me>')
 			return
 		end
         trade['Number of Items'] = n
@@ -242,16 +240,21 @@ local function sparky_purge()
 end
 
 local function start_fight()
-	log('start fight')
-	local p = packets.new('outgoing', 0x5b, {
-            ['Target'] = npc_id,
-            ['Target Index'] = npc_index,
-			['Menu ID'] = menu_id,
-			['Zone'] = zone,
-			['Option Index'] = phase_cell_options[settings["displacers"]],
-			['_unknown1'] = 0,
-		})
-	packets.inject(p)
+	if not interrupted then
+		log('start fight')
+		local p = packets.new('outgoing', 0x5b, {
+				['Target'] = npc_id,
+				['Target Index'] = npc_index,
+				['Menu ID'] = menu_id,
+				['Zone'] = zone,
+				['Option Index'] = phase_cell_options[settings["displacers"]],
+				['_unknown1'] = 0,
+			})
+		packets.inject(p)
+	else
+		log('interrupted')
+		interrupted = false
+	end
 end
 
 local function buy_cell()
@@ -386,6 +389,7 @@ local function parse_incoming(id, data)
 	if started then
 		if id == 0x34 then
 			if wait_for_rift_0x34 then
+				interrupted = false
 				wait_for_rift_0x34 = false
 				wait_for_boss_spawn = true
 				local p = packets.parse('incoming', data)
@@ -438,9 +442,6 @@ local function parse_incoming(id, data)
 				log("mob spawn")
 				wait_for_boss_spawn = false
 				wait_for_rift_spawn = false
-				wait_for_crap_to_die = false
-				need_to_attack_crap = false
-				crap_id = nil
 				wait_for_box_spawn = true
 				windower.send_command('wait 1; input /target <bt>; wait 0.2; input /attack on')
 				coroutine.schedule(face_target, 1.5)
@@ -459,6 +460,12 @@ local function parse_incoming(id, data)
 			local p = packets.parse('incoming', data)
 			if p['Message ID'] == 40285 then
 				-- param 1 + param 2 = blue, param 3 + param 4 = red
+			end
+		elseif id == 0x52 then
+			local p = packets.parse('incoming', data)
+			if p['Type'] == 2 and (wait_for_boss_spawn or wait_for_rift_0x34) then
+				interrupted = true
+				coroutine.schedule(poke_rift, 0.1)
 			end
 		end
 	end
@@ -535,12 +542,6 @@ local function parse_action(action)
 								running = false
 								windower.ffxi.run(false)
 							end
-							if need_to_attack_crap and not wait_for_crap_to_die then
-								log('attacking crap')
-								need_to_attack_crap = false
-								crap_id = mob.id
-								wait_for_crap_to_die = true
-							end
 							if mob_stun_moves[player_target.name] and can_stun then
 								if player.vitals.tp >= settings["autowstp"] then
 									if player_target.hpp >= 80 or player_target.hpp <= 15 then
@@ -566,17 +567,9 @@ local function parse_action(action)
 					end
 				end
 			elseif action.category == 7 or action.category == 8 or action.category == 1 then
-				if action.targets[1].id == player.id then -- someone attacking me
-					if wait_for_boss_spawn and not wait_for_crap_to_die then
-						if player.target_index then
-							local player_target = windower.ffxi.get_mob_by_index(player.target_index)
-							if player_target and player_target.id == mob.id then
-								log('attack interruptor')
-								need_to_attack_crap = true
-								windower.send_command("wait 2; input /attack on")
-							end
-						end
-					elseif wait_for_box_spawn then
+				if action.targets[1].id == player.id then -- someone attacking me but I'm not in combat!
+					if wait_for_box_spawn then
+						log('retry attack boss')
 						windower.send_command("wait 2; input /attack on")
 					end
 				end
@@ -622,14 +615,6 @@ local function parse_action_message(actor_id, target_id, actor_index, target_ind
 			face_target()
 			running = true
 			windower.ffxi.run(true)
-		elseif message_id == 6 or message_id == 20 then -- crap died
-			if wait_for_crap_to_die and crap_id and crap_id == actor_id then
-				log('interruptor dead')
-				wait_for_crap_to_die = false
-				crap_id = nil
-				wait_for_rift_0x34 = true
-				coroutine.schedule(poke_rift, 4)
-			end
 		end
 	end
 end
@@ -747,6 +732,10 @@ local function handle_command(...)
 				log("Number must be between 1000 and 3000")
 			end
 		end
+	elseif args[1] == "warpwhendone" then
+		settings['warpwhendone'] = not settings['warpwhendone']
+		config.save(settings)
+		log("Warp when done changed to " .. tostring(settings['warpwhendone']))
     else
         notice('//vw t: trade cells and displacers and start fight')
 		notice('//vw bc (number): buy number * 12 cobalt cells from nearby Voidwatch Officer')
@@ -761,6 +750,7 @@ local function handle_command(...)
 		notice('//vw converttocell: toggles whether to convert pulse to cells or not.')
 		notice('//vw setws: set the WS name to auto WS.')
 		notice('//vw settp: set the TP threshold for auto WS.')
+		notice('//vw warpwhendone: toggle warping when done. Uses a Scroll of Instant Warp.')
 		notice('//vw stop: stops all parsing of incoming packets.')
     end
 end
