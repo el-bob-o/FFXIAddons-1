@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.7.1'
+_addon.version  = '0.7.2'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -87,6 +87,7 @@ local wait_for_box_spawn = false
 local wait_for_rift_spawn = false
 local wait_for_boss_spawn = false
 local wait_for_crap_to_die = false
+local need_to_attack_crap = false
 local crap_id = nil
 local use_cleric = false
 local started = false
@@ -169,6 +170,7 @@ local function reset(new_id, old_id)
 	wait_for_rift_spawn = false
 	wait_for_boss_spawn = false
 	wait_for_crap_to_die = false
+	need_to_attack_crap = false
 	crap_id = nil
 	use_cleric = false
 	started = false
@@ -249,7 +251,6 @@ local function start_fight()
 			['Option Index'] = phase_cell_options[settings["displacers"]],
 			['_unknown1'] = 0,
 		})
-	wait_for_boss_spawn = true
 	packets.inject(p)
 end
 
@@ -386,6 +387,7 @@ local function parse_incoming(id, data)
 		if id == 0x34 then
 			if wait_for_rift_0x34 then
 				wait_for_rift_0x34 = false
+				wait_for_boss_spawn = true
 				local p = packets.parse('incoming', data)
 				parse_menu_data(p)
 				coroutine.schedule(start_fight, 0.1)
@@ -436,6 +438,9 @@ local function parse_incoming(id, data)
 				log("mob spawn")
 				wait_for_boss_spawn = false
 				wait_for_rift_spawn = false
+				wait_for_crap_to_die = false
+				need_to_attack_crap = false
+				crap_id = nil
 				wait_for_box_spawn = true
 				windower.send_command('wait 1; input /target <bt>; wait 0.2; input /attack')
 				coroutine.schedule(face_target, 1.5)
@@ -449,6 +454,11 @@ local function parse_incoming(id, data)
 					log('rift spawn')
 					coroutine.schedule(trade_cells, 1)
 				end
+			end
+		elseif id == 0x2a then
+			local p = packets.parse('incoming', data)
+			if p['Message ID'] == 40285 then
+				-- param 1 + param 2 = blue, param 3 + param 4 = red
 			end
 		end
 	end
@@ -525,6 +535,12 @@ local function parse_action(action)
 								running = false
 								windower.ffxi.run(false)
 							end
+							if need_to_attack_crap and not wait_for_crap_to_die then
+								log('attacking crap')
+								need_to_attack_crap = false
+								crap_id = mob.id
+								wait_for_crap_to_die = true
+							end
 							if mob_stun_moves[player_target.name] and can_stun then
 								if player.vitals.tp >= settings["autowstp"] then
 									if player_target.hpp >= 80 or player_target.hpp <= 15 then
@@ -553,9 +569,9 @@ local function parse_action(action)
 						if player.target_index then
 							local player_target = windower.ffxi.get_mob_by_index(player.target_index)
 							if player_target and player_target.id == mob.id then
-								wait_for_crap_to_die = true
-								crap_id = player_target.id
-								windower.send_command("wait 2; input /attack")
+								log('attack interruptor')
+								need_to_attack_crap = true
+								windower.send_command("wait 1; input /attack")
 							end
 						end
 					end
@@ -603,7 +619,8 @@ local function parse_action_message(actor_id, target_id, actor_index, target_ind
 			running = true
 			windower.ffxi.run(true)
 		elseif message_id == 6 or message_id == 20 then -- crap died
-			if wait_for_crap_to_die and crap_id and crap_id == target_id then
+			if wait_for_crap_to_die and crap_id and crap_id == actor_id then
+				log('interruptor dead')
 				wait_for_crap_to_die = false
 				crap_id = nil
 				wait_for_rift_0x34 = true
