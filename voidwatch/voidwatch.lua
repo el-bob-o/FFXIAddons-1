@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.7.0'
+_addon.version  = '0.7.1'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -549,14 +549,13 @@ local function parse_action(action)
 				end
 			elseif action.category == 7 or action.category == 8 or action.category == 1 then
 				if action.targets[1].id == player.id then -- someone attacking me
-					log("wait_for_boss_spawn " .. tostring(wait_for_boss_spawn) .. " wait_for_crap_to_die " .. tostring(wait_for_crap_to_die))
 					if wait_for_boss_spawn and not wait_for_crap_to_die then
 						if player.target_index then
 							local player_target = windower.ffxi.get_mob_by_index(player.target_index)
 							if player_target and player_target.id == mob.id then
 								wait_for_crap_to_die = true
 								crap_id = player_target.id
-								windower.send_command("input /attack")
+								windower.send_command("wait 2; input /attack")
 							end
 						end
 					end
