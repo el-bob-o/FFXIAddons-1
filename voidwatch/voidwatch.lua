@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.6.0'
+_addon.version  = '0.7.0'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -20,6 +20,7 @@ local default_settings = {
 	["autoloop"] = false,
 	["autosell"] = false,
 	["autows"] = false,
+	["autowstp"] = 1000,
 	["WS"] = "Evisceration",
 	["converttocell"] = false,
 }
@@ -84,6 +85,9 @@ local wait_for_officer_0x34 = false
 local wait_for_rift_0x34 = false
 local wait_for_box_spawn = false
 local wait_for_rift_spawn = false
+local wait_for_boss_spawn = false
+local wait_for_crap_to_die = false
+local crap_id = nil
 local use_cleric = false
 local started = false
 local running = false
@@ -163,6 +167,9 @@ local function reset(new_id, old_id)
 	wait_for_rift_0x34 = false
 	wait_for_box_spawn = false
 	wait_for_rift_spawn = false
+	wait_for_boss_spawn = false
+	wait_for_crap_to_die = false
+	crap_id = nil
 	use_cleric = false
 	started = false
 	running = false
@@ -242,6 +249,7 @@ local function start_fight()
 			['Option Index'] = phase_cell_options[settings["displacers"]],
 			['_unknown1'] = 0,
 		})
+	wait_for_boss_spawn = true
 	packets.inject(p)
 end
 
@@ -426,6 +434,7 @@ local function parse_incoming(id, data)
 			local mob = windower.ffxi.get_mob_by_index(p['Index'])
 			if mob and voidwatch_mobs:contains(mob.name) then
 				log("mob spawn")
+				wait_for_boss_spawn = false
 				wait_for_rift_spawn = false
 				wait_for_box_spawn = true
 				windower.send_command('wait 1; input /target <bt>; wait 0.2; input /attack')
@@ -508,7 +517,7 @@ local function parse_action(action)
 							elseif use_cleric then
 								use_cleric = false
 								windower.send_command("input /item \"Cleric's Drink\" <me>")
-							elseif player.vitals.tp >= 1000 then
+							elseif player.vitals.tp >= settings["autowstp"] then
 								do_ws()
 							end
 						elseif action.actor_id == player.id and action.category == 1 then
@@ -517,7 +526,7 @@ local function parse_action(action)
 								windower.ffxi.run(false)
 							end
 							if mob_stun_moves[player_target.name] and can_stun then
-								if player.vitals.tp >= 1000 then
+								if player.vitals.tp >= settings["autowstp"] then
 									if player_target.hpp >= 80 or player_target.hpp <= 15 then
 										do_ws()
 									else
@@ -531,9 +540,23 @@ local function parse_action(action)
 								if use_cleric then
 									use_cleric = false
 									windower.send_command("input /item \"Cleric's Drink\" <me>")
-								elseif player.vitals.tp >= 1000 then
+								elseif player.vitals.tp >= settings["autowstp"] then
 									do_ws()
 								end
+							end
+						end
+					end
+				end
+			elseif action.category == 7 or action.category == 8 or action.category == 1 then
+				if action.targets[1].id == player.id then -- someone attacking me
+					log("wait_for_boss_spawn " .. tostring(wait_for_boss_spawn) .. " wait_for_crap_to_die " .. tostring(wait_for_crap_to_die))
+					if wait_for_boss_spawn and not wait_for_crap_to_die then
+						if player.target_index then
+							local player_target = windower.ffxi.get_mob_by_index(player.target_index)
+							if player_target and player_target.id == mob.id then
+								wait_for_crap_to_die = true
+								crap_id = player_target.id
+								windower.send_command("input /attack")
 							end
 						end
 					end
@@ -573,12 +596,21 @@ local function on_load()
 end
 
 local function parse_action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
-	if message_id == 5 then -- can't see target
-		face_target()
-	elseif message_id == 4 or message_id == 78 then -- out of range
-		face_target()
-		running = true
-		windower.ffxi.run(true)
+	if started then
+		if message_id == 5 then -- can't see target
+			face_target()
+		elseif message_id == 4 or message_id == 78 then -- out of range
+			face_target()
+			running = true
+			windower.ffxi.run(true)
+		elseif message_id == 6 or message_id == 20 then -- crap died
+			if wait_for_crap_to_die and crap_id and crap_id == target_id then
+				wait_for_crap_to_die = false
+				crap_id = nil
+				wait_for_rift_0x34 = true
+				coroutine.schedule(poke_rift, 4)
+			end
+		end
 	end
 end
 
@@ -684,6 +716,17 @@ local function handle_command(...)
 				log("Number must be between 0 and 1")
 			end
 		end
+	elseif args[1] == "settp" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			if number >= 1000 and number <= 3000 then
+				settings["autowstp"] = number
+				config.save(settings)
+				log("Auto WS at " .. number .. " TP.")
+			else
+				log("Number must be between 1000 and 3000")
+			end
+		end
     else
         notice('//vw t: trade cells and displacers and start fight')
 		notice('//vw bc (number): buy number * 12 cobalt cells from nearby Voidwatch Officer')
@@ -697,6 +740,7 @@ local function handle_command(...)
 		notice('//vw autows: toggles whether to auto WS or not.')
 		notice('//vw converttocell: toggles whether to convert pulse to cells or not.')
 		notice('//vw setws: set the WS name to auto WS.')
+		notice('//vw settp: set the TP threshold for auto WS.')
 		notice('//vw stop: stops all parsing of incoming packets.')
     end
 end
