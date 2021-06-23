@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.8.0'
+_addon.version  = '0.8.10'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -466,6 +466,7 @@ local function parse_incoming(id, data)
 			local mob = windower.ffxi.get_mob_by_id(p['Mob'])
 			if mob and (mob.name == 'Riftworn Pyxis') then
 				if p['Type'] == 'deru' then
+					wait_for_sc = nil
 					wait_for_box_spawn = false
 					coroutine.schedule(poke_box, 2)
 				end
