@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.7.5'
+_addon.version  = '0.8.0'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -22,8 +22,11 @@ local default_settings = {
 	["autows"] = false,
 	["autowstp"] = 1000,
 	["WS"] = "Evisceration",
+	["scdelay"] = 3,
 	["converttocell"] = false,
-	["warpwhendone"] = false
+	["warpwhendone"] = false,
+	["trustset"] = "botulus",
+	["refreshtrusts"] = true,
 }
 
 local settings = config.load(default_settings)
@@ -79,6 +82,8 @@ local mob_stun_moves = {
 	["Ig-Alima"] = T{ "Oblivion's Mantle", "Dread Spikes" },
 }
 
+local skillchain_opener = T{ "Ayame" }
+
 -- state vars
 local wait_for_adrick_0x34 = false
 local wait_for_box_0x34 = false
@@ -94,6 +99,8 @@ local interrupted = false
 local buying_cobalt = false
 local buying_rubicund = false
 local number_to_buy = 0
+local sc_opener = nil
+local wait_for_sc = nil
 
 local function leader()
     local self = windower.ffxi.get_player()
@@ -178,6 +185,8 @@ local function reset(new_id, old_id)
 	buying_cobalt = false
 	buying_rubicund = false
 	number_to_buy = 0
+	sc_opener = nil
+	wait_for_sc = nil
 end
 
 local function trade_cells()
@@ -229,7 +238,7 @@ local function trade_cells()
 		if n ~= settings['cobalt'] + settings['rubicund'] + settings['displacers'] then
 			log("not enough cells/displacers")
 			reset()
-			windower.send_command('input /item "Instant Warp" <me>')
+			if settings['warpwhendone'] then windower.send_command('input /item "Instant Warp" <me>') end
 			return
 		end
         trade['Number of Items'] = n
@@ -257,6 +266,22 @@ local function start_fight()
 				['_unknown1'] = 0,
 			})
 		packets.inject(p)
+		local party = windower.ffxi.get_party()
+		if skillchain_opener:contains(party.p0.name) then 
+			sc_opener = party.p0.mob.id
+		elseif skillchain_opener:contains(party.p1.name) then
+			sc_opener = party.p1.mob.id
+		elseif skillchain_opener:contains(party.p2.name) then
+			sc_opener = party.p2.mob.id
+		elseif skillchain_opener:contains(party.p3.name) then
+			sc_opener = party.p3.mob.id
+		elseif skillchain_opener:contains(party.p4.name) then
+			sc_opener = party.p4.mob.id
+		elseif skillchain_opener:contains(party.p5.name) then
+			sc_opener = party.p5.mob.id
+		else
+			sc_opener = nil
+		end
 	else
 		log('interrupted')
 		interrupted = false
@@ -264,7 +289,7 @@ local function start_fight()
 end
 
 local function buy_cell()
-	log('buying cells')
+	log('buying ' .. number_to_buy + 1  .. 'x12 cells')
 	local p = packets.new('outgoing', 0x5b, {
             ['Target'] = npc_id,
             ['Target Index'] = npc_index,
@@ -318,6 +343,10 @@ local function get_everything()
 		wait_for_box_0x34 = true
 	elseif settings["autosell"] then
 		coroutine.schedule(sparky_purge, 1)
+	end
+	if settings['refreshtrusts'] and windower.ffxi.get_party().party1_count < 6 then
+		log('resummon trusts')
+		windower.send_command('wait 2; input //tru ' .. settings['trustset'])
 	end
 end
 
@@ -563,10 +592,22 @@ local function parse_action(action)
 								if use_cleric then
 									use_cleric = false
 									windower.send_command("input /item \"Cleric's Drink\" <me>")
-								elseif player_target.hpp <= 15 and player.vitals.tp >= 1000 then
-									do_ws()
+								elseif wait_for_sc then
+									if os.time() > wait_for_sc and player.vitals.tp >= 1000 then
+										wait_for_sc = nil
+										do_ws()
+									end
 								elseif player.vitals.tp >= settings["autowstp"] then
 									do_ws()
+								end
+							end
+						elseif sc_opener and action.category == 3 
+						and action.targets[1].id == player_target.id then -- someone wsed the mob
+							if action.targets[1].actions[1].param > 0 then
+								if action.actor_id == sc_opener then
+									wait_for_sc = os.time() + settings['scdelay']
+								else
+									wait_for_sc = nil
 								end
 							end
 						end
@@ -742,6 +783,25 @@ local function handle_command(...)
 		settings['warpwhendone'] = not settings['warpwhendone']
 		config.save(settings)
 		log("Warp when done changed to " .. tostring(settings['warpwhendone']))
+	elseif args[1] == "trustset" and args[2] then
+		settings['trustset'] = args[2]
+		config.save(settings)
+		log("Trust set changed to " .. tostring(settings['trustset']))
+	elseif args[1] == "refreshtrusts" then
+		settings['refreshtrusts'] = not settings['refreshtrusts']
+		config.save(settings)
+		log("Refresh trusts changed to " .. tostring(settings['refreshtrusts']))
+	elseif args[1] == "scdelay" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			if number > 1 and number < 10 then
+				settings['scdelay'] = number
+				config.save(settings)
+				log("Skillchain delay changed to " .. tostring(settings['scdelay']))
+			else
+				log("Number must be between 1 and 10(?)")
+			end
+		end
     else
         notice('//vw t: trade cells and displacers and start fight')
 		notice('//vw bc (number): buy number * 12 cobalt cells from nearby Voidwatch Officer')
@@ -757,6 +817,9 @@ local function handle_command(...)
 		notice('//vw setws: set the WS name to auto WS.')
 		notice('//vw settp: set the TP threshold for auto WS.')
 		notice('//vw warpwhendone: toggle warping when done. Uses a Scroll of Instant Warp.')
+		notice('//vw refreshtrusts: toggles whether to resummon trusts after battle.')
+		notice('//vw trustset (name): sets the name of the trust set. Uses Trusts addon to summon trusts.')
+		notice('//vw scdelay (number): sets the skillchain delay when a sc_opener is in the party.')
 		notice('//vw stop: stops all parsing of incoming packets.')
     end
 end
