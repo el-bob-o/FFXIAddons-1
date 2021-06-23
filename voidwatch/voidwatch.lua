@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.7.4'
+_addon.version  = '0.7.5'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -91,6 +91,9 @@ local use_cleric = false
 local started = false
 local running = false
 local interrupted = false
+local buying_cobalt = false
+local buying_rubicund = false
+local number_to_buy = 0
 
 local function leader()
     local self = windower.ffxi.get_player()
@@ -172,6 +175,9 @@ local function reset(new_id, old_id)
 	started = false
 	running = false
 	interrupted = false
+	buying_cobalt = false
+	buying_rubicund = false
+	number_to_buy = 0
 end
 
 local function trade_cells()
