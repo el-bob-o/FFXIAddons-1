@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.8.10'
+_addon.version  = '0.8.11'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -541,7 +541,14 @@ local function parse_incoming(id, data)
 end
 
 local function ws()
-	windower.send_command('input /ws "' .. settings['WS'] .. '" <t>')
+	local command = 'input /ws "' .. settings['WS'] .. '" <t>'
+	if wait_for_sc and windower.ffxi.get_player().main_job == "THF" then
+		if windower.ffxi.get_ability_recasts()[66] == 0 then
+			command = 'input /ja "Trick Attack" <me>; wait 1; input /ws "' .. settings['WS'] .. '" <t>'
+		end
+	end
+	wait_for_sc = nil
+	windower.send_command(command)
 end
 
 local function do_ws()
@@ -595,7 +602,6 @@ local function parse_action(action)
 									windower.send_command("input /item \"Cleric's Drink\" <me>")
 								elseif wait_for_sc then
 									if os.time() > wait_for_sc and player.vitals.tp >= 1000 then
-										wait_for_sc = nil
 										do_ws()
 									end
 								elseif player.vitals.tp >= settings["autowstp"] then
