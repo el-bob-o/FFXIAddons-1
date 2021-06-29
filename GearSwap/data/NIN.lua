@@ -1,5 +1,5 @@
 include('THHelper.lua')
-include("MasterGearList.lua")
+include("MasterGearFunctions.lua")
 
 elemental_ninjutsu = { "Katon", "Suiton", "Raiton", "Doton", "Huton", "Hyoton" }
 
@@ -10,7 +10,7 @@ function get_sets()
 	Mode = 1
 	Buffs = {}
 	
-	get_set_for_job("NIN", sets)
+	get_set_for_job_json("NIN", sets)
 		
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] }
@@ -93,9 +93,7 @@ function self_command(command)
             return
         end
     end
-	if args[1] == "th" then
-		parse_th_command(args)
-	elseif args[1] == "cp" then
+	if args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
 			enable("back")
@@ -136,8 +134,6 @@ function self_command(command)
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)
 		end
-	else
-		master_gear_list_command(args)
 	end
 end
 

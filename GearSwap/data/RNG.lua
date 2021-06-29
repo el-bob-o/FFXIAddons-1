@@ -1,4 +1,4 @@
-include("MasterGearList.lua")
+include("MasterGearFunctions.lua")
 include('THHelper.lua')
 texts = require('texts')
 
@@ -59,8 +59,11 @@ function get_sets()
 	HoverShot = false
 	last_shot_position = nil
 	cancel_haste = true
+	AM3Mode = false
 	
-	get_set_for_job("RNG", sets)
+	setup_text_window()
+	
+	get_set_for_job_from_json("RNG", sets)
 		
 	Modes = { 
 		{ name = "RangedIdleDT", set = sets["RangedIdleDT"] },
@@ -69,19 +72,16 @@ function get_sets()
 		
 	sets.Idle = set_combine(sets["RangedIdleDT"], sets["IdleRegen"], sets["Movement"])
 	
-	sets["Flurry1"] = set_combine(sets["Flurry2"], sets["Flurry1"])
-	sets["Flurry0"] = set_combine(sets["Flurry1"], sets["Flurry0"])
-	
 	sets["Hot Shot"] = set_combine(sets["MagicAtk"], sets["Fotia"])
 	sets["Trueflight"] = sets["MagicAtk"]
 	sets["Wildfire"] = sets["MagicAtk"]
 	sets["Aeolian Edge"] = set["MagicAtk"]
 	sets["Savage Blade"] = sets["STR_Melee_WS"]	
-	sets["Last Stand"] = set_combine(sets["AGI_Ranged_WS"], sets["Fotia"])
+	sets["Last Stand"] = set_combine(sets["Ranged_AGI_WS"], sets["Fotia"])
 	sets["Ruinator"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
 	sets["Decimation"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
 	
-	setup_text_window()
+	
 	check_buffs()
 	update_rng_info()	
 	
@@ -101,7 +101,9 @@ function precast(spell)
 			setToUse = sets[spell.english]
 		end
 		local maxTP = 3000
-		if player.equipment.range == "Fomalhaut" and spell.skill == "Marksmanship" then
+		local equipment = windower.ffxi.get_items().equipment
+		local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
+		if res.items[range.id].name == "Fomalhaut" and spell.skill == "Marksmanship" then
 			maxTP = maxTP - 500
 		end
 		if player.sub_job == "WAR" then
@@ -123,7 +125,14 @@ end
 function midcast(spell)
 	if spell.action_type == "Ranged Attack" then
 		local setToUse = sets["Midshot"]
-		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end
+		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
+		if buffactive["Aftermath: Lv.3"] then
+			local equipment = windower.ffxi.get_items().equipment
+			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
+			if res.items[range.id].name == "Armageddon" then
+				setToUse = set_combine(setToUse, set["AM3"]) end
+			end
+		if buffactive["Barrage"] then setToUse = set_combine(setToUse, sets["Barrage"]) end
 		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		equip(setToUse)
 	end
@@ -211,10 +220,6 @@ function self_command(command)
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)
 		end
-	elseif args[1] == "th" then
-		parse_th_command(args)
-	else
-		master_gear_list_command(args)
 	end
 end
 
@@ -251,6 +256,7 @@ function check_buffs()
 	local playerbuffs = windower.ffxi.get_player().buffs
 	local hover_found = false
 	local double_found = false
+	local AM_found = false
 	for k, _buff_id in pairs(playerbuffs) do
 		if buff_ids:contains(_buff_id) then
 			if not hover_found then
@@ -269,6 +275,7 @@ function check_buffs()
 	end
 	if not hover_found then HoverShot = false end
 	if not double_found then DoubleShot = false end
+	if not AM_found then AM3Mode = false end
 	if cancel_haste then
 		for k, _buff_id in pairs(playerbuffs) do
 			if _buff_id == 33 then 
@@ -287,7 +294,7 @@ function update_rng_info()
 	if items.equipment.ammo and string.len(items.equipment.ammo) > 0 then
 		ranger_info_hub.ammo_name = player.equipment.ammo
 		local ammo_item = windower.ffxi.get_items(items.equipment.ammo_bag, items.equipment.ammo)
-		if ammo_item then 
+		if ammo_item and ammo_item.id ~= 65535 then 
 			ranger_info_hub.ammo_count = ammo_item.count
 		else
 			ranger_info_hub.ammo_count = 0

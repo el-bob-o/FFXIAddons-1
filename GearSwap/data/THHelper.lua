@@ -17,28 +17,33 @@ SlotsUsed = S{}
 AmmoDisabled = false
 THEquipped = false
 
-function parse_th_command(args)
-	if args[2] and type(tonumber(args[2])) == 'number' then
-		local nextMode = tonumber(args[2])
-		if THModes[nextMode] == nil then
-			add_to_chat(122, "Invalid TH mode number")
-		else
-			if THModes[nextMode].thfMain == false then
-				THMode = nextMode
-			elseif THModes[nextMode].thfMain and player.main_job == "THF" then
-				THMode = nextMode
-			else
+function parse_th_command(...)
+	local args = T{...}
+	if args[1] == "th" then
+		if args[2] and type(tonumber(args[2])) == 'number' then
+			local nextMode = tonumber(args[2])
+			if THModes[nextMode] == nil then
 				add_to_chat(122, "Invalid TH mode number")
+			else
+				if THModes[nextMode].thfMain == false then
+					THMode = nextMode
+				elseif THModes[nextMode].thfMain and player.main_job == "THF" then
+					THMode = nextMode
+				else
+					add_to_chat(122, "Invalid TH mode number")
+				end
 			end
+			print_th_mode()
+		else		
+			THMode = THMode + 1		
+			if THModes[THMode] == nil or (THModes[THMode].thfMain and player.main_job ~= "THF") then 
+				THMode = 1
+			end
+			print_th_mode()
 		end
-		print_th_mode()
-	else		
-		THMode = THMode + 1		
-		if THModes[THMode] == nil or (THModes[THMode].thfMain and player.main_job ~= "THF") then 
-			THMode = 1
-		end
-		print_th_mode()
+		return true
 	end
+	return false
 end
 
 function equip_th()
@@ -175,3 +180,4 @@ windower.register_event('target change', on_target_change_for_th)
 windower.raw_register_event('incoming chunk', on_incoming_chunk_for_th)
 windower.register_event('zone change', clear_tags)
 windower.register_event('time change', clean_up_tags)
+register_unhandled_command(parse_th_command)

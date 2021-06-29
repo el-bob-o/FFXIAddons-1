@@ -1,4 +1,5 @@
-include('MasterGearList.lua')
+include("MasterGearFunctions.lua")
+include('THHelper.lua')
 
 function get_sets()
 	KiteMode = false
@@ -17,7 +18,7 @@ function get_sets()
 		{ name = "OmenSolo", Indi = "Indi-Haste", Geo = "Geo-Malaise", Entrust = "Indi-Refresh" }
 	}
 	
-	get_set_for_job("GEO", sets)
+	get_set_for_job_from_json("GEO", sets)
 		
 	Modes = { 
 		{ name = "CombatIdleDT", set = sets["CombatIdleDT"]},
@@ -28,12 +29,13 @@ function get_sets()
 	sets["Seraph Strike"] = sets["Elemental"]
 	sets["Flash Nova"] = sets["Elemental"]
 	sets["Cataclysm"] = sets["Elemental"]
-	sets["Hexa Strike"] = set_combine(sets["Melee"], sets["STR_Melee_WS"], sets["Fotia"])
-	sets["Black Halo"] = sets["Melee"]
-	sets["Exudation"] = sets["Melee"]
+	sets["Hexa Strike"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
+	sets["Black Halo"] = sets["MND_WS"]
+	sets["Exudation"] = sets["MND_WS"]
 	 
 	send_command('@input /macro book 3;wait 1;input /macro set 1')
 	print_mode()
+	print_th_mode()
 	print_current_nuke()
 	print_current_geos()
 	print_buff_mode()
@@ -228,8 +230,10 @@ function self_command(command)
 	elseif args[1] == 'setEntrust' then
 		Entrust = args[2]
 		print_current_geos()
-	else
-		master_gear_list_command(args)
+	elseif args[1] == "thtagged" then
+		if player.status == "Engaged" then
+			equip(Modes[Mode].set)
+		end
 	end
 end
 

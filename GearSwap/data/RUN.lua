@@ -1,5 +1,5 @@
 include("THHelper.lua")
-include("MasterGearList.lua")
+include("MasterGearFunctions.lua")
 
 EmnityActions = {}
 EmnityActions["JA"] = { "Valiance", "Vallation", "Swordplay", "Pflug", "Gambit", "Rayke", "Liement",
@@ -97,12 +97,12 @@ function get_sets()
 		["ignis"] = 0,
 	}
 	
-	get_set_for_job("RUN", sets)
+	get_set_for_job_from_json("RUN", sets)
 	
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] },
-		{ name = "Tank_Physical", set = set_combine(sets["Hybrid"], sets["Tank_Physical"]) },
-		{ name = "Tank_Magical", set = set_combine(sets["Hybrid"], sets["Tank_Magical"]) },
+		{ name = "Tank_Physical", set = sets["Tank_Physical"] },
+		{ name = "Tank_Magical", set = sets["Tank_Magical"] },
 	}
 	
 	sets["Swipe"] = sets["Lunge"]
@@ -114,12 +114,11 @@ function get_sets()
 	sets["Resolution"] = set_combine(sets["STR_WS"], sets["Fotia"])
 	sets["Savage Blade"] = set_combine(sets["STR_WS"])
 	sets["Requeiscat"] = set_combine(sets["MND_WS"], sets["Fotia"])
-	sets["Dimidiation"] = set_combine(sets["DEX_WS"], sets["WSD"])
+	sets["Dimidiation"] = set_combine(sets["DEX_WS"])
 	
-	sets.FastcastEnhancing = set_combine(sets["Fastcast"], sets["FastcastEnhancing"])
-	sets.EnhancingRegen = set_combine(sets["EnhancingAny"], sets["EnhancingRegen"])
-	sets.EnhancingPhalanx = set_combine(sets["EnhancingAny"], sets["EnhancingPhalanx"])
-	sets.Idle = set_combine(sets["Hybrid"], sets["Tank_Magical"], sets["Movement"], sets["IdleRegen"])
+	sets["EnhancingRegen"] = set_combine(sets["EnhancingAny"], sets["EnhancingRegen"])
+	sets["EnhancingPhalanx"] = set_combine(sets["EnhancingAny"], sets["EnhancingPhalanx"])
+	sets["Idle"] = set_combine(sets["Hybrid"], sets["Tank_Magical"], sets["Movement"], sets["IdleRegen"])
 	
 	subjob_check(player.sub_job)
 	print_mode()
@@ -174,9 +173,9 @@ function midcast(spell)
 		local setToUse = nil
 		if spell.skill == "Enhancing Magic" then
 			if spell.english:match("Regen") then
-				setToUse = sets.EnhancingRegen
+				setToUse = sets["EnhancingRegen"]
 			elseif spell.english:match("Phalanx") then
-				setToUse = sets.EnhancingPhalanx
+				setToUse = sets["EnhancingPhalanx"]
 			else
 				setToUse = sets["EnhancingAny"]
 			end
@@ -195,14 +194,14 @@ function aftercast(spell)
     if player.status=='Engaged' or Combat then
         equip(Modes[Mode].set)
     else
-        equip(sets.Idle)
+        equip(sets["Idle"])
     end
 end
  
 function status_change(new,old)
     if T{'Idle','Resting'}:contains(new) then
 		on_status_change_for_th(new, old)
-		equip(sets.Idle)
+		equip(sets["Idle"])
     elseif new == 'Engaged' then
 		equip(Modes[Mode].set)
 		on_status_change_for_th(new, old)
@@ -218,13 +217,13 @@ windower.register_event('zone change', function()
 		if Combat then
 			equip(Modes[Mode].set)
 		else
-			equip(set_combine(sets.Idle, sets["Adoulin"]))
+			equip(set_combine(sets["Idle"], sets["Adoulin"]))
 		end
 	else
 		if Combat then
 			equip(Modes[Mode].set)
 		else
-			equip(sets.Idle)
+			equip(sets["Idle"])
 		end
 	end
 end)
@@ -385,8 +384,6 @@ function self_command(command)
 				print_current_rune()
 			end
 		end
-	elseif args[1] == "th" then
-		parse_th_command(args)
 	elseif args[1] == "printBuffs" then
 		for k,v in pairs(buffactive) do
 			add_to_chat(122, k .. " " .. tostring(v))
@@ -395,8 +392,6 @@ function self_command(command)
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)
 		end
-	else
-		master_gear_list_command(args)
 	end
 end
 

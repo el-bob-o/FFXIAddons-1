@@ -1,4 +1,5 @@
-include('MasterGearList.lua')
+include("MasterGearFunctions.lua")
+include('THHelper.lua')
 texts = require('texts')
 
 BPs = {
@@ -167,7 +168,9 @@ function get_sets()
 	Buffs = {}
 	TimerFromPrecast = 1.25
 	
-	get_set_for_job("SMN", sets)
+	get_set_for_job_from_json("SMN", sets)
+	
+	print_th_mode()
 	
 	setup_text_window()
 	if pet.isvalid then update_blood_pact_info(pet.name) end
@@ -406,8 +409,10 @@ function self_command(command)
 			add_to_chat(122, "BuffBot on!")
 			BuffBot = true
 		end
-	else
-		master_gear_list_command(args)
+	elseif args[1] == "thtagged" then
+		if player.status == "Engaged" then
+			equip_idle_set()
+		end
 	end
 end
 

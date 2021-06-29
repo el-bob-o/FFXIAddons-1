@@ -1,5 +1,5 @@
 include('THHelper.lua')
-include("MasterGearList.lua")
+include("MasterGearFunctions.lua")
 
 function get_sets()
 	CPMode = false
@@ -9,20 +9,24 @@ function get_sets()
 	Mode = 1
 	Buffs = {}
 	
-	get_set_for_job("THF", sets)
+	get_set_for_job_from_json("THF", sets)
 		
-	sets.Lilith = set_combine(sets["Hybrid"], sets["Knockback"])
+	sets["Lilith"] = set_combine(sets["Hybrid"], sets["Knockback"])
 	
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] },
-		{ name = "Lilith", set = sets.Lilith }
+		{ name = "Lilith", set = sets["Lilith"] }
 	}
 	
 	sets.SATA = set_combine(sets["SneakAttack"], sets["TrickAttack"])
-		
-	sets["Mandalic Stab"] = sets["Rudra's Storm"]
-	sets["Cyclone"] = sets["Aeolian Edge"]
-	sets["Gust Slash"] = sets["Aeolian Edge"]
+	
+	sets["Rudra's Storm"] = sets["DEX_WS"]
+	sets["Mandalic Stab"] = sets["DEX_WS"]
+	sets["Aeolian Edge"] = sets["MagicAtk"]
+	sets["Cyclone"] = sets["MagicAtk"]
+	sets["Gust Slash"] = sets["MagicAtk"]
+	sets["Evisceration"] = set_combine(sets["DEX_Crit_WS"], sets["Fotia"])
+	sets["Savage Blade"] = sets["STR_WS"]
  
 	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
 	
@@ -57,7 +61,7 @@ end
 function midcast(spell)
 	if spell.action_type == 'Magic' then
 		if spell.skill == "Elemental Magic" then
-			equip(sets["WS_Magical"])
+			equip(sets["MagicAtk"])
 		end
 	end
 end
@@ -155,8 +159,6 @@ function self_command(command)
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)
 		end
-	else
-		master_gear_list_command(args)
 	end
 end
 
