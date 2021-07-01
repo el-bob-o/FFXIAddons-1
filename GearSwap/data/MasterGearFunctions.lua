@@ -224,6 +224,7 @@ function export_sets_from_json()
         windower.create_dir(windower.addon_path..'export')
     end
 	local exportFilePath = windower.addon_path..'export/'..player.name..'.txt'
+	windower.add_to_chat(122, "Exporting sets to " .. exportFilePath)
 	local f = io.open(exportFilePath,'w+')
 	local saveString = ""
 	for k, job in pairs(jobs) do
@@ -392,6 +393,36 @@ function add_to_set_json(sets, gear, slot, job)
 	return count
 end
 
+function update_gear_name(name1, name2)
+	if update_gear_name_in_slot(gear_list.main, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.sub, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.range, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.ammo, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.head, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.neck, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.ear1, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.ear2, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.body, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.hands, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.ring1, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.ring2, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.back, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.waist, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.legs, name1, name2) then return true end
+	if update_gear_name_in_slot(gear_list.feet, name1, name2) then return true end
+	return false
+end
+
+function update_gear_name_in_slot(slot, name1, name2)
+	for k,v in pairs(slot) do
+		if v.name == name1 then
+			v.name = name2
+			return true
+		end
+	end
+	return false
+end
+
 -- reusable old lua function
 
 function gear_string(gearlist, slot_name)
@@ -468,6 +499,7 @@ function print_help()
 	windower.add_to_chat(122, "//gs mastergear saveequipped (set_name): Saved equipped gear to a set. Won't save main, sub, ranged.")
 	windower.add_to_chat(122, "//gs mastergear savegearslots (slots:csv) (set_name): Saved gear in specified slots to a set.")
 	windower.add_to_chat(122, "//gs mastergear removeset (set_name): Remove specified set.")
+	windower.add_to_chat(122, "//gs mastergear update (gear_1_name,gear_2_name): Updates name of gear from gear_1_name to gear_2_name.")
 end
 
 function parse_command(...)
@@ -491,6 +523,7 @@ function parse_command(...)
 			end
 			set_name = string.sub(set_name, 1, #set_name - 1)
 			save_equipped_as_set(set_name)
+			windower.add_to_chat(122, "Equipment saved to " .. set_name)
 		elseif args[1] == "saveslots" and args[2] and args[3] then
 			local set_name = ""
 			for i = 3, #args do
@@ -499,8 +532,31 @@ function parse_command(...)
 			set_name = string.sub(set_name, 1, #set_name - 1)
 			save_gear_slots(args[2], set_name)
 			save_json_setting()
+			windower.add_to_chat(122, args[2] " saved to " .. set_name)
 		elseif args[1] == 'removeset' and args[2] then
-			remove_set(args[2])
+			local set_name = ""
+			for i = 2, #args do
+				set_name = set_name .. args[i] .. " "
+			end
+			remove_set(set_name)
+			windower.add_to_chat(122, "Removing " .. set_name)
+		elseif args[1] == 'update' and args[2] then
+			local commandstring = ""
+			for i = 2, #args do
+				commandstring = commandstring .. args[i] .. " "
+			end
+			commandstring = string.sub(commandstring, 1, #commandstring - 1)
+			local gear_names = T(commandstring:split(','))
+			if #gear_names == 2 then
+				if update_gear_name(gear_names[1], gear_names[2]) then
+					windower.add_to_chat(122, "Updated " .. gear_names[1] .. " to " .. gear_names[2])
+					save_json_setting()
+				else
+					windower.add_to_chat(122, "Couldn't find any gear with name: " .. gear_names[1])
+				end
+			else
+				windower.add_to_chat(122, "Please input 2 names separated by comma: " .. commandstring)
+			end
 		else
 			print_help()
 		end

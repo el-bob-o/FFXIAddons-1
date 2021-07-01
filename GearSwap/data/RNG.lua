@@ -60,6 +60,7 @@ function get_sets()
 	last_shot_position = nil
 	cancel_haste = true
 	AM3Mode = false
+	AM3DT = false
 	
 	setup_text_window()
 	
@@ -80,7 +81,6 @@ function get_sets()
 	sets["Last Stand"] = set_combine(sets["Ranged_AGI_WS"], sets["Fotia"])
 	sets["Ruinator"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
 	sets["Decimation"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
-	
 	
 	check_buffs()
 	update_rng_info()	
@@ -130,8 +130,13 @@ function midcast(spell)
 			local equipment = windower.ffxi.get_items().equipment
 			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
 			if res.items[range.id].name == "Armageddon" then
-				setToUse = set_combine(setToUse, set["AM3"]) end
+				if AM3DT then 
+					setToUse = set_combine(setToUse, set["AM3DT"])
+				else 
+					setToUse = set_combine(setToUse, set["AM3"])
+				end
 			end
+		end
 		if buffactive["Barrage"] then setToUse = set_combine(setToUse, sets["Barrage"]) end
 		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		equip(setToUse)
@@ -215,6 +220,14 @@ function self_command(command)
 		elseif cancel_haste == true then
 			add_to_chat(122, "Keeping Haste Buffs")
 			cancel_haste = false
+		end
+	elseif args[1] == "AM3DT" then
+		if AM3DT == false then
+			add_to_chat(122, "AM3DT true")
+			AM3DT = true
+		elseif AM3DT == true then
+			add_to_chat(122, "AM3DT false")
+			AM3DT = false
 		end
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
