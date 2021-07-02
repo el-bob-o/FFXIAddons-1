@@ -189,17 +189,27 @@ function remove_set_from_slot(slot, set_name)
 			if v2[player.main_job] then
 				for k3, v3 in pairs(v2[player.main_job]) do
 					if v3 == set_name then
+						windower.add_to_chat(122, "Removing " .. set_name .. " from " .. v.name)
 						table.remove(v2[player.main_job], k3)
 						break
 					end
 				end
 				if #v2[player.main_job] == 0 then
+					windower.add_to_chat(122, "Removing " .. player.main_job .. " from " .. v.name)
 					table.remove(v.set_list, k2)
 				end
-				break
 			end
 		end
-		if #v.set_list == 0 then
+	end
+	for k,v in pairs(slot) do
+		local count = 0
+		for k2, v2 in pairs(v.set_list) do
+			for k3, v3 in pairs(v2) do
+				count = count + 1
+			end
+		end
+		if count == 0 then
+			windower.add_to_chat(122, "Removing " .. v.name)
 			table.remove(slot, k)
 		end
 	end
@@ -532,7 +542,7 @@ function parse_command(...)
 			set_name = string.sub(set_name, 1, #set_name - 1)
 			save_gear_slots(args[2], set_name)
 			save_json_setting()
-			windower.add_to_chat(122, args[2] " saved to " .. set_name)
+			windower.add_to_chat(122, args[2] .. " saved to " .. set_name)
 		elseif args[1] == 'removeset' and args[2] then
 			local set_name = ""
 			for i = 2, #args do
