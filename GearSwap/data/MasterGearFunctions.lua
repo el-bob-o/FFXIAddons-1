@@ -189,14 +189,12 @@ function remove_set_from_slot(slot, set_name)
 			if v2[player.main_job] then
 				for k3, v3 in pairs(v2[player.main_job]) do
 					if v3 == set_name then
-						windower.add_to_chat(122, "Removing " .. set_name .. " from " .. v.name)
 						table.remove(v2[player.main_job], k3)
 						break
 					end
 				end
 				if #v2[player.main_job] == 0 then
-					windower.add_to_chat(122, "Removing " .. player.main_job .. " from " .. v.name)
-					table.remove(v.set_list, k2)
+					v2[player.main_job] = nil
 				end
 			end
 		end
@@ -209,7 +207,6 @@ function remove_set_from_slot(slot, set_name)
 			end
 		end
 		if count == 0 then
-			windower.add_to_chat(122, "Removing " .. v.name)
 			table.remove(slot, k)
 		end
 	end
