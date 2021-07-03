@@ -222,7 +222,7 @@ function self_command(command)
 			add_to_chat(122, "Keeping Haste Buffs")
 			cancel_haste = false
 		end
-	elseif args[1] == "DT" then
+	elseif args[1] == "dt" then
 		if DT == false then
 			add_to_chat(122, "DT true")
 			DT = true
