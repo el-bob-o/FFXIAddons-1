@@ -60,7 +60,7 @@ function get_sets()
 	last_shot_position = nil
 	cancel_haste = true
 	AM3Mode = false
-	AM3DT = false
+	DT = false
 	
 	setup_text_window()
 	
@@ -125,12 +125,13 @@ end
 function midcast(spell)
 	if spell.action_type == "Ranged Attack" then
 		local setToUse = sets["Midshot"]
+		if DT then setToUse = sets["MidshotDT"] end
 		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
 		if buffactive["Aftermath: Lv.3"] then
 			local equipment = windower.ffxi.get_items().equipment
 			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
 			if res.items[range.id].name == "Armageddon" then
-				if AM3DT then 
+				if DT then 
 					setToUse = set_combine(setToUse, set["AM3DT"])
 				else 
 					setToUse = set_combine(setToUse, set["AM3"])
@@ -221,13 +222,13 @@ function self_command(command)
 			add_to_chat(122, "Keeping Haste Buffs")
 			cancel_haste = false
 		end
-	elseif args[1] == "AM3DT" then
-		if AM3DT == false then
-			add_to_chat(122, "AM3DT true")
-			AM3DT = true
-		elseif AM3DT == true then
-			add_to_chat(122, "AM3DT false")
-			AM3DT = false
+	elseif args[1] == "DT" then
+		if DT == false then
+			add_to_chat(122, "DT true")
+			DT = true
+		elseif DT == true then
+			add_to_chat(122, "DT false")
+			DT = false
 		end
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then

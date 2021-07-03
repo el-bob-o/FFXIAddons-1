@@ -10,7 +10,7 @@ function get_sets()
 	Mode = 1
 	Buffs = {}
 	
-	get_set_for_job_json("NIN", sets)
+	get_set_for_job_from_json("NIN", sets)
 		
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] }
