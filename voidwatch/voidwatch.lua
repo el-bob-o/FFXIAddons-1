@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.8.11'
+_addon.version  = '0.8.12'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -620,11 +620,14 @@ local function parse_action(action)
 						end
 					end
 				end
-			elseif action.category == 7 or action.category == 8 or action.category == 1 then
-				if action.targets[1].id == player.id then -- someone attacking me but I'm not in combat!
-					if wait_for_box_spawn then
-						log('retry attack boss')
-						windower.send_command("wait 2; input /attack on")
+			else
+				for k,v in pairs(action.targets) do
+					if v.id == player.id then -- a mob doing anything to player
+						if wait_for_box_spawn then
+							log('retry attack boss')
+							windower.send_command("wait 2; input /attack on")
+							break
+						end
 					end
 				end
 			end
