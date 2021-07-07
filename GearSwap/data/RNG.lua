@@ -1,6 +1,7 @@
 include("MasterGearFunctions.lua")
 include('THHelper.lua')
 texts = require('texts')
+packets = require('packets')
 
 ranger_info = [[${ammo_name}:${ammo_count}
 Flurry: ${flurry|0}
@@ -58,9 +59,12 @@ function get_sets()
 	DoubleShot = false
 	HoverShot = false
 	last_shot_position = nil
+	shot_position_0x015 = { x = 0, y = 0, z = 0 }
 	cancel_haste = true
 	AM3Mode = false
 	DT = false
+	ShootNextPosUpdate = false
+	RecordPosNextRangedAttack = false
 	
 	setup_text_window()
 	
@@ -145,13 +149,6 @@ function midcast(spell)
 end
  
 function aftercast(spell)
-	if spell.action_type == "Ranged Attack" 
-	or (spell.type == "WeaponSkill" and (spell.skill == "Marksmanship" or spell.skill == "Archery")) then
-		local player = windower.ffxi.get_mob_by_target('me')
-		if player then 
-			last_shot_position = player
-		end
-	end
     if player.status=='Engaged' then
         equip(Modes[Mode].set)
     else
@@ -177,6 +174,22 @@ windower.register_event('zone change', function()
 		equip(sets.Idle)
 	end
 end)
+
+function get_distance_sq()
+	if last_shot_position ~= nil then
+		local player = windower.ffxi.get_mob_by_target('me')
+		if player then 
+			local x = math.abs(last_shot_position.x - player.x)
+			local y = math.abs(last_shot_position.y - player.y)
+			local z = math.abs(last_shot_position.z - player.z)
+			x = (x*x)
+			y = (y*y)
+			z = (z*z)
+			return x + y + z
+		end
+	end
+	return 0
+end
  
 function self_command(command)
 	local args = T{}
@@ -233,6 +246,22 @@ function self_command(command)
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)
+		end
+	elseif args[1] == "ra" then
+		if HoverShot and last_shot_position ~= nil then
+			local player = windower.ffxi.get_mob_by_target('me')
+			if player then 
+				local distance = get_distance_sq()
+				if distance > 1 then
+					ShootNextPosUpdate = true
+					RecordPosNextRangedAttack = false
+				else
+					windower.add_to_chat(123,"Not far enough for hover shot!")
+				end
+			end
+		else
+			ShootNextPosUpdate = true
+			RecordPosNextRangedAttack = false
 		end
 	end
 end
@@ -369,6 +398,10 @@ function rng_action_helper(act)
 					end
 				end
 			end
+			if RecordPosNextRangedAttack then
+				RecordPosNextRangedAttack = false
+				last_shot_position = shot_position_0x015
+			end
 		end
 	elseif act.category == 3 then -- ws
 		if act.actor_id == player.id then
@@ -377,23 +410,22 @@ function rng_action_helper(act)
 					ranger_info_hub.dmg = v2.param
 				end
 			end
+			if HoverShot then
+				local ws = res.weapon_skills[act.param]
+				if ws and (ws.skill == 26 or ws.skill == 25)then
+					local player = windower.ffxi.get_mob_by_target('me')
+					if player then 
+						last_shot_position = player
+					end
+				end
+			end
 		end
 	end
 end
 
 function update_hover_shot_info()
 	if HoverShot then
-		ranger_info_hub.distance = 0
-		local player = windower.ffxi.get_mob_by_target('me')
-		if player and last_shot_position ~= nil then
-			local x = math.abs(last_shot_position.x - player.x)
-			local y = math.abs(last_shot_position.y - player.y)
-			local z = math.abs(last_shot_position.z - player.z)
-			x = (x*x)
-			y = (y*y)
-			z = (z*z)
-			ranger_info_hub.distance = math.sqrt(x + y + z)
-		end
+		ranger_info_hub.distance = math.sqrt(get_distance_sq())
 	else
 		ranger_info_hub.distance = nil
 	end
@@ -407,6 +439,21 @@ function clear_last_shot_position()
 	last_shot_position = nil
 end
 
+function parse_outgoing(id, original, modified, injected, blocked)
+	if id == 0x015 and not injected and not blocked and ShootNextPosUpdate then
+		ShootNextPosUpdate = false
+		windower.send_command('input /ra <t>')
+		if HoverShot then
+			RecordPosNextRangedAttack = true
+			local p = packets.parse('outgoing', original)
+			shot_position_0x015.x = p['X']
+			shot_position_0x015.y = p['Y']
+			shot_position_0x015.z = p['Z']
+		end
+	end
+end
+
 windower.register_event('action', rng_action_helper)
 windower.register_event('prerender', update_hover_shot_info)
 windower.register_event('zone change', clear_last_shot_position)
+windower.register_event('outgoing chunk', parse_outgoing)
