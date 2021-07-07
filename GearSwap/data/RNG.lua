@@ -65,6 +65,7 @@ function get_sets()
 	DT = false
 	ShootNextPosUpdate = false
 	RecordPosNextRangedAttack = false
+	HoverShotTarget = nil
 	
 	setup_text_window()
 	
@@ -252,7 +253,7 @@ function self_command(command)
 			local player = windower.ffxi.get_mob_by_target('me')
 			if player then 
 				local distance = get_distance_sq()
-				if distance > 1 then
+				if distance > 1 or HoverShotTarget == nil then
 					ShootNextPosUpdate = true
 					RecordPosNextRangedAttack = false
 				else
@@ -387,6 +388,7 @@ function rng_action_helper(act)
 	elseif act.category == 2 then -- ranged attack
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
+				if HoverShot then HoverShotTarget = v.id end
 				for k2, v2 in pairs(v.actions) do
 					ranger_info_hub.dmg = v2.param
 					if v2.message == 352 then 
@@ -406,6 +408,7 @@ function rng_action_helper(act)
 	elseif act.category == 3 then -- ws
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
+				if HoverShot then HoverShotTarget = v.id end
 				for k2, v2 in pairs(v.actions) do
 					ranger_info_hub.dmg = v2.param
 				end
@@ -453,7 +456,14 @@ function parse_outgoing(id, original, modified, injected, blocked)
 	end
 end
 
+function parse_action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
+	if (message_id == 6 or message_id == 20) and HoverShotTarget ~= nil and target_id == HoverShotTarget then
+		HoverShotTarget = nil
+	end
+end
+
 windower.register_event('action', rng_action_helper)
 windower.register_event('prerender', update_hover_shot_info)
 windower.register_event('zone change', clear_last_shot_position)
 windower.register_event('outgoing chunk', parse_outgoing)
+windower.register_event('action message', parse_action_message)
