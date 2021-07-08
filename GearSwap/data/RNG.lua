@@ -2,10 +2,11 @@ include("MasterGearFunctions.lua")
 include('THHelper.lua')
 texts = require('texts')
 packets = require('packets')
+require('chat')
 
 ranger_info = [[${ammo_name}:${ammo_count}
 Flurry: ${flurry|0}
-Hover Shot: ${distance|Off|%.2f}
+Hover Shot: ${distance}
 True Strike: ${distance_correction}
 Last Attack: ${dmg}
 ]]
@@ -58,8 +59,11 @@ function get_sets()
 	Flurry = 0
 	DoubleShot = false
 	HoverShot = false
-	last_shot_position = nil
-	shot_position_0x015 = { x = 0, y = 0, z = 0 }
+	last_shot_position_x = 0
+	last_shot_position_y = 0
+	last_shot_position_valid = false
+	shot_position_0x015_x = 0 
+	shot_position_0x015_y = 0
 	cancel_haste = true
 	AM3Mode = false
 	DT = false
@@ -177,16 +181,14 @@ windower.register_event('zone change', function()
 end)
 
 function get_distance_sq()
-	if last_shot_position ~= nil then
-		local player = windower.ffxi.get_mob_by_target('me')
-		if player then 
-			local x = math.abs(last_shot_position.x - player.x)
-			local y = math.abs(last_shot_position.y - player.y)
-			local z = math.abs(last_shot_position.z - player.z)
+	if last_shot_position_valid then
+		local playerpos = windower.ffxi.get_mob_by_target('me')
+		if playerpos then 
+			local x = math.abs(last_shot_position_x - playerpos.x)
+			local y = math.abs(last_shot_position_y - playerpos.y)
 			x = (x*x)
 			y = (y*y)
-			z = (z*z)
-			return x + y + z
+			return x + y
 		end
 	end
 	return 0
@@ -249,16 +251,13 @@ function self_command(command)
 			equip(Modes[Mode].set)
 		end
 	elseif args[1] == "ra" then
-		if HoverShot and last_shot_position ~= nil then
-			local player = windower.ffxi.get_mob_by_target('me')
-			if player then 
-				local distance = get_distance_sq()
-				if distance > 1 or HoverShotTarget == nil then
-					ShootNextPosUpdate = true
-					RecordPosNextRangedAttack = false
-				else
-					windower.add_to_chat(123,"Not far enough for hover shot!")
-				end
+		if HoverShot and not last_shot_position_valid then
+			local distance = get_distance_sq()
+			if distance > 1 or HoverShotTarget == nil then
+				ShootNextPosUpdate = true
+				RecordPosNextRangedAttack = false
+			else
+				windower.add_to_chat(123,"Not far enough for hover shot!")
 			end
 		else
 			ShootNextPosUpdate = true
@@ -385,6 +384,10 @@ function rng_action_helper(act)
 				end
 			end
 		end
+	elseif act.category == 12 then
+		if act.param == 28787 then -- ranged attack interrupted
+			RecordPosNextRangedAttack = false
+		end
 	elseif act.category == 2 then -- ranged attack
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
@@ -402,7 +405,9 @@ function rng_action_helper(act)
 			end
 			if RecordPosNextRangedAttack then
 				RecordPosNextRangedAttack = false
-				last_shot_position = shot_position_0x015
+				last_shot_position_valid = true
+				last_shot_position_x = shot_position_0x015_x
+				last_shot_position_y = shot_position_0x015_y
 			end
 		end
 	elseif act.category == 3 then -- ws
@@ -416,9 +421,11 @@ function rng_action_helper(act)
 			if HoverShot then
 				local ws = res.weapon_skills[act.param]
 				if ws and (ws.skill == 26 or ws.skill == 25)then
-					local player = windower.ffxi.get_mob_by_target('me')
-					if player then 
-						last_shot_position = player
+					local playerpos = windower.ffxi.get_mob_by_target('me')
+					if playerpos then 
+						last_shot_position.valid = true
+						last_shot_position_x = playerpos.x
+						last_shot_position_y = playerpos.y
 					end
 				end
 			end
@@ -428,7 +435,11 @@ end
 
 function update_hover_shot_info()
 	if HoverShot then
-		ranger_info_hub.distance = math.sqrt(get_distance_sq())
+		local distance = math.sqrt(get_distance_sq())
+		local distance_string = string.format("%.2f", distance)
+		if distance >= 1 or HoverShotTarget == nil then distance_string = string.text_color(distance_string, 0, 200, 0)
+		else distance_string = string.text_color(distance_string, 200, 0, 0) end
+		ranger_info_hub.distance = distance_string
 	else
 		ranger_info_hub.distance = nil
 	end
@@ -439,7 +450,7 @@ function cancel_buff(id)
 end
 
 function clear_last_shot_position()
-	last_shot_position = nil
+	last_shot_position_valid = false
 end
 
 function parse_outgoing(id, original, modified, injected, blocked)
@@ -449,9 +460,8 @@ function parse_outgoing(id, original, modified, injected, blocked)
 		if HoverShot then
 			RecordPosNextRangedAttack = true
 			local p = packets.parse('outgoing', original)
-			shot_position_0x015.x = p['X']
-			shot_position_0x015.y = p['Y']
-			shot_position_0x015.z = p['Z']
+			shot_position_0x015_x = p['X']
+			shot_position_0x015_y = p['Y']
 		end
 	end
 end
@@ -459,6 +469,7 @@ end
 function parse_action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
 	if (message_id == 6 or message_id == 20) and HoverShotTarget ~= nil and target_id == HoverShotTarget then
 		HoverShotTarget = nil
+		last_shot_position_valid = false
 	end
 end
 
