@@ -251,7 +251,7 @@ function self_command(command)
 			equip(Modes[Mode].set)
 		end
 	elseif args[1] == "ra" then
-		if HoverShot and not last_shot_position_valid then
+		if HoverShot and last_shot_position_valid then
 			local distance = get_distance_sq()
 			if distance > 1 or HoverShotTarget == nil then
 				ShootNextPosUpdate = true
@@ -423,7 +423,7 @@ function rng_action_helper(act)
 				if ws and (ws.skill == 26 or ws.skill == 25)then
 					local playerpos = windower.ffxi.get_mob_by_target('me')
 					if playerpos then 
-						last_shot_position.valid = true
+						last_shot_position_valid = true
 						last_shot_position_x = playerpos.x
 						last_shot_position_y = playerpos.y
 					end
@@ -437,8 +437,8 @@ function update_hover_shot_info()
 	if HoverShot then
 		local distance = math.sqrt(get_distance_sq())
 		local distance_string = string.format("%.2f", distance)
-		if distance >= 1 or HoverShotTarget == nil then distance_string = string.text_color(distance_string, 0, 200, 0)
-		else distance_string = string.text_color(distance_string, 200, 0, 0) end
+		if distance >= 1 or HoverShotTarget == nil then distance_string = string.text_color(distance_string, 0, 255, 0)
+		else distance_string = string.text_color(distance_string, 255, 0, 0) end
 		ranger_info_hub.distance = distance_string
 	else
 		ranger_info_hub.distance = nil
@@ -450,6 +450,7 @@ function cancel_buff(id)
 end
 
 function clear_last_shot_position()
+	HoverShotTarget = nil
 	last_shot_position_valid = false
 end
 
@@ -468,8 +469,7 @@ end
 
 function parse_action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
 	if (message_id == 6 or message_id == 20) and HoverShotTarget ~= nil and target_id == HoverShotTarget then
-		HoverShotTarget = nil
-		last_shot_position_valid = false
+		clear_last_shot_position()
 	end
 end
 
