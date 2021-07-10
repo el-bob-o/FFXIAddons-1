@@ -62,6 +62,8 @@ function get_sets()
 	last_shot_position_x = 0
 	last_shot_position_y = 0
 	last_shot_position_valid = false
+	current_position_0x015_x = 0
+	current_position_0x015_y = 0
 	shot_position_0x015_x = 0 
 	shot_position_0x015_y = 0
 	cancel_haste = true
@@ -180,18 +182,23 @@ windower.register_event('zone change', function()
 	end
 end)
 
-function get_distance_sq()
+function get_distance_sq(playerpos)
 	if last_shot_position_valid then
-		local playerpos = windower.ffxi.get_mob_by_target('me')
-		if playerpos then 
-			local x = math.abs(last_shot_position_x - playerpos.x)
-			local y = math.abs(last_shot_position_y - playerpos.y)
-			x = (x*x)
-			y = (y*y)
-			return x + y
-		end
+		local x = math.abs(last_shot_position_x - playerpos.x)
+		local y = math.abs(last_shot_position_y - playerpos.y)
+		x = (x*x)
+		y = (y*y)
+		return x + y
 	end
 	return 0
+end
+
+function check_current_and_player_position(playerpos)
+	local x = math.abs(last_shot_position_x - playerpos.x)
+	local y = math.abs(last_shot_position_y - playerpos.y)
+	x = (x*x)
+	y = (y*y)
+	return x + y < 0.01
 end
  
 function self_command(command)
@@ -251,18 +258,36 @@ function self_command(command)
 			equip(Modes[Mode].set)
 		end
 	elseif args[1] == "ra" then
-		if HoverShot and last_shot_position_valid then
-			local distance = get_distance_sq()
-			if distance > 1 or HoverShotTarget == nil then
-				ShootNextPosUpdate = true
-				RecordPosNextRangedAttack = false
+		local playerpos = windower.ffxi.get_mob_by_target('me')
+		if HoverShot then
+			if last_shot_position_valid then
+				local distance = get_distance_sq(playerpos)
+				if distance > 1 or HoverShotTarget == nil then
+					shoot_now_or_wait_for_pos_update(playerpos)
+				else
+					windower.add_to_chat(123,"Not far enough for hover shot!")
+				end
 			else
-				windower.add_to_chat(123,"Not far enough for hover shot!")
+				shoot_now_or_wait_for_pos_update(playerpos)
 			end
 		else
-			ShootNextPosUpdate = true
-			RecordPosNextRangedAttack = false
+			shoot_now_or_wait_for_pos_update(playerpos)
 		end
+	end
+end
+
+function shoot_now_or_wait_for_pos_update(playerpos)
+	local can_shoot = check_current_and_player_position(playerpos)
+	if can_shoot then
+		windower.send_command('input /ra <t>')
+		shot_position_0x015_x = playerpos.x
+		shot_position_0x015_y = playerpos.y
+		if HoverShot then
+			RecordPosNextRangedAttack = true
+		end
+	else
+		ShootNextPosUpdate = true
+		RecordPosNextRangedAttack = false
 	end
 end
 
@@ -435,7 +460,8 @@ end
 
 function update_hover_shot_info()
 	if HoverShot then
-		local distance = math.sqrt(get_distance_sq())
+		local playerpos = windower.ffxi.get_mob_by_target('me')
+		local distance = math.sqrt(get_distance_sq(playerpos))
 		local distance_string = string.format("%.2f", distance)
 		if distance >= 1 or HoverShotTarget == nil then distance_string = string.text_color(distance_string, 0, 255, 0)
 		else distance_string = string.text_color(distance_string, 255, 0, 0) end
@@ -455,14 +481,16 @@ function clear_last_shot_position()
 end
 
 function parse_outgoing(id, original, modified, injected, blocked)
-	if id == 0x015 and not injected and not blocked and ShootNextPosUpdate then
-		ShootNextPosUpdate = false
-		windower.send_command('input /ra <t>')
-		if HoverShot then
+	if id == 0x015 and not injected and not blocked then
+		local p = packets.parse('outgoing', original)
+		current_position_0x015_x = p['X']
+		current_position_0x015_y = p['Y']
+		if ShootNextPosUpdate then
+			ShootNextPosUpdate = false
+			windower.send_command('input /ra <t>')
 			RecordPosNextRangedAttack = true
-			local p = packets.parse('outgoing', original)
-			shot_position_0x015_x = p['X']
-			shot_position_0x015_y = p['Y']
+			shot_position_0x015_x = current_position_0x015_x
+			shot_position_0x015_y = current_position_0x015_y
 		end
 	end
 end

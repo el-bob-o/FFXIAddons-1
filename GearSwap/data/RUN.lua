@@ -179,6 +179,8 @@ function midcast(spell)
 			else
 				setToUse = sets["EnhancingAny"]
 			end
+		elseif sets[spell.english] then
+			setToUse = sets[spell.english]
 		else
 			setToUse = Modes[Mode].set
 		end
@@ -434,7 +436,7 @@ end
 
 function subjob_check(job)
 	if job == "NIN" then
-		SJAction = '/ma "Utsusemi: Ni" <me>'
+		SJAction = '/ma "Utsusemi: Ni" <me>;input /ma "Utsusemi: Ichi" <me>'
 	elseif job == "DNC" then
 		SJAction = nil
 	elseif job == "SAM" then
