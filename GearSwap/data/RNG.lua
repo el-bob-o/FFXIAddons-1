@@ -123,7 +123,6 @@ function precast(spell)
 		if player.tp < maxTP then
 			setToUse = set_combine(setToUse, sets["TPBonus"])
 		end
-		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		if spell.element == world.weather_element or spell.element == world.day_element then 
 			setToUse = set_combine(setToUse, sets["WeatherObi"])
 		end
@@ -150,8 +149,9 @@ function midcast(spell)
 			end
 		end
 		if buffactive["Barrage"] then setToUse = set_combine(setToUse, sets["Barrage"]) end
-		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		equip(setToUse)
+	elseif spell.skill == "Elemental Magic" then
+		equip(sets["MagicAtk"])
 	end
 end
  
@@ -183,7 +183,7 @@ windower.register_event('zone change', function()
 end)
 
 function get_distance_sq(playerpos)
-	if last_shot_position_valid then
+	if last_shot_position_valid and playerpos then
 		local x = math.abs(last_shot_position_x - playerpos.x)
 		local y = math.abs(last_shot_position_y - playerpos.y)
 		x = (x*x)
@@ -212,9 +212,13 @@ function self_command(command)
 	if args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
+			enable("back")
+			equip(sets["CP"])
+			disable("back")
 			CPMode = true
 		elseif CPMode == true then
 			add_to_chat(122, "CP Mode off")
+			enable("back")
 			CPMode = false
 		end
 	elseif args[1] == "mode" then
@@ -262,7 +266,7 @@ function self_command(command)
 		if HoverShot then
 			if last_shot_position_valid then
 				local distance = get_distance_sq(playerpos)
-				if distance > 1 or HoverShotTarget == nil then
+				if distance > 1 or HoverShotTarget == nil or HoverShotTarget ~= player.target.id then
 					shoot_now_or_wait_for_pos_update(playerpos)
 				else
 					windower.add_to_chat(123,"Not far enough for hover shot!")

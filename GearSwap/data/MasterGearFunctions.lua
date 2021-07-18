@@ -20,7 +20,6 @@ local default_gear_list = {
 	waist = { },
 	legs = { },
 	feet = { },
-	-- main = { { name = "Nyame Helm", set_list = { { job = "RUN", sets = { "Hybrid", "Lunge" } }, }, priority = 91, augments = { "", "", } }, },
 }
 
 jobs = { "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN" }
@@ -301,9 +300,11 @@ function get_list_of_gear_in_json(filter)
 	for slot,gears in pairs(gear_list) do
 		for k, gear in pairs(gears) do
 			if filter ~= nil then
-				for k2, set in pairs(gear.set_list) do
-					if filter:contains(string.lower(set.job)) then
-						table.insert(gearSet, gear)
+				for k2, v2 in pairs(gear.set_list) do
+					for k3, v3 in pairs(v2) do
+						if filter:contains(string.lower(k3)) then
+							table.insert(gearSet, gear)
+						end
 					end
 				end
 			else
@@ -317,7 +318,7 @@ end
 function print_extra_gear_not_in_json(args)
 	add_to_chat(122, "Extra Gear")
 	local filter = nil 
-	if args[2] then filter = args[2]:split(',') end
+	if args[2] then filter = string.lower(args[2]):split(',') end
 	local gears = get_list_of_gear_in_json(filter)
 	local extra = get_list_of_extra_gear(gears)	
 	for bagId, itemList in pairs(extra) do
@@ -545,6 +546,7 @@ function parse_command(...)
 			for i = 2, #args do
 				set_name = set_name .. args[i] .. " "
 			end
+			set_name = string.sub(set_name, 1, #set_name - 1)
 			remove_set(set_name)
 			windower.add_to_chat(122, "Removing " .. set_name)
 		elseif args[1] == 'update' and args[2] then
