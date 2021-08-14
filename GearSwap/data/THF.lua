@@ -1,4 +1,5 @@
 include('THHelper.lua')
+include("HasteTracker.lua")
 include("MasterGearFunctions.lua")
 
 function get_sets()
@@ -14,14 +15,15 @@ function get_sets()
 	sets["Lilith"] = set_combine(sets["Hybrid"], sets["Knockback"])
 	
 	Modes = { 
-		{ name = "Hybrid", set = sets["Hybrid"] },
-		{ name = "Lilith", set = sets["Lilith"] }
+		{ name = "Hybrid", set = sets["Hybrid"] }
 	}
 	
 	sets.SATA = set_combine(sets["SneakAttack"], sets["TrickAttack"])
 	
 	sets["Rudra's Storm"] = sets["DEX_WS"]
 	sets["Mandalic Stab"] = sets["DEX_WS"]
+	sets["Dancing Edge"] = set_combine(sets["DEX_WS"], sets["Fotia"])
+	sets["Shark Bite"] = sets["DEX_WS"]
 	sets["Aeolian Edge"] = sets["MagicAtk"]
 	sets["Cyclone"] = sets["MagicAtk"]
 	sets["Gust Slash"] = sets["MagicAtk"]
@@ -29,6 +31,8 @@ function get_sets()
 	sets["Savage Blade"] = sets["STR_WS"]
  
 	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
+	
+	cancel_haste = 1
 	
 	print_current_ws()
 	print_mode()
@@ -45,8 +49,6 @@ function precast(spell)
 		local setToUse = {}
         if sets[spell.english] then
 			setToUse = sets[spell.english]
-		else
-			setToUse = sets["WS_Any"]
 		end
 		setToUse = SATA_check(setToUse)
 		if player.tp < 3000 then
@@ -104,9 +106,7 @@ function self_command(command)
             return
         end
     end
-	if args[1] == "th" then
-		parse_th_command(args)
-	elseif args[1] == "cp" then
+	if args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
 			enable("back")

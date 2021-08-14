@@ -1,5 +1,6 @@
 include("MasterGearFunctions.lua")
 include('THHelper.lua')
+include('HasteTracker.lua')
 texts = require('texts')
 packets = require('packets')
 require('chat')
@@ -66,7 +67,6 @@ function get_sets()
 	current_position_0x015_y = 0
 	shot_position_0x015_x = 0 
 	shot_position_0x015_y = 0
-	cancel_haste = true
 	AM3Mode = false
 	DT = false
 	ShootNextPosUpdate = false
@@ -123,6 +123,7 @@ function precast(spell)
 		if player.tp < maxTP then
 			setToUse = set_combine(setToUse, sets["TPBonus"])
 		end
+		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		if spell.element == world.weather_element or spell.element == world.day_element then 
 			setToUse = set_combine(setToUse, sets["WeatherObi"])
 		end
@@ -149,6 +150,7 @@ function midcast(spell)
 			end
 		end
 		if buffactive["Barrage"] then setToUse = set_combine(setToUse, sets["Barrage"]) end
+		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
 		equip(setToUse)
 	elseif spell.skill == "Elemental Magic" then
 		equip(sets["MagicAtk"])
@@ -161,6 +163,7 @@ function aftercast(spell)
     else
         equip(sets.Idle)
     end
+	if CPMode then equip(sets["CP"]) end
 	update_rng_info()
 end
  
@@ -212,13 +215,10 @@ function self_command(command)
 	if args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
 			CPMode = true
+			equip(sets["CP"])
 		elseif CPMode == true then
 			add_to_chat(122, "CP Mode off")
-			enable("back")
 			CPMode = false
 		end
 	elseif args[1] == "mode" then
@@ -240,14 +240,6 @@ function self_command(command)
 				Mode = 1
 			end
 			print_mode()
-		end
-	elseif args[1] == "cancelhaste" then
-		if cancel_haste == false then
-			add_to_chat(122, "Cancelling Haste Buffs")
-			cancel_haste = true
-		elseif cancel_haste == true then
-			add_to_chat(122, "Keeping Haste Buffs")
-			cancel_haste = false
 		end
 	elseif args[1] == "dt" then
 		if DT == false then
@@ -348,17 +340,6 @@ function check_buffs()
 	if not hover_found then HoverShot = false end
 	if not double_found then DoubleShot = false end
 	if not AM_found then AM3Mode = false end
-	if cancel_haste then
-		for k, _buff_id in pairs(playerbuffs) do
-			if _buff_id == 33 then 
-				cancel_buff(33)
-				break
-			elseif _buff_id == 580 then
-				cancel_buff(580)
-				break
-			end
-		end
-	end
 end
 
 function update_rng_info()
@@ -420,9 +401,12 @@ function rng_action_helper(act)
 	elseif act.category == 2 then -- ranged attack
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
+				local dmg = 0
+				local shots = 0
 				if HoverShot then HoverShotTarget = v.id end
 				for k2, v2 in pairs(v.actions) do
-					ranger_info_hub.dmg = v2.param
+					dmg = dmg + v2.param
+					shots = shots + 1
 					if v2.message == 352 then 
 						ranger_info_hub.distance_correction = "..."
 					elseif v2.message == 576 then
@@ -430,6 +414,11 @@ function rng_action_helper(act)
 					elseif v2.message == 577 then
 						ranger_info_hub.distance_correction = "True!"
 					end
+				end
+				if shots == 1 then
+					ranger_info_hub.dmg = dmg
+				else
+					ranger_info_hub.dmg = dmg .. "[" .. shots .. "]"
 				end
 			end
 			if RecordPosNextRangedAttack then

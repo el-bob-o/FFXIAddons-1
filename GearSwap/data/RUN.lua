@@ -86,6 +86,7 @@ function get_sets()
 	Combat = false
 	Buffs = {}
 	MultiRune = false
+	SIR = false
 	TargetRuneCount = {
 		["tenebrae"] = 0,
 		["lux"] = 0,
@@ -185,10 +186,12 @@ function midcast(spell)
 			setToUse = Modes[Mode].set
 		end
 		if equipEmnity then
-			equip(set_combine(setToUse, sets["Emnity"]))
-		else
-			equip(setToUse)
+			setToUse = (set_combine(setToUse, sets["Emnity"]))
 		end
+		if SIR then
+			setToUse = (set_combine(setToUse, sets["SIR"]))
+		end
+		equip(setToUse)
 	end
 end
  
@@ -258,6 +261,14 @@ function self_command(command)
 			add_to_chat(122, "Combat on!")
 			equip(Modes[Mode].set)
 			Combat = true
+		end
+	elseif args[1] == "sir" then
+		if SIR == true then
+			add_to_chat(122, "SIR off!")
+			SIR = false
+		else
+			add_to_chat(122, "SIR on!")
+			SIR = true
 		end
 	elseif args[1] == 'kite' then
 		if KiteMode == false then
