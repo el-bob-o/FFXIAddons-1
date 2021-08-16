@@ -67,10 +67,15 @@ local function cancel_buff(id)
 	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
 
-local function gain_buff(id)
-	if id == 33 or id == 580 then
-		if cancel_haste >= haste_level then
-			cancel_buff(id)
+local function time_change(new, old)
+	if cancel_haste >= haste_level then
+		local playerbuffs = windower.ffxi.get_player().buffs
+		for k, _buff_id in pairs(playerbuffs) do
+			if (_buff_id == 33 or _buff_id == 580) then
+				cancel_buff(_buff_id)
+				haste_level = 0
+				return
+			end
 		end
 	end
 end
@@ -101,6 +106,6 @@ local function parse_command(...)
 end
 
 windower.register_event('action', parse_action)
-windower.register_event('gain buff', gain_buff)
+windower.register_event('time change', time_change)
 windower.register_event('lose buff', lose_buff)
 register_unhandled_command(parse_command)

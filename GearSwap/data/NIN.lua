@@ -25,7 +25,7 @@ function get_sets()
 	print_current_ws()
 	print_mode()
 	print_th_mode()
-	send_command('@input /macro book 5')
+	send_command('@input /macro book 5;wait 1;input /macro set 1')
 end
  
 function precast(spell)

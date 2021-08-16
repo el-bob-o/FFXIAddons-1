@@ -98,7 +98,7 @@ function get_sets()
 	
 	print_mode()
 	print_th_mode()
-	send_command('@input /macro book 7')
+	send_command('@input /macro book 7;wait 1;input /macro set 1')
 end
  
 function precast(spell)

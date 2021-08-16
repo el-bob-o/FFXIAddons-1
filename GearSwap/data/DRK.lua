@@ -1,53 +1,49 @@
-include("MasterGearFunctions.lua")
 include('THHelper.lua')
-texts = require('texts')
-packets = require('packets')
-require('chat')
+include("HasteTracker.lua")
+include("MasterGearFunctions.lua")
 
 function get_sets()
-	Mode = 1
 	CPMode = false
-	learn_blu_mode = false
-
-	get_set_for_job_from_json("BLU", sets)
-		
+	Mode = 1
+	
+	get_set_for_job_from_json("DRK", sets)
+	
 	Modes = { 
-		{ name = "Hybrid", set = sets["Hybrid"] },
-		{ name = "DT", set = set_combine(sets["Hybrid"], sets["DT"]) },
+		{ name = "Hybrid", set = sets["Hybrid"] }
 	}
-		
-	sets.Idle = set_combine(sets["DT"], sets["IdleRegen"], sets["Movement"])
+ 
+	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
 	
 	WS = {}
-	WS["Savage Blade"] = { set = sets["STR_WS"], tp_bonus = true }
-	WS["Expiacion"] = { set = sets["STR_WS"], tp_bonus = true }
-	WS["Black Halo"] = { set = sets["STR_WS"], tp_bonus = true }
-	WS["Chant du Cygne"] = { set = set_combine(sets["DEX_Crit_WS"], sets["Fotia"]), tp_bonus = false }
-	WS["Requiescat"] = { set = set_combine(sets["MND_WS"], sets["Fotia"]), tp_bonus = true }
-	WS["Realmrazer"] = { set = set_combine(sets["MND_WS"], sets["Fotia"]), tp_bonus = false }
-	WS["Seraph Blade"] = { set = sets["MagicAtk"], tp_bonus = true }
-	WS["Red Lotus Blade"] = { set = sets["MagicAtk"], tp_bonus = true }
-	WS["Sanguine Blade"] = { set = sets["MagicAtk"], tp_bonus = true }
+	WS["Cross Reaper"] = { set = sets["Catastrophe"], tp_bonus = true }
+	WS["Spiral Hell"] = { set = sets["Catastrophe"], tp_bonus = true }
+	WS["Catastrophe"] = { set = sets["Catastrophe"], tp_bonus = false }
+	WS["Quietus"] = { set = sets["Catastrophe"], tp_bonus = false }
+	WS["Spinning Scythe"] = { set = sets["Catastrophe"], tp_bonus = false }
+	WS["Entropy"] = { set = sets["Entropy"], tp_bonus = true }
+	WS["Insurgency"] = { set = sets["Insurgency"], tp_bonus = true }
+	WS["Shadow of Death"] = { set = sets["DarkMagicAtk"], tp_bonus = true }
+	WS["Infernal Scythe"] = { set = sets["DarkMagicAtk"], tp_bonus = false }
 	
-	sets["Sudden Lunge"] = sets["MagicAcc"]
-	sets["Osmosis"] = sets["MagicAcc"]
-	sets["Anvil Lightning"] = sets["MagicAtk"]
-	sets["Searing Tempest"] = sets["MagicAtk"]
-	sets["Spectral Floe"] = sets["MagicAtk"]
-	sets["Subduction"] = sets["MagicAtk"]
-	sets["Tenebral Crush"] = sets["MagicAtk"]
-	sets["Entomb"] = sets["MagicAtk"]
+	absorb_cycle = 1
+	absorbs = {}
+	absorbs[1] = { buff = "STR Boost", spell = "Absorb-STR" }
+	absorbs[2] = { buff = "INT Boost", spell = "Absorb-INT" }
+	absorbs[3] = { buff = "Accuracy Boost", spell = "Absorb-Acc" }
+	absorbs[4] = { buff = "DEX Boost", spell = "Absorb-DEX" }
+ 	
+	cancel_haste = 1
 	
 	print_mode()
 	print_th_mode()
-	send_command('@input /macro book 9;wait 1;input /macro set 1')
+	send_command('@input /macro book 11;wait 1;input /macro set 1')
 end
  
 function precast(spell)
 	if spell.action_type == 'Magic' then
 		equip(sets["Fastcast"])
     elseif spell.type=="WeaponSkill" then
-		if WS[spell.english] then
+        if WS[spell.english] then
 			local setToUse = WS[spell.english].set
 			if WS[spell.english].tp_bonus then
 				local maxTP = 3000
@@ -67,10 +63,8 @@ end
 
 function midcast(spell)
 	if spell.action_type == 'Magic' then
-		if spell.english == "Mighty Guard" and buffactive["Diffusion"] then
-			equip(sets["DiffusionBuff"])
-		elseif sets[spell.english] then	
-			equip(sets[spell.english])
+		if spell.skill == "Elemental Magic" then
+			equip(sets["MagicAtk"])
 		end
 	end
 end
@@ -81,6 +75,14 @@ function aftercast(spell)
     else
         equip(sets.Idle)
     end
+	if not spell.interrupted then
+		for k,v in pairs(absorbs) do
+			if v.spell == spell.english then
+				absorb_cycle = absorb_cycle + 1
+				if absorb_cycle > #absorbs then absorb_cycle = 1 end
+			end
+		end
+	end		
 end
  
 function status_change(new,old)
@@ -99,6 +101,7 @@ windower.register_event('zone change', function()
 	else
 		equip(sets.Idle)
 	end
+	absorb_cycle = 1
 end)
  
 function self_command(command)
@@ -112,26 +115,14 @@ function self_command(command)
 	if args[1] == "cp" then
 		if CPMode == false then
 			add_to_chat(122, "CP Mode on")
-			enable('back')
+			enable("back")
 			equip(sets["CP"])
-			disable('back')
+			disable("back")
 			CPMode = true
 		elseif CPMode == true then
 			add_to_chat(122, "CP Mode off")
-			enable('back')
+			enable("back")
 			CPMode = false
-		end
-	elseif args[1] == "learnblu" then
-		if learn_blu_mode == false then
-			add_to_chat(122, "Learning BLU Spells on")
-			enable('hands')
-			equip(sets["LearnBlu"])
-			disable('hands')
-			learn_blu_mode = true
-		elseif learn_blu_mode == true then
-			add_to_chat(122, "Learning BLU Spells off")
-			enable('hands')
-			learn_blu_mode = false
 		end
 	elseif args[1] == "mode" then
 		if args[2] and type(tonumber(args[2])) == 'number' then
@@ -153,6 +144,15 @@ function self_command(command)
 			end
 			print_mode()
 		end
+	elseif args[1] == "absorb" then
+		for k,v in pairs(absorbs) do
+			if not buffactive[v.buff] then
+				absorb_cycle = k
+				send_command('input /ma "' .. v.spell .. '" <t>')
+				return
+			end
+		end
+		send_command('input /ma "' .. absorbs[absorb_cycle].spell .. '" <t>')
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)

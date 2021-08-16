@@ -6,13 +6,10 @@ function get_sets()
 	CPMode = false
 	Throwing = false
 	WS = "Rudra's Storm"
-	THMode = 1
 	Mode = 1
 	Buffs = {}
 	
 	get_set_for_job_from_json("THF", sets)
-		
-	sets["Lilith"] = set_combine(sets["Hybrid"], sets["Knockback"])
 	
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] }

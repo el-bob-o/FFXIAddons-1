@@ -79,18 +79,18 @@ function get_sets()
 	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
 	sets["Beastial Loyalty"] = sets["Call Beast"]
 	
-	sets["Decimation"].tp_bonus = false
-	sets["Ruinator"] = sets["Decimation"]
-	sets["Calamity"] = sets["Decimation"]
-	sets["Calamity"].tp_bonus = true
-	sets["Primal Rend"].tp_bonus = true
-	sets["Cloudsplitter"] = sets["Primal Rend"]
+	WS = {}
+	WS["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
+	WS["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
+	WS["Calamity"] = { set = sets["Decimation"], tp_bonus = true }
+	WS["Primal Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
+	WS["Cloudsplitter Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
 	
 	print_mode()
 	print_th_mode()
 	setup_text_window()
 	if pet.isvalid then update_pet_info(pet.name) end
-	send_command('@input /macro book 10')
+	send_command('@input /macro book 10;wait 1;input /macro set 1')
 end
 
 function pet_change(pet,gain)
@@ -138,14 +138,16 @@ function precast(spell)
     elseif spell.action_type == 'Magic' then
 		equip(sets["Fastcast"])
     elseif spell.type=="WeaponSkill" then
-        if sets[spell.english] then
-			local setToUse = {}
-			setToUse = sets[spell.english]
-			if sets[spell.english].tp_bonus then
+        if WS[spell.english] then
+			local setToUse = WS[spell.english].set
+			if WS[spell.english].tp_bonus then
 				local maxTP = 3000
 				if player.tp < maxTP then
 					setToUse = set_combine(setToUse, sets["TPBonus"])
 				end
+			end
+			if spell.element == world.weather_element or spell.element == world.day_element then 
+				setToUse = set_combine(setToUse, sets["WeatherObi"])
 			end
 			equip(setToUse)
 		end
