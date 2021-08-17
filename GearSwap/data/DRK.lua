@@ -24,6 +24,9 @@ function get_sets()
 	WS["Insurgency"] = { set = sets["Insurgency"], tp_bonus = true }
 	WS["Shadow of Death"] = { set = sets["DarkMagicAtk"], tp_bonus = true }
 	WS["Infernal Scythe"] = { set = sets["DarkMagicAtk"], tp_bonus = false }
+	WS["Steel Cyclone"] = { set = sets["Catastrophe"], tp_bonus = true }
+	WS["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
+	WS["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
 	
 	absorb_cycle = 1
 	absorbs = {}
