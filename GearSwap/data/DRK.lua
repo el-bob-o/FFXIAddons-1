@@ -74,15 +74,7 @@ function aftercast(spell)
         equip(Modes[Mode].set)
     else
         equip(sets.Idle)
-    end
-	if not spell.interrupted then
-		for k,v in pairs(absorbs) do
-			if v.spell == spell.english then
-				absorb_cycle = absorb_cycle + 1
-				if absorb_cycle > #absorbs then absorb_cycle = 1 end
-			end
-		end
-	end		
+    end	
 end
  
 function status_change(new,old)
@@ -145,14 +137,9 @@ function self_command(command)
 			print_mode()
 		end
 	elseif args[1] == "absorb" then
-		for k,v in pairs(absorbs) do
-			if not buffactive[v.buff] then
-				absorb_cycle = k
-				send_command('input /ma "' .. v.spell .. '" <t>')
-				return
-			end
-		end
 		send_command('input /ma "' .. absorbs[absorb_cycle].spell .. '" <t>')
+		absorb_cycle = absorb_cycle + 1
+		if absorb_cycle > #absorbs then absorb_cycle = 1 end
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)
