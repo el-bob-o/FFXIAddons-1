@@ -21,6 +21,7 @@ function get_sets()
 	WS["Quietus"] = { set = sets["Catastrophe"], tp_bonus = false }
 	WS["Spinning Scythe"] = { set = sets["Catastrophe"], tp_bonus = false }
 	WS["Entropy"] = { set = sets["Entropy"], tp_bonus = true }
+	WS["Guillotine"]= { set = sets["Insurgency"], tp_bonus = false }
 	WS["Insurgency"] = { set = sets["Insurgency"], tp_bonus = true }
 	WS["Shadow of Death"] = { set = sets["DarkMagicAtk"], tp_bonus = true }
 	WS["Infernal Scythe"] = { set = sets["DarkMagicAtk"], tp_bonus = false }
@@ -28,12 +29,12 @@ function get_sets()
 	WS["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
 	WS["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
 	
-	absorb_cycle = 1
 	absorbs = {}
-	absorbs[1] = { buff = "STR Boost", spell = "Absorb-STR" }
-	absorbs[2] = { buff = "INT Boost", spell = "Absorb-INT" }
-	absorbs[3] = { buff = "Accuracy Boost", spell = "Absorb-Acc" }
-	absorbs[4] = { buff = "DEX Boost", spell = "Absorb-DEX" }
+	absorbs[1] = { buff = "STR Boost", spell = "Absorb-STR", recast_id = 266 }
+	absorbs[2] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }
+	absorbs[3] = { buff = "INT Boost", spell = "Absorb-INT", recast_id = 270 }
+	absorbs[4] = { buff = "DEX Boost", spell = "Absorb-DEX", recast_id = 267 }
+	absorbs[5] = { buff = "MND Boost", spell = "Absorb-MND", recast_id = 271 }
  	
 	cancel_haste = 1
 	
@@ -68,6 +69,15 @@ function midcast(spell)
 	if spell.action_type == 'Magic' then
 		if spell.skill == "Elemental Magic" then
 			equip(sets["MagicAtk"])
+			if spell.element == world.weather_element or spell.element == world.day_element then 
+				equip(sets["WeatherObi"])
+			end
+		elseif spell.skill == "Dark Magic" then
+			equip(sets["DarkSkill"])
+			if spell.english == "Dread Spikes" then equip(sets["DreadSpikes"]) end
+			if buffactive['Dark Seal'] then equip(sets["DarkSeal"]) end
+		elseif sets[spell.english] then
+			equip(sets[spell.english])
 		end
 	end
 end
@@ -79,6 +89,10 @@ function aftercast(spell)
         equip(sets.Idle)
     end	
 end
+
+-- function buff_change(name,buff,details)
+	-- windower.add_to_chat(122, name)
+-- end
  
 function status_change(new,old)
 	if new == 'Engaged' then
@@ -96,7 +110,6 @@ windower.register_event('zone change', function()
 	else
 		equip(sets.Idle)
 	end
-	absorb_cycle = 1
 end)
  
 function self_command(command)
@@ -140,9 +153,28 @@ function self_command(command)
 			print_mode()
 		end
 	elseif args[1] == "absorb" then
-		send_command('input /ma "' .. absorbs[absorb_cycle].spell .. '" <t>')
-		absorb_cycle = absorb_cycle + 1
-		if absorb_cycle > #absorbs then absorb_cycle = 1 end
+		local recasts = windower.ffxi.get_spell_recasts()
+		local lowest_time = -1
+		local lowest_index = -1
+		for k,v in pairs(absorbs) do
+			if not buffactive[v.buff] and recasts[v.recast_id] == 0 then
+				send_command('input /ma "' .. v.spell .. '" <t>')
+				v.time = os.time()
+				return
+			elseif v.time and recasts[v.recast_id] == 0 then
+				if lowest_time == -1 then 
+					lowest_time = v.time
+					lowest_index = k
+				elseif v.time < lowest_time then 
+					lowest_time = v.time
+					lowest_index = k
+				end
+			end
+		end
+		if lowest.index ~= -1 then
+			send_command('input /ma "' .. absorbs[lowest_index].spell .. '" <t>')
+			absorbs[lowest_index].time = os.time()
+		end
 	elseif args[1] == "thtagged" then
 		if player.status == "Engaged" then
 			equip(Modes[Mode].set)

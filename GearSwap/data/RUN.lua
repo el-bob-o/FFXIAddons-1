@@ -97,6 +97,7 @@ function get_sets()
 		["gelus"] = 0,
 		["ignis"] = 0,
 	}
+	RuneCast = {}
 	
 	get_set_for_job_from_json("RUN", sets)
 	
@@ -333,6 +334,7 @@ function self_command(command)
 					TargetRuneCount[rune3] = TargetRuneCount[rune3] + 1
 					print_current_rune()
 				end
+				RuneCast = {}
 			end
 		elseif args[2] then
 			MultiRune = false
@@ -346,10 +348,15 @@ function self_command(command)
 					if v > 0 then
 						if buffactive[k] == nil or buffactive[k] < v then
 							send_command('input /ja "' .. k .. '" <me>')
-							break;
+							table.insert(RuneCast, k)
+							return
 						end
 					end
-					-- can't get duration info so can't refresh time... have to wait for it to expire
+				end
+				if #RuneCast > 0 then
+					send_command('input /ja "' .. RuneCast[1] .. '" <me>')
+					table.insert(RuneCast, RuneCast[1])
+					table.remove(RuneCast, 1)
 				end
 			else
 				send_command('input /ja "' .. Rune .. '" <me>')
@@ -388,6 +395,7 @@ function self_command(command)
 					TargetRuneCount[rune3] = TargetRuneCount[rune3] + 1
 					print_current_rune()
 				end
+				RuneCast = {}
 			end
 		else
 			local arg2 = string.lower(args[2])

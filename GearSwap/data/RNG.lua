@@ -72,6 +72,7 @@ function get_sets()
 	ShootNextPosUpdate = false
 	RecordPosNextRangedAttack = false
 	HoverShotTarget = nil
+	cancel_haste = 2
 	
 	setup_text_window()
 	
@@ -366,17 +367,52 @@ function buff_change(name, gain, buff_details)
 	update_rng_info()
 end
 
-actor_started_flurry = 0
-flurry_started = 0
+local spells_started = {}
+
+local function get_flurry_level(id)
+	if id == 845 then return 1
+	elseif id == 846 then return 2
+	else return 0
+	end
+end
+
+local function set_spells_started(add, id, actor_id)
+	if add then
+		spells_started[actor_id] = id
+	else
+		spells_started[actor_id] = nil
+	end
+end
+
+local function set_flurry_level(actor_id)
+	if spells_started[actor_id] then
+		local level = get_flurry_level(spells_started[actor_id])
+		if level > Flurry then Flurry = level end
+		spells_started[actor_id] = nil
+	end
+end
 
 function rng_action_helper(act)
 	if act.category == 8 then
-		for k, v in pairs(act.targets) do
-			if v.id == player.id then
-				actor_started_flurry = act.actor_id
-				for k2, v2 in pairs(v.actions) do
-					if v2.param == 845 then flurry_started = 1
-					elseif v2.param == 846 then flurry_started = 2
+		if act.param == 24931 then
+			for k, v in pairs(act.targets) do
+				if v.id == player.id then
+					for k2, v2 in pairs(v.actions) do
+						if get_flurry_level(v2.param) > 0 then 
+							set_spells_started(true, v2.param, act.actor_id)
+							return
+						end
+					end
+				end
+			end
+		elseif act.param == 28787 then
+			for k, v in pairs(act.targets) do
+				if v.id == player.id then
+					for k2, v2 in pairs(v.actions) do
+						if get_flurry_level(v2.param) > 0 then 
+							set_spells_started(false, v2.param, act.actor_id)
+							return
+						end
 					end
 				end
 			end
@@ -384,13 +420,9 @@ function rng_action_helper(act)
 	elseif act.category == 4 then -- finish casting spell
 		for k, v in pairs(act.targets) do
 			if v.id == player.id then
-				if act.param == 845 or act.param == 846 then -- flurry
-					if act.actor_id == actor_started_flurry then
-						if flurry_started > Flurry then 
-							Flurry = flurry_started
-							update_rng_info()
-						end
-					end
+				if get_flurry_level(act.param) > 0 then
+					set_flurry_level(act.actor_id)
+					return
 				end
 			end
 		end
