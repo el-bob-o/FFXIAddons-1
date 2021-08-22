@@ -171,7 +171,7 @@ function self_command(command)
 				end
 			end
 		end
-		if lowest.index ~= -1 then
+		if lowest_index ~= -1 then
 			send_command('input /ma "' .. absorbs[lowest_index].spell .. '" <t>')
 			absorbs[lowest_index].time = os.time()
 		end
