@@ -1,7 +1,7 @@
 res = require 'resources'
 slips = require 'slips'
 extdata = require 'extdata'
-json = require 'jsonlib'
+json = include('json.lua')
 
 local default_gear_list = {
 	main =  { },
@@ -35,22 +35,22 @@ function load_json_setting()
 	local f = io.open(gear_list_file_path,'r')
 	local json_string = ""
 	if f then
-		json_string = f:read()
+		json_string = f:read("*a")
 		f:close()
 	end
 	if not json_string or #json_string == 0 then
 		f = io.open(gear_list_file_path,'w+')
-		f:write(json.encode(default_gear_list))
+		f:write(json:encode_pretty(default_gear_list))
 		f:close()
 		return default_gear_list
 	else
-		return json.decode(json_string)
+		return json:decode(json_string)
 	end
 end
 
 function save_json_setting()
 	local f = io.open(gear_list_file_path,'w+')
-	f:write(json.encode(gear_list))
+	f:write(json:encode_pretty(gear_list))
 	f:close()
 end
 

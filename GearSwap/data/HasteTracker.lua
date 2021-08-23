@@ -88,17 +88,14 @@ end
 
 local function parse_command(...)
 	local args = T{...}
-	if string.lower(args[1]) == "hastetracker" then
-		table.remove(args, 1)
-		local arg1 = string.lower(args[1])
-		if arg1 == "cancelhaste" and args[2] and type(tonumber(args[2])) == 'number' then
-			local cancel_haste_number = tonumber(args[2])
-			if cancel_haste_number >= 0 and cancel_haste_number <= 2 then
-				cancel_haste = cancel_haste_number
-				windower.add_to_chat(122, "Cancelling haste level " .. cancel_haste_number .. " and below.")
-			else
-				windower.add_to_chat(122, cancel_haste_number .. " is not between 0 and 2")
-			end
+	local arg1 = string.lower(args[1])
+	if arg1 == "cancelhaste" and args[2] and type(tonumber(args[2])) == 'number' then
+		local cancel_haste_number = tonumber(args[2])
+		if cancel_haste_number >= 0 and cancel_haste_number <= 2 then
+			cancel_haste = cancel_haste_number
+			windower.add_to_chat(122, "Cancelling haste level " .. cancel_haste_number .. " and below.")
+		else
+			windower.add_to_chat(122, cancel_haste_number .. " is not between 0 and 2")
 		end
 		return true
 	end
