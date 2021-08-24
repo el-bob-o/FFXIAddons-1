@@ -79,6 +79,8 @@ function midcast(spell)
 				set_to_use = set_combine(set_to_use, sets["DreadSpikes"])
 			elseif spell.english:startswith("Drain") or spell.english:startswith("Aspir") then
 				set_to_use = set_combine(set_to_use, sets["DrainAspir"])
+			elseif spell.english:startswith("Absorb") and (spell.english ~= "Absorb-TP" or spell.english ~= "Absorb-Attri") then
+				set_to_use = set_combine(set_to_use, sets["AbsorbDuration"])
 			end
 			if buffactive['Dark Seal'] then 
 				set_to_use = set_combine(set_to_use, sets["DarkSeal"])

@@ -128,7 +128,7 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
+      "DRK": [ "DarkMagicAtk", "MagicAcc" ],
       "GEO": [ "Elemental", "MACC" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Lunge" ],
@@ -283,6 +283,13 @@
     "priority": 0,
     "set_list": [ {
       "GEO": [ "STR_Melee_WS", "MND_WS", "IdleRefresh" ]
+    } ]
+  }, {
+    "augments": [ "Attack+11", "Dark magic skill +6", "\"Drain\" and \"Aspir\" potency +25", "none", "none" ],
+    "name": "Niht Mantle",
+    "priority": 0,
+    "set_list": [ {
+      "DRK": [ "DarkSkill", "DrainAspir" ]
     } ]
   } ],
   "body": [ {
@@ -451,7 +458,7 @@
     "name": "Sacro Breastplate",
     "priority": 182,
     "set_list": [ {
-      "DRK": [ "Fastcast" ]
+      "DRK": [ "Fastcast", "IdleRegen" ]
     } ]
   }, {
     "name": "Heath. Cuirass +1",
@@ -522,7 +529,7 @@
     "name": "Telos Earring",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "Hybrid", "DEX_Crit_WS", "STR_WS", "MND_WS" ],
+      "BLU": [ "DEX_Crit_WS", "STR_WS", "MND_WS" ],
       "DRK": [ "Hybrid", "Entropy", "Insurgency" ],
       "GEO": [ "STR_Melee_WS", "Melee" ],
       "NIN": [ "Hybrid" ],
@@ -603,6 +610,7 @@
     "name": "Eabani Earring",
     "priority": 45,
     "set_list": [ {
+      "BLU": [ "Hybrid" ],
       "BST": [ "DW" ]
     } ]
   }, {
@@ -739,7 +747,7 @@
     "name": "Crep. Earring",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "Hybrid", "MagicAcc" ],
+      "BLU": [ "MagicAcc" ],
       "DRK": [ "Hybrid" ],
       "GEO": [ "Melee" ],
       "RNG": [ "Midshot", "MidshotDT" ]
@@ -748,6 +756,7 @@
     "name": "Suppanomimi",
     "priority": 0,
     "set_list": [ {
+      "BLU": [ "Hybrid" ],
       "BST": [ "DW" ]
     } ]
   }, {
@@ -1291,12 +1300,6 @@
       "RUN": [ "Fastcast" ]
     } ]
   }, {
-    "name": "Igno. Burgeonet +1",
-    "priority": 41,
-    "set_list": [ {
-      "DRK": [ "DarkSkill", "Souleater" ]
-    } ]
-  }, {
     "augments": [ "none", "none", "Enhances \"Dark Seal\" effect", "none" ],
     "name": "Fall. Burgeonet +1",
     "priority": 76,
@@ -1308,6 +1311,12 @@
     "priority": 88,
     "set_list": [ {
       "RUN": [ "Emnity" ]
+    } ]
+  }, {
+    "name": "Ig. Burgonet +2",
+    "priority": 61,
+    "set_list": [ {
+      "DRK": [ "DarkSkill", "Souleater", "AbsorbDuration" ]
     } ]
   } ],
   "legs": [ {
