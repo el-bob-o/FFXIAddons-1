@@ -66,20 +66,28 @@ function precast(spell)
 end
 
 function midcast(spell)
+	local set_to_use = {}
 	if spell.action_type == 'Magic' then
 		if spell.skill == "Elemental Magic" then
-			equip(sets["MagicAtk"])
+			set_to_use = sets["MagicAtk"]
 			if spell.element == world.weather_element or spell.element == world.day_element then 
-				equip(sets["WeatherObi"])
+				set_to_use = set_combine(set_to_use, sets["WeatherObi"])
 			end
 		elseif spell.skill == "Dark Magic" then
-			equip(sets["DarkSkill"])
-			if spell.english == "Dread Spikes" then equip(sets["DreadSpikes"]) end
-			if buffactive['Dark Seal'] then equip(sets["DarkSeal"]) end
+			set_to_use = sets["DarkSkill"]
+			if spell.english == "Dread Spikes" then
+				set_to_use = set_combine(set_to_use, sets["DreadSpikes"])
+			elseif spell.english:startswith("Drain") or spell.english:startswith("Aspir") then
+				set_to_use = set_combine(set_to_use, sets["DrainAspir"])
+			end
+			if buffactive['Dark Seal'] then 
+				set_to_use = set_combine(set_to_use, sets["DarkSeal"])
+			end
 		elseif sets[spell.english] then
-			equip(sets[spell.english])
+			set_to_use = sets[spell.english]
 		end
 	end
+	equip(set_to_use)
 end
  
 function aftercast(spell)

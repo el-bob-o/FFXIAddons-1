@@ -24,7 +24,7 @@
     "name": "Seeth. Bomblet +1",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "DarkMagicAtk", "Hybrid", "MagicAcc" ],
+      "DRK": [ "DarkMagicAtk", "Hybrid", "MagicAcc", "DrainAspir" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
       "RUN": [ "Lunge", "STR_WS" ],
       "THF": [ "STR_WS" ]
@@ -128,7 +128,7 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
       "GEO": [ "Elemental", "MACC" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Lunge" ],
@@ -316,7 +316,7 @@
     "priority": 136,
     "set_list": [ {
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "MACC", "Melee" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
       "RNG": [ "STR_Melee_WS" ],
@@ -560,7 +560,7 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "MagicAtk" ],
-      "DRK": [ "DarkMagicAtk" ],
+      "DRK": [ "DarkMagicAtk", "DrainAspir" ],
       "NIN": [ "MagicAtk" ],
       "RNG": [ "MagicAtk" ],
       "RUN": [ "Lunge" ],
@@ -652,7 +652,7 @@
     "name": "Malignance Earring",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "DarkMagicAtk" ],
+      "DRK": [ "DarkMagicAtk", "DrainAspir" ],
       "GEO": [ "Elemental", "MACC" ],
       "SMN": [ "Fastcast", "Idle", "MACC" ]
     } ]
@@ -790,7 +790,7 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "MagicAtk", "STR_WS" ],
       "RNG": [ "STR_Melee_WS", "MagicAtk" ],
@@ -1135,7 +1135,7 @@
     "name": "Fall. Fin. Gaunt. +1",
     "priority": 29,
     "set_list": [ {
-      "DRK": [ "DarkSkill" ]
+      "DRK": [ "DarkSkill", "DrainAspir" ]
     } ]
   } ],
   "head": [ {
@@ -1272,7 +1272,7 @@
     "name": "Pixie Hairpin +1",
     "priority": -35,
     "set_list": [ {
-      "DRK": [ "DarkMagicAtk" ]
+      "DRK": [ "DarkMagicAtk", "DrainAspir" ]
     } ]
   }, {
     "name": "Flam. Zucchetto +2",
@@ -1316,7 +1316,7 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "Hybrid", "MagicAtk" ],
       "RNG": [ "MagicAtk", "MeleeHybrid" ],
@@ -1656,7 +1656,7 @@
     "name": "Erra Pendant",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "MagicAcc", "DarkSkill" ]
+      "DRK": [ "MagicAcc", "DarkSkill", "DrainAspir" ]
     } ]
   } ],
   "range": [ {
@@ -1816,7 +1816,7 @@
     "name": "Archon Ring",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "DarkMagicAtk" ]
+      "DRK": [ "DarkMagicAtk", "DrainAspir" ]
     } ]
   }, {
     "name": "Ilabrat Ring",
@@ -1994,6 +1994,12 @@
     "set_list": [ {
       "THF": [ "DEX_WS" ]
     } ]
+  }, {
+    "name": "Evanescence Ring",
+    "priority": 0,
+    "set_list": [ {
+      "DRK": [ "DrainAspir" ]
+    } ]
   } ],
   "sub": [ {
     "name": "Nusku Shield",
@@ -2082,7 +2088,7 @@
     "priority": 20,
     "set_list": [ {
       "BST": [ "Primal Rend" ],
-      "DRK": [ "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Lunge", "Fastcast" ],
       "SMN": [ "MACC" ],
