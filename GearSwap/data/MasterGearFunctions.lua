@@ -385,11 +385,23 @@ function add_to_set_json(sets, gear, slot, job)
 		for k2, v2 in pairs(v) do
 			if string.upper(k2) == string.upper(job) then
 				for k3, v3 in pairs(v2) do
-					if sets[v3] == nil then
-						sets[v3] = { }
+					local set_name = v3:split('.')
+					local set = nil
+					for i = 1, #set_name do
+						if set == nil then
+							if sets[set_name[i]] == nil then
+								sets[set_name[i]] = { }
+							end
+							set = sets[set_name[i]]
+						else
+							if set[set_name[i]] == nil then
+								set[set_name[i]] = { }
+							end
+							set = set[set_name[i]]
+						end
 					end
-					if sets[v3][slot] == nil then
-						sets[v3][slot] = gear
+					if set[slot] == nil then
+						set[slot] = gear
 						count = count + 1
 					else
 						add_to_chat(122, "Duplicate found at " .. tostring(v3) .. " for " .. tostring(slot) .. " slot.")
