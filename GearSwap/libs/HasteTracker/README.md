@@ -14,8 +14,20 @@
 
 # Commands:
 
-- //gs cancelhaste (num 0-2)
+## //gs cancelhaste (num 0-2)
 
-Automatically cancels all haste I cast on you so that haste II can be cast by Koru-Moru or King of Hearts.
+Set to automatically cancel haste spells cast on you.
+
+> //gs cancelhaste 2
+
+Automatically cancels all haste spells so that Flurry II can be cast by Koru-Moru.
+
 > //gs cancelhaste 1
+
+Automatically cancels all Haste I cast on you so that Haste II can be cast by Koru-Moru or King of Hearts.
+
+> //gs cancelhaste 0
+
+Don't cancel any haste spells.
+
 
