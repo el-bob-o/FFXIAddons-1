@@ -1,6 +1,6 @@
-include('THHelper.lua')
-include("HasteTracker.lua")
-include("MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
+include('HasteTracker/HasteTracker.lua')
+include("MasterGear/MasterGearFunctions.lua")
 
 function get_sets()
 	CPMode = false

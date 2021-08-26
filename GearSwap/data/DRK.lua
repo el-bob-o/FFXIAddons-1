@@ -1,12 +1,12 @@
-include('THHelper.lua')
-include("HasteTracker.lua")
-include("MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
+include('HasteTracker/HasteTracker.lua')
+include("MasterGear/MasterGearFunctions.lua")
 
 function get_sets()
 	CPMode = false
 	Mode = 1
 	
-	get_set_for_job_from_json("DRK", sets)
+	get_set_for_job_from_json()
 	
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] }

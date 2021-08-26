@@ -1,6 +1,6 @@
-include('THHelper.lua')
-include('HasteTracker.lua')
-include("MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
+include('HasteTracker/HasteTracker.lua')
+include("Mastergear/MasterGearFunctions.lua")
 
 ready = {
 	["Slug"] = {
@@ -69,7 +69,7 @@ function get_sets()
 	Mode = 1
 	cancel_haste = 1
 	
-	get_set_for_job_from_json("BST", sets)
+	get_set_for_job_from_json()
 	sub_job_change(player.sub_job)
 	
 	Modes = { 

@@ -1,5 +1,5 @@
-include("MasterGearFunctions.lua")
-include('THHelper.lua')
+include("Mastergear/MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
 texts = require('texts')
 packets = require('packets')
 require('chat')
@@ -9,7 +9,7 @@ function get_sets()
 	CPMode = false
 	learn_blu_mode = false
 
-	get_set_for_job_from_json("BLU", sets)
+	get_set_for_job_from_json()
 		
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] },

@@ -1,5 +1,5 @@
-include("MasterGearFunctions.lua")
-include('THHelper.lua')
+include("MasterGear/MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
 
 function get_sets()
 	KiteMode = false

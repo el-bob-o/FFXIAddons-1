@@ -1,5 +1,5 @@
-include("THHelper.lua")
-include("MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
+include("MasterGear/MasterGearFunctions.lua")
 
 EmnityActions = {}
 EmnityActions["JA"] = { "Valiance", "Vallation", "Swordplay", "Pflug", "Gambit", "Rayke", "Liement",

@@ -1,16 +1,9 @@
--- How to Use:
--- put this file and json.lua into the gearswap data folder
--- include("MasterGearFunctions.lua") somewhere near the top of your gearswap lua
--- in your get_set function or mote equivalent, use get_set_for_job_from_json function. E.g get_set_for_job_from_json("DRK", sets) for DRK
--- then you equip your gear and use //gs mastergear saveeq or //gs mastergear saveslots to define your sets
--- //gs reload when you are done defining sets
--- //gs mastergear help for more information on other functions
--- uncomment --0 for equipable_bags if you want to use your inventory for gearswaps
+-- Version 1.0
 
 res = require 'resources'
 slips = require 'slips'
 extdata = require 'extdata'
-json = include('json.lua')
+json = include('MasterGear/json.lua')
 
 local default_gear_list = {
 	main =  { },
@@ -36,7 +29,7 @@ jobs = { "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "
 equipable_bags = { --0, -- don't care inventory 
 					8, 10, 11, 12 } -- Mog Wardrobes
 					
-storage_bags = { 1, 2, 5, 6, 7, 9 }
+-- storage_bags = { 1, 2, 5, 6, 7, 9 }  -- Maybe for future use when doing something like porterpacker
 
 gear_list_file_path = windower.addon_path .. "data/gear_list.json"
 
@@ -220,8 +213,8 @@ function remove_set_from_slot(slot, set_name)
 	end
 end
 
-function get_set_for_job_from_json(job, sets)
-	return populate_sets_from_json(sets, job)
+function get_set_for_job_from_json()
+	return populate_sets_from_json(sets, player.main_job)
 end
 
 function populate_sets_from_json(sets, job)

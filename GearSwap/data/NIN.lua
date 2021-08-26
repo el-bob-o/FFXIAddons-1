@@ -1,5 +1,5 @@
-include('THHelper.lua')
-include("MasterGearFunctions.lua")
+include('THHelper/THHelper.lua')
+include("MasterGear/MasterGearFunctions.lua")
 
 elemental_ninjutsu = { "Katon", "Suiton", "Raiton", "Doton", "Huton", "Hyoton" }
 

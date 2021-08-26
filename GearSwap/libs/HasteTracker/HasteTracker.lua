@@ -1,3 +1,5 @@
+-- Version 1.0
+
 haste_level = 0
 cancel_haste = 0
 
