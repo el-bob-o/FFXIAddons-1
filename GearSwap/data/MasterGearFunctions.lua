@@ -1,3 +1,12 @@
+-- How to Use:
+-- put this file and json.lua into the gearswap data folder
+-- include("MasterGearFunctions.lua") somewhere near the top of your gearswap lua
+-- in your get_set function or mote equivalent, use get_set_for_job_from_json function. E.g get_set_for_job_from_json("DRK", sets) for DRK
+-- then you equip your gear and use //gs mastergear saveeq or //gs mastergear saveslots to define your sets
+-- //gs reload when you are done defining sets
+-- //gs mastergear help for more information on other functions
+-- uncomment --0 for equipable_bags if you want to use your inventory for gearswaps
+
 res = require 'resources'
 slips = require 'slips'
 extdata = require 'extdata'
