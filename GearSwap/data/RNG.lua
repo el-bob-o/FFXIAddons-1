@@ -142,11 +142,13 @@ function precast(spell)
 end
 
 function midcast(spell)
-	if spell.action_type == "Ranged Attack" then
+	if spell.action_type == "Ranged Attack" then	
 		local setToUse = sets["Midshot"]
 		if DT then setToUse = sets["MidshotDT"] end
 		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
 		if buffactive["Aftermath: Lv.3"] then
+			local equipment = windower.ffxi.get_items().equipment
+			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)	
 			if res.items[range.id].name == "Armageddon" then
 				if DT then 
 					setToUse = set_combine(setToUse, set["AM3DT"])
