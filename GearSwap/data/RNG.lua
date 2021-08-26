@@ -143,18 +143,7 @@ end
 
 function midcast(spell)
 	if spell.action_type == "Ranged Attack" then
-		local equipment = windower.ffxi.get_items().equipment
-		local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
 		local setToUse = sets["Midshot"]
-		if res.items[range.id].skill == 25 then -- archery
-			setToUse = set_combine(setToUse, sets["Arrow"])
-		elseif res.items[range.id].skill == 26 then -- marksmanship
-			if res.items[range.id].name == "Gastraphetes" then
-				setToUse = set_combine(setToUse, sets["Bolt"])
-			else
-				setToUse = set_combine(setToUse, sets["RangedAttackBullet"])
-			end
-		end
 		if DT then setToUse = sets["MidshotDT"] end
 		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
 		if buffactive["Aftermath: Lv.3"] then
@@ -319,10 +308,23 @@ function print_mode()
 end
 
 function get_preshot_set()
-	if Flurry == 0 then return sets["Flurry0"]
-	elseif Flurry == 1 then return sets["Flurry1"]
-	else return sets["Flurry2"]
+	local set_to_use = {}
+	if Flurry == 0 then set_to_use = sets["Flurry0"]
+	elseif Flurry == 1 then set_to_use = sets["Flurry1"]
+	else set_to_use = sets["Flurry2"]
 	end
+	local equipment = windower.ffxi.get_items().equipment
+	local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)		
+	if res.items[range.id].skill == 25 then -- archery
+		set_to_use = set_combine(set_to_use, sets["Arrow"])
+	elseif res.items[range.id].skill == 26 then -- marksmanship
+		if res.items[range.id].name == "Gastraphetes" then
+			set_to_use = set_combine(set_to_use, sets["Bolt"])
+		else
+			set_to_use = set_combine(set_to_use, sets["RangedAttackBullet"])
+		end
+	end
+	return set_to_use
 end
 
 buff_ids = 
