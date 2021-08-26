@@ -9,22 +9,20 @@ function get_sets()
 	Mode = 1
 	Buffs = {}
 	
-	get_set_for_job_from_json("THF", sets)
+	get_set_for_job_from_json("DNC", sets)
 	
 	Modes = { 
 		{ name = "Hybrid", set = sets["Hybrid"] }
 	}
 	
-	sets.SATA = set_combine(sets["SneakAttack"], sets["TrickAttack"])
-	
 	WS = {}
 	WS["Rudra's Storm"] = { set = sets["DEX_WS"], tp_bonus = true }
 	WS["Mandalic Stab"] = { set = sets["DEX_WS"], tp_bonus = true }
 	WS["Shark Bite"] = { set = sets["DEX_WS"], tp_bonus = true }
-	WS["Savage Blade"] = { set = sets["STR_WS"], tp_bonus = true }
 	WS["Dancing Edge"] = { set = set_combine(sets["DEX_WS"], sets["Fotia"]), tp_bonus = false }
 	WS["Exenterator"] = { set = set_combine(sets["DEX_WS"], sets["Fotia"]), tp_bonus = false }
 	WS["Evisceration"] = { set = set_combine(sets["DEX_Crit_WS"], sets["Fotia"]), tp_bonus = false }
+	WS["Pyrrhic Kleos"] = { set = set_combine(sets["DEX_WS"], sets["Fotia"]), tp_bonus = false }
 	WS["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
 	WS["Cyclone"] = { set = sets["MagicAtk"], tp_bonus = true }
 	WS["Gust Slash"] = { set = sets["MagicAtk"], tp_bonus = true }
@@ -37,8 +35,7 @@ function get_sets()
 	print_mode()
 	print_th_mode()
 	print_throwing()
-	send_command('@input /macro book 2')
-	subjob_macro_page(player.sub_job)
+	send_command('@input /macro book 12;wait 1;input /macro set 1')
 end
  
 function precast(spell)
@@ -89,7 +86,7 @@ function status_change(new,old)
 		equip(sets.Idle)
     end
 end
-
+ 
 windower.register_event('zone change', function()
 	if world.area:contains("Adoulin") then
 		equip(set_combine(sets.Idle, sets["Adoulin"]))
@@ -162,25 +159,15 @@ function self_command(command)
 	end
 end
 
-function sub_job_change(new, old)
-	subjob_macro_page(new)
-end
-
 function print_current_ws()
 	add_to_chat(122, "Current WS: " .. current_ws)
 end
 
 function SATA_check(set)
-	SA = buffactive["Sneak Attack"]
-	TA = buffactive["Trick Attack"]
-	if SA or TA then
-		if SA and TA then
-			set = set_combine(set, sets.SATA)
-		elseif SA then
-			set = set_combine(set, sets["SneakAttack"])
-		elseif TA then
-			set = set_combine(set, sets["TrickAttack"])
-		end
+	if buffactive["Sneak Attack"] or buffactive["Trick Attack"] then
+		set = set_combine(set, sets["CritDmg"])
+	elseif buffactive["Climactic Flourish"] then
+		set = set_combine(set, sets["CritDmg"], sets["Climactic"])
 	end
 	return set
 end
@@ -204,17 +191,5 @@ function print_throwing()
 		add_to_chat(122, "Boomerang: On")
 	else
 		add_to_chat(122, "Boomerang: Off")
-	end
-end
-
-function subjob_macro_page(job)
-	if job == "DNC" then
-		send_command('@wait 1;input /macro set 1')
-	elseif job == "NIN" then
-		send_command('@wait 1;input /macro set 2')
-	elseif job == "RUN" then
-		send_command('@wait 1;input /macro set 3')
-	elseif job == "WAR" then
-		send_command('@wait 1;input /macro set 4')
 	end
 end

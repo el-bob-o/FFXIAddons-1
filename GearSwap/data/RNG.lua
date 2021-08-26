@@ -85,14 +85,19 @@ function get_sets()
 		
 	sets.Idle = set_combine(sets["RangedIdleDT"], sets["IdleRegen"], sets["Movement"])
 	
-	sets["Hot Shot"] = set_combine(sets["MagicAtk"], sets["Fotia"])
-	sets["Trueflight"] = sets["MagicAtk"]
-	sets["Wildfire"] = sets["MagicAtk"]
-	sets["Aeolian Edge"] = set["MagicAtk"]
-	sets["Savage Blade"] = sets["STR_Melee_WS"]	
-	sets["Last Stand"] = set_combine(sets["Ranged_AGI_WS"], sets["Fotia"])
-	sets["Ruinator"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
-	sets["Decimation"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
+	WS = {}
+	WS["Hot Shot"] = { set = set_combine(sets["MagicAtk"], sets["Fotia"], sets["MagicAtkBullet"]), tp_bonus = true }
+	WS["Trueflight"] = { set = set_combine(sets["MagicAtk"], sets["MagicAtkBullet"]), tp_bonus = true }
+	WS["Wildfire"] = { set = set_combine(sets["MagicAtk"], sets["MagicAtkBullet"]), tp_bonus = false }	
+	WS["Last Stand"] = { set = set_combine(sets["Ranged_AGI_WS"], sets["Fotia"], sets["RangedAttackBullet"]), tp_bonus = true }
+	WS["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
+	WS["Savage Blade"] = { set = sets["STR_Melee_WS"], tp_bonus = true }
+	WS["Ruinator"] = { set = set_combine(sets["STR_Melee_WS"], sets["Fotia"]), tp_bonus = false }
+	WS["Decimation"] = { set = set_combine(sets["STR_Melee_WS"], sets["Fotia"]), tp_bonus = false }
+	WS["Flaming Arrow"] = { set = set_combine(sets["MagicAtk"], sets["Fotia"], sets["Arrow"]), tp_bonus = true }
+	WS["Empyreal Arrow"] = { set = set_combine(sets["Ranged_AGI_WS"], sets["Arrow"]), tp_bonus = true }
+	WS["Apex Arrow"] = { set = set_combine(sets["Ranged_AGI_WS"], sets["Arrow"]), tp_bonus = false }
+	WS["Jishnu's Radiance"] = { set = set_combine(sets["AM3"], sets["Arrow"]), tp_bonus = false }
 	
 	check_buffs()
 	update_rng_info()	
@@ -108,27 +113,29 @@ function precast(spell)
 	elseif spell.action_type == "Ranged Attack" then
 		equip(get_preshot_set())
     elseif spell.type=="WeaponSkill" then
-		local setToUse = {}
-        if sets[spell.english] then
-			setToUse = sets[spell.english]
+		if WS[spell.english] then
+			local setToUse = WS[spell.english].set
+			if WS[spell.english].tp_bonus then
+				local maxTP = 3000
+				local equipment = windower.ffxi.get_items().equipment
+				local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
+				if (res.items[range.id].name == "Fomalhaut" and spell.skill == "Marksmanship")
+				or (res.items[range.id].name == "Fail-Not" and spell.skill == "Archery") then
+					maxTP = maxTP - 500
+				end
+				if player.sub_job == "WAR" then
+					maxTP = maxTP - 200
+				end
+				if player.tp < maxTP then
+					setToUse = set_combine(setToUse, sets["TPBonus"])
+				end
+			end
+			if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
+			if spell.element == world.weather_element or spell.element == world.day_element then 
+				setToUse = set_combine(setToUse, sets["WeatherObi"])
+			end
+			equip(setToUse)
 		end
-		local maxTP = 3000
-		local equipment = windower.ffxi.get_items().equipment
-		local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
-		if res.items[range.id].name == "Fomalhaut" and spell.skill == "Marksmanship" then
-			maxTP = maxTP - 500
-		end
-		if player.sub_job == "WAR" then
-			maxTP = maxTP - 200
-		end
-		if player.tp < maxTP then
-			setToUse = set_combine(setToUse, sets["TPBonus"])
-		end
-		if CPMode then setToUse = set_combine(setToUse, sets["CP"]) end
-		if spell.element == world.weather_element or spell.element == world.day_element then 
-			setToUse = set_combine(setToUse, sets["WeatherObi"])
-		end
-		equip(setToUse)
 	elseif sets[spell.english] then
         equip(sets[spell.english])
     end
@@ -136,12 +143,21 @@ end
 
 function midcast(spell)
 	if spell.action_type == "Ranged Attack" then
+		local equipment = windower.ffxi.get_items().equipment
+		local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
 		local setToUse = sets["Midshot"]
+		if res.items[range.id].skill == 25 then -- archery
+			setToUse = set_combine(setToUse, sets["Arrow"])
+		elseif res.items[range.id].skill == 26 then -- marksmanship
+			if res.items[range.id].name == "Gastraphetes" then
+				setToUse = set_combine(setToUse, sets["Bolt"])
+			else
+				setToUse = set_combine(setToUse, sets["RangedAttackBullet"])
+			end
+		end
 		if DT then setToUse = sets["MidshotDT"] end
 		if DoubleShot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
 		if buffactive["Aftermath: Lv.3"] then
-			local equipment = windower.ffxi.get_items().equipment
-			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
 			if res.items[range.id].name == "Armageddon" then
 				if DT then 
 					setToUse = set_combine(setToUse, set["AM3DT"])

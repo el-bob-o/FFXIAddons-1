@@ -3,13 +3,13 @@
     "name": "Chrono Bullet",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "Flurry2", "Flurry1", "RangedIdleDT", "Ranged_AGI_WS", "Eagle Eye", "Eagle Eye Shot", "Flurry0", "MeleeHybrid", "Midshot", "MidshotDT", "AM3", "AM3DT" ]
+      "RNG": [ "RangedAttackBullet" ]
     } ]
   }, {
     "name": "Devastating Bullet",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "STR_Melee_WS", "MagicAtk" ]
+      "RNG": [ "MagicAtkBullet" ]
     } ]
   }, {
     "name": "Staunch Tathlum",
@@ -83,6 +83,12 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "Insurgency", "Entropy" ]
+    } ]
+  }, {
+    "name": "Chrono Arrow",
+    "priority": 0,
+    "set_list": [ {
+      "RNG": [ "Arrow" ]
     } ]
   } ],
   "back": [ {
