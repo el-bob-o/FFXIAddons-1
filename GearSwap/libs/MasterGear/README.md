@@ -24,7 +24,7 @@ Count number of gear for jobs specified in third argument if filter keyword is s
 
 > //gs mastergear countgear filter rng
 
-Count the number of total gear used by ranger job
+Count the total number of gear used by ranger job
 
 ## //gs mastergear extragear (jobs:csv)
 
