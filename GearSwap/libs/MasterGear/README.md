@@ -50,7 +50,8 @@ Export all sets to a txt file.
 
 Saved equipped gear to a set. Won't save main, sub, ranged.
 
-> //gs mastergear saveeq Idle.Regen 
+> //gs mastergear saveeq Idle.Regen
+
 Saves all equipment except main,sub,ranged to a set called Idle.Regen. This can be accessed in gearswap with equip(sets.Idle.Regen) or equip(sets\["Idle]\["Regen"])
 
 ## //gs mastergear saveslots (slots:csv) (set_name)
