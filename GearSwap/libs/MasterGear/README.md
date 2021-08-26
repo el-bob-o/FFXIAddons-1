@@ -1,5 +1,8 @@
 # MasterGear
 
+1.1
+- Fix exportsets function
+
 1.0
 - Initial commit
 

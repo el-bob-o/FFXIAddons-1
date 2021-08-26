@@ -1,4 +1,4 @@
--- Version 1.0
+-- Version 1.1
 
 res = require 'resources'
 slips = require 'slips'
@@ -217,6 +217,10 @@ function get_set_for_job_from_json()
 	return populate_sets_from_json(sets, player.main_job)
 end
 
+function get_set_from_json(job, set_list)
+	return populate_sets_from_json(set_list, job)
+end
+
 function populate_sets_from_json(sets, job)
 	local count = 0
 	for slot, gears in pairs(gear_list) do
@@ -237,7 +241,7 @@ function export_sets_from_json()
 	local saveString = ""
 	for k, job in pairs(jobs) do
 		local sets = {} 
-		if get_set_for_job_from_json(job, sets) > 0 then		
+		if get_set_from_json(job, sets) > 0 then		
 			saveString = saveString .. job .. " {\n"
 			for set, gearlist in pairs(sets) do
 				saveString = saveString .. "\t" .. set .. " {\n"
