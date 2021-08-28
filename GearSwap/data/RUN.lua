@@ -242,19 +242,7 @@ function self_command(command)
             return
         end
     end
-	if args[1] == 'cp' then
-		if CPMode == false then
-			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
-			CPMode = true
-		elseif CPMode == true then
-			add_to_chat(122, "CP Mode off")
-			enable("back")
-			CPMode = false
-		end
-	elseif args[1] == "combat" then
+	if args[1] == "combat" then
 		if Combat == true then
 			add_to_chat(122, "Combat off!")
 			Combat = false

@@ -113,15 +113,6 @@
       "RNG": [ "STR_Melee_WS", "Ranged_AGI_WS" ]
     } ]
   }, {
-    "augments": [ "Cap. Point+41%", "HP+28", "Attack+3", "DEF+11", "none" ],
-    "name": "Mecisto. Mantle",
-    "priority": 0,
-    "set_list": [ {
-      "NIN": [ "CP" ],
-      "RNG": [ "CP" ],
-      "RUN": [ "CP" ]
-    } ]
-  }, {
     "augments": [ "DEX+20", "Accuracy+20 Attack+20", "DEX+10", "\"Store TP\"+10", "Phys. dmg. taken-10%" ],
     "name": "Ogma's Cape",
     "priority": 0,
@@ -202,7 +193,7 @@
     "name": "Belenus's Cape",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot", "AM3", "AM3DT" ]
+      "RNG": [ "Eagle Eye Shot", "AM3", "AM3DT" ]
     } ]
   }, {
     "augments": [ "Enmity+6", "\"Embolden\"+12", "\"Dbl.Atk.\"+1", "Damage taken-5%", "none" ],
@@ -239,14 +230,15 @@
     "set_list": [ {
       "BLU": [ "CP" ],
       "BST": [ "CP" ],
-      "DRK": [ "CP" ]
+      "DRK": [ "CP" ],
+      "NIN": [ "CP" ]
     } ]
   }, {
     "augments": [ "DEX+20", "Accuracy+20 Attack+20", "DEX+5", "\"Dbl.Atk.\"+10", "none" ],
     "name": "Rosmerta's Cape",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "Hybrid", "DEX_Crit_WS", "Fastcast", "STR_WS", "MND_WS" ]
+      "BLU": [ "DEX_Crit_WS", "Fastcast", "STR_WS", "MND_WS", "Hybrid" ]
     } ]
   }, {
     "augments": [ "STR+20", "Accuracy+20 Attack+20", "STR+10", "\"Dbl.Atk.\"+10", "none" ],
@@ -446,7 +438,7 @@
     "name": "Meg. Cuirie +2",
     "priority": 40,
     "set_list": [ {
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot" ]
+      "RNG": [ "Eagle Eye Shot" ]
     } ]
   }, {
     "name": "Hjarrandi Breast.",
@@ -539,7 +531,7 @@
       "DRK": [ "Hybrid", "Entropy", "Insurgency" ],
       "GEO": [ "STR_Melee_WS", "Melee" ],
       "NIN": [ "Hybrid" ],
-      "RNG": [ "Ranged_AGI_WS", "Eagle Eye", "Eagle Eye Shot", "MeleeHybrid", "Midshot", "MidshotDT" ],
+      "RNG": [ "Ranged_AGI_WS", "Eagle Eye Shot", "MeleeHybrid", "Midshot", "MidshotDT" ],
       "THF": [ "DEX_WS", "Hybrid", "DEX_Crit_WS" ]
     } ]
   }, {
@@ -648,7 +640,7 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "DEX_Crit_WS" ],
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot" ],
+      "RNG": [ "Eagle Eye Shot" ],
       "RUN": [ "DEX_WS" ],
       "THF": [ "DEX_WS", "DEX_Crit_WS" ]
     } ]
@@ -790,7 +782,7 @@
     "name": "Arcadian Socks +3",
     "priority": 23,
     "set_list": [ {
-      "RNG": [ "Flurry2", "Ranged_AGI_WS", "Eagle Eye", "Eagle Eye Shot", "AM3", "AM3DT" ]
+      "RNG": [ "Flurry2", "Ranged_AGI_WS", "Eagle Eye Shot", "AM3", "AM3DT" ]
     } ]
   }, {
     "name": "Meg. Jam. +2",
@@ -1072,11 +1064,11 @@
       "BST": [ "Primal Rend" ],
       "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc" ],
       "GEO": [ "HealingFastcast", "IdleRefresh", "Elemental" ],
-      "NIN": [ "Hybrid", "MagicAtk", "STR_WS" ],
-      "RNG": [ "MagicAtk", "RangedIdleDT", "MidshotDT", "AM3DT" ],
+      "NIN": [ "MagicAtk", "STR_WS" ],
+      "RNG": [ "MagicAtk" ],
       "RUN": [ "Lunge", "Hybrid", "Fastcast" ],
       "SMN": [ "MACC" ],
-      "THF": [ "MagicAtk", "Hybrid" ]
+      "THF": [ "MagicAtk" ]
     } ]
   }, {
     "name": "Jhakri Cuffs +2",
@@ -1089,21 +1081,15 @@
     "name": "Gleti's Gauntlets",
     "priority": 68,
     "set_list": [ {
-      "BLU": [ "Hybrid", "IdleRegen", "DEX_Crit_WS" ],
-      "BST": [ "Hybrid", "Decimation", "IdleRegen" ],
+      "BLU": [ "IdleRegen", "DEX_Crit_WS" ],
+      "BST": [ "Decimation", "IdleRegen" ],
       "THF": [ "IdleRegen", "DEX_Crit_WS" ]
     } ]
   }, {
     "name": "Mummu Wrists +2",
     "priority": 45,
     "set_list": [ {
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot" ]
-    } ]
-  }, {
-    "name": "Ikenga's Gloves",
-    "priority": 57,
-    "set_list": [ {
-      "RNG": [ "Midshot", "AM3" ]
+      "RNG": [ "Eagle Eye Shot" ]
     } ]
   }, {
     "augments": [ "none", "none", "Enhances \"Beast Affinity\" effect", "none" ],
@@ -1151,6 +1137,16 @@
     "priority": 29,
     "set_list": [ {
       "DRK": [ "DarkSkill", "DrainAspir" ]
+    } ]
+  }, {
+    "name": "Malignance Gloves",
+    "priority": 57,
+    "set_list": [ {
+      "BLU": [ "Hybrid" ],
+      "BST": [ "Hybrid" ],
+      "NIN": [ "Hybrid" ],
+      "RNG": [ "RangedIdleDT", "AM3DT", "MidshotDT", "AM3", "Midshot" ],
+      "THF": [ "Hybrid" ]
     } ]
   } ],
   "head": [ {
@@ -1253,7 +1249,7 @@
     "name": "Meghanada Visor +2",
     "priority": 25,
     "set_list": [ {
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot", "AM3", "AM3DT" ],
+      "RNG": [ "Eagle Eye Shot", "AM3", "AM3DT" ],
       "RUN": [ "DEX_WS" ]
     } ]
   }, {
@@ -1349,7 +1345,7 @@
     "name": "Mummu Kecks +2",
     "priority": 52,
     "set_list": [ {
-      "RNG": [ "Eagle Eye" ]
+      "RNG": [ "AM3" ]
     } ]
   }, {
     "augments": [ "Accuracy+12", "DEX+12", "MND+20" ],
@@ -1429,7 +1425,7 @@
     "set_list": [ {
       "BLU": [ "Hybrid" ],
       "BST": [ "Hybrid" ],
-      "RNG": [ "RangedIdleDT", "Midshot", "MidshotDT", "AM3", "AM3DT" ],
+      "RNG": [ "RangedIdleDT", "Midshot", "MidshotDT", "AM3DT" ],
       "THF": [ "Hybrid" ]
     } ]
   }, {
@@ -1585,7 +1581,7 @@
     "name": "Marked Gorget",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "Ranged_AGI_WS", "Eagle Eye", "Eagle Eye Shot", "Midshot", "AM3", "AM3DT" ]
+      "RNG": [ "Ranged_AGI_WS", "Eagle Eye Shot", "Midshot", "AM3", "AM3DT" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -1694,6 +1690,13 @@
     "priority": 0,
     "set_list": [ {
       "GEO": [ "GeoWeps" ]
+    } ]
+  }, {
+    "augments": [ "Path: A" ],
+    "name": "Fail-Not",
+    "priority": 0,
+    "set_list": [ {
+      "RNG": [ "Bow" ]
     } ]
   } ],
   "ring1": [ {
@@ -1804,7 +1807,7 @@
     "name": "Mummu Ring",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot", "AM3", "AM3DT" ],
+      "RNG": [ "Eagle Eye Shot", "AM3", "AM3DT" ],
       "THF": [ "DEX_Crit_WS" ]
     } ]
   }, {
@@ -1931,7 +1934,7 @@
     "priority": 0,
     "set_list": [ {
       "NIN": [ "MagicAtk" ],
-      "RNG": [ "Eagle Eye", "Eagle Eye Shot" ],
+      "RNG": [ "Eagle Eye Shot" ],
       "THF": [ "MagicAtk" ]
     } ]
   }, {
@@ -2082,7 +2085,7 @@
     "name": "Tellen Belt",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "MagicAtk", "RangedIdleDT", "Ranged_AGI_WS", "Eagle Eye", "Eagle Eye Shot", "Midshot", "MidshotDT", "AM3", "AM3DT" ]
+      "RNG": [ "MagicAtk", "RangedIdleDT", "Ranged_AGI_WS", "Eagle Eye Shot", "Midshot", "MidshotDT", "AM3", "AM3DT" ]
     } ]
   }, {
     "name": "Hachirin-no-Obi",
@@ -2220,6 +2223,12 @@
     "priority": 0,
     "set_list": [ {
       "RUN": [ "SIR" ]
+    } ]
+  }, {
+    "name": "Chrono Quiver",
+    "priority": 0,
+    "set_list": [ {
+      "RNG": [ "Quiver" ]
     } ]
   } ]
 }
