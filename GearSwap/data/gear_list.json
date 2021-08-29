@@ -51,7 +51,7 @@
     "name": "Epitaph",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "Fastcast", "BPDmg", "SmnSkill", "PrecastBP", "Idle", "MACC", "IdleDT" ]
+      "SMN": [ "Fastcast", "BPDmg", "PrecastBP", "Idle", "MACC", "IdleDT", "SmnSkill" ]
     } ]
   }, {
     "name": "Aurgelmir Orb",
@@ -179,7 +179,7 @@
     "name": "Conveyance Cape",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "SmnSkill", "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "augments": [ "AGI+20", "Mag. Acc+20 /Mag. Dmg.+20", "AGI+10", "Weapon skill damage +10%", "none" ],
@@ -389,13 +389,13 @@
     "name": "Apo. Dalmatica +1",
     "priority": -160,
     "set_list": [ {
-      "SMN": [ "BPDmg", "SmnSkill" ]
+      "SMN": [ "BPDmg" ]
     } ]
   }, {
     "name": "Con. Doublet +3",
     "priority": 85,
     "set_list": [ {
-      "SMN": [ "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Orion Jerkin +1",
@@ -527,7 +527,7 @@
     "name": "Telos Earring",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "DEX_Crit_WS", "STR_WS", "MND_WS" ],
+      "BLU": [ "DEX_Crit_WS", "STR_WS", "MND_WS", "Hybrid" ],
       "DRK": [ "Hybrid", "Entropy", "Insurgency" ],
       "GEO": [ "STR_Melee_WS", "Melee" ],
       "NIN": [ "Hybrid" ],
@@ -544,7 +544,7 @@
     "name": "Lodurr Earring",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "SmnSkill", "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Evans Earring",
@@ -608,7 +608,6 @@
     "name": "Eabani Earring",
     "priority": 45,
     "set_list": [ {
-      "BLU": [ "Hybrid" ],
       "BST": [ "DW" ]
     } ]
   }, {
@@ -666,6 +665,7 @@
     "name": "Cessance Earring",
     "priority": 0,
     "set_list": [ {
+      "BLU": [ "Hybrid" ],
       "NIN": [ "Hybrid" ]
     } ]
   }, {
@@ -680,7 +680,7 @@
     "name": "Gelos Earring",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg", "SmnSkill", "PrecastBP" ]
+      "SMN": [ "BPDmg", "PrecastBP" ]
     } ]
   }, {
     "name": "Enervating Earring",
@@ -754,7 +754,6 @@
     "name": "Suppanomimi",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "Hybrid" ],
       "BST": [ "DW" ]
     } ]
   }, {
@@ -768,6 +767,12 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "Catastrophe" ]
+    } ]
+  }, {
+    "name": "C. Palug Earring",
+    "priority": 0,
+    "set_list": [ {
+      "SMN": [ "SmnSkill" ]
     } ]
   } ],
   "feet": [ {
@@ -856,14 +861,14 @@
     "name": "Apogee Pumps +1",
     "priority": -90,
     "set_list": [ {
-      "SMN": [ "BPDmg", "SmnSkill", "Idle", "IdleDT" ]
+      "SMN": [ "BPDmg", "Idle", "IdleDT" ]
     } ]
   }, {
     "augments": [ "none", "none", "Inc. Sp. \"Blood Pact\" magic crit. dmg.", "none" ],
     "name": "Glyph. Pigaches +1",
     "priority": 9,
     "set_list": [ {
-      "SMN": [ "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Herald's Gaiters",
@@ -1047,7 +1052,7 @@
     "name": "Lamassu Mitts +1",
     "priority": 18,
     "set_list": [ {
-      "SMN": [ "SmnSkill", "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "augments": [ "none", "none", "Inc. Sp. \"Blood Pact\" magic burst dmg.", "none" ],
@@ -1243,7 +1248,7 @@
     "name": "Beckoner's Horn +1",
     "priority": 31,
     "set_list": [ {
-      "SMN": [ "SmnSkill", "PrecastBP", "Idle", "IdleDT" ]
+      "SMN": [ "PrecastBP", "Idle", "IdleDT", "SmnSkill" ]
     } ]
   }, {
     "name": "Meghanada Visor +2",
@@ -1408,7 +1413,7 @@
     "name": "Beck. Spats +1",
     "priority": 41,
     "set_list": [ {
-      "SMN": [ "SmnSkill", "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "augments": [ "Accuracy+9 Attack+9", "Weapon skill damage +4%", "STR+9", "Accuracy+4", "none" ],
@@ -1442,12 +1447,6 @@
       "RUN": [ "Emnity" ]
     } ]
   }, {
-    "name": "Sulev. Cuisses +2",
-    "priority": 50,
-    "set_list": [ {
-      "DRK": [ "Hybrid", "Entropy", "Insurgency" ]
-    } ]
-  }, {
     "name": "Aya. Cosciales +2",
     "priority": 45,
     "set_list": [ {
@@ -1465,6 +1464,12 @@
     "priority": 77,
     "set_list": [ {
       "DRK": [ "DarkSkill" ]
+    } ]
+  }, {
+    "name": "Sakpata's Cuisses",
+    "priority": 114,
+    "set_list": [ {
+      "DRK": [ "Hybrid", "Entropy", "Insurgency" ]
     } ]
   } ],
   "main": [ {
@@ -1609,7 +1614,7 @@
     "set_list": [ {
       "GEO": [ "Healing", "Geomancy" ],
       "RUN": [ "EnhancingAny" ],
-      "SMN": [ "SmnSkill", "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Lissome Necklace",
@@ -1772,7 +1777,7 @@
     "name": "Evoker's Ring",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "Fastcast", "SmnSkill", "PrecastBP" ]
+      "SMN": [ "Fastcast", "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Varar Ring +1",
@@ -1902,7 +1907,7 @@
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg", "SmnSkill", "PrecastBP" ]
+      "SMN": [ "BPDmg", "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Chirich Ring",
@@ -2179,7 +2184,7 @@
     "name": "Lucidity Sash",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "SmnSkill", "PrecastBP" ]
+      "SMN": [ "PrecastBP", "SmnSkill" ]
     } ]
   }, {
     "name": "Flume Belt +1",

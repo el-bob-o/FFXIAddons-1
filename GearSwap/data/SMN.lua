@@ -183,6 +183,12 @@ function precast(spell)
 		if sets[spell.english] then
 			equip(sets[spell.english])
 		end
+	elseif spell.english == "Alexander" then
+		StartedBPWard = true
+		coroutine.schedule(check_pet_midcast, TimerFromPrecast)
+	elseif spell.english == "Odin" then
+		StartedBPRage = true
+		coroutine.schedule(check_pet_midcast, TimerFromPrecast)
 	elseif spell.action_type == 'Magic' then
 		equip(sets["Fastcast"])
 	elseif spell.type=="BloodPactWard" then
