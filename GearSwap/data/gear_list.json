@@ -24,10 +24,9 @@
     "name": "Seeth. Bomblet +1",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "DarkMagicAtk", "Hybrid", "MagicAcc", "DrainAspir" ],
+      "DRK": [ "DarkMagicAtk", "Hybrid", "MagicAcc", "DrainAspir", "Insurgency" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
-      "RUN": [ "Lunge", "STR_WS" ],
-      "THF": [ "STR_WS" ]
+      "RUN": [ "Lunge", "STR_WS" ]
     } ]
   }, {
     "name": "Knobkierrie",
@@ -61,7 +60,7 @@
       "BST": [ "Hybrid", "Decimation" ],
       "NIN": [ "Hybrid" ],
       "RUN": [ "Hybrid" ],
-      "THF": [ "Hybrid" ]
+      "THF": [ "Hybrid", "Savage Blade", "Rudra's Storm", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -70,25 +69,20 @@
     "set_list": [ {
       "BLU": [ "MagicAtk" ],
       "BST": [ "Primal Rend" ],
+      "DRK": [ "Entropy" ],
       "THF": [ "MagicAtk" ]
-    } ]
-  }, {
-    "name": "Yetshila",
-    "priority": 0,
-    "set_list": [ {
-      "THF": [ "DEX_Crit_WS" ]
-    } ]
-  }, {
-    "name": "Crepuscular Pebble",
-    "priority": 0,
-    "set_list": [ {
-      "DRK": [ "Insurgency", "Entropy" ]
     } ]
   }, {
     "name": "Chrono Arrow",
     "priority": 0,
     "set_list": [ {
       "RNG": [ "Arrow" ]
+    } ]
+  }, {
+    "name": "Yetshila",
+    "priority": 0,
+    "set_list": [ {
+      "THF": [ "Evisceration" ]
     } ]
   } ],
   "back": [ {
@@ -125,7 +119,7 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "DarkMagicAtk" ],
       "GEO": [ "Elemental", "MACC" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Lunge" ],
@@ -165,7 +159,7 @@
     "priority": 0,
     "set_list": [ {
       "NIN": [ "Hybrid", "STR_WS" ],
-      "THF": [ "DEX_WS", "STR_WS" ]
+      "THF": [ "Savage Blade", "Rudra's Storm", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "augments": [ "Pet: Acc.+20 Pet: R.Acc.+20 Pet: Atk.+20 Pet: R.Atk.+20", "Eva.+20 /Mag. Eva.+20", "Pet: Attack+10 Pet: Rng.Atk.+10", "Pet: \"Regen\"+10", "Pet: Damage taken -5%" ],
@@ -217,13 +211,6 @@
       "GEO": [ "Melee" ]
     } ]
   }, {
-    "augments": [ "DEX+20", "Accuracy+20 Attack+20", "none", "Crit.hit rate+10", "none" ],
-    "name": "Toutatis's Cape",
-    "priority": 0,
-    "set_list": [ {
-      "THF": [ "DEX_Crit_WS" ]
-    } ]
-  }, {
     "augments": [ "Cap. Point+49%", "HP+25", "Mag. Acc.+4", "DEF+3", "none" ],
     "name": "Mecisto. Mantle",
     "priority": 0,
@@ -238,7 +225,7 @@
     "name": "Rosmerta's Cape",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "DEX_Crit_WS", "Fastcast", "STR_WS", "MND_WS", "Hybrid" ]
+      "BLU": [ "DEX_Crit_WS", "STR_WS", "MND_WS", "Hybrid" ]
     } ]
   }, {
     "augments": [ "STR+20", "Accuracy+20 Attack+20", "STR+10", "\"Dbl.Atk.\"+10", "none" ],
@@ -266,14 +253,14 @@
     "name": "Ankou's Mantle",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "Hybrid", "Insurgency", "Entropy" ]
+      "DRK": [ "Hybrid", "Insurgency", "Entropy", "Last Resort" ]
     } ]
   }, {
     "augments": [ "none", "none", "none", "\"Fast Cast\"+10", "Spell interruption rate down-10%" ],
     "name": "Ankou's Mantle",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "Fastcast" ]
+      "DRK": [ "Fastcast", "AbsorbDuration", "MagicAcc", "HP" ]
     } ]
   }, {
     "augments": [ "MND+20", "Accuracy+20 Attack+20", "MND+10", "Weapon skill damage +10%", "Damage taken-5%" ],
@@ -288,6 +275,20 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "DarkSkill", "DrainAspir" ]
+    } ]
+  }, {
+    "augments": [ "DEX+20", "Accuracy+20 Attack+20", "none", "Crit.hit rate+10", "none" ],
+    "name": "Toutatis's Cape",
+    "priority": 0,
+    "set_list": [ {
+      "THF": [ "Evisceration" ]
+    } ]
+  }, {
+    "augments": [ "Path: A" ],
+    "name": "Fi Follet Cape +1",
+    "priority": 0,
+    "set_list": [ {
+      "BLU": [ "Fastcast" ]
     } ]
   } ],
   "body": [ {
@@ -321,12 +322,12 @@
     "priority": 136,
     "set_list": [ {
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
+      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "DrainAspir", "MagicAcc", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "MACC", "Melee" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
       "RNG": [ "STR_Melee_WS" ],
       "RUN": [ "EnhancingAny", "Tank_Physical", "Lunge", "MND_WS", "Hybrid", "STR_WS", "Fastcast", "DEX_WS" ],
-      "THF": [ "MagicAtk", "STR_WS" ]
+      "THF": [ "MagicAtk", "Savage Blade" ]
     } ]
   }, {
     "name": "Runeist's Coat +2",
@@ -372,7 +373,7 @@
     "name": "Plunderer's Vest +3",
     "priority": 79,
     "set_list": [ {
-      "THF": [ "TrickAttack", "DEX_WS" ]
+      "THF": [ "TrickAttack", "Evisceration", "Rudra's Storm" ]
     } ]
   }, {
     "name": "Malignance Tabard",
@@ -418,7 +419,7 @@
     "set_list": [ {
       "BLU": [ "DEX_Crit_WS", "STR_WS", "MND_WS" ],
       "BST": [ "Decimation", "IdleRegen" ],
-      "THF": [ "IdleRegen", "DEX_Crit_WS" ]
+      "THF": [ "IdleRegen", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "augments": [ "STR+8", "\"Dbl.Atk.\"+2", "\"Treasure Hunter\"+1", "Accuracy+17 Attack+17", "Mag. Acc.+1 \"Mag.Atk.Bns.\"+1" ],
@@ -472,7 +473,7 @@
       "NIN": [ "STR_WS" ],
       "RNG": [ "STR_Melee_WS" ],
       "RUN": [ "MND_WS", "Hybrid", "STR_WS", "DEX_WS" ],
-      "THF": [ "STR_WS" ]
+      "THF": [ "Savage Blade", "Rudra's Storm" ]
     } ]
   }, {
     "name": "Loquac. Earring",
@@ -532,7 +533,7 @@
       "GEO": [ "STR_Melee_WS", "Melee" ],
       "NIN": [ "Hybrid" ],
       "RNG": [ "Ranged_AGI_WS", "Eagle Eye Shot", "MeleeHybrid", "Midshot", "MidshotDT" ],
-      "THF": [ "DEX_WS", "Hybrid", "DEX_Crit_WS" ]
+      "THF": [ "Hybrid" ]
     } ]
   }, {
     "name": "Lugalbanda Earring",
@@ -557,6 +558,7 @@
     "name": "Odnowa Earring +1",
     "priority": 0,
     "set_list": [ {
+      "DRK": [ "HP" ],
       "GEO": [ "Geomancy" ],
       "RNG": [ "Flurry2", "Flurry1", "RangedIdleDT", "Flurry0" ]
     } ]
@@ -596,13 +598,15 @@
     "name": "Odr Earring",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "AM3", "AM3DT" ]
+      "RNG": [ "AM3", "AM3DT" ],
+      "THF": [ "Dancing Edge" ]
     } ]
   }, {
     "name": "Sherida Earring",
     "priority": 0,
     "set_list": [ {
-      "BST": [ "Decimation", "Hybrid" ]
+      "BST": [ "Decimation", "Hybrid" ],
+      "THF": [ "Evisceration" ]
     } ]
   }, {
     "name": "Eabani Earring",
@@ -624,11 +628,18 @@
     "set_list": [ {
       "DRK": [ "Catastrophe" ]
     } ]
+  }, {
+    "name": "Cessance Earring",
+    "priority": 0,
+    "set_list": [ {
+      "THF": [ "Exenterator" ]
+    } ]
   } ],
   "ear2": [ {
     "name": "Etiolation Earring",
     "priority": 50,
     "set_list": [ {
+      "DRK": [ "HP" ],
       "GEO": [ "Healing", "HealingFastcast", "Fastcast", "ElementalFastcast", "Geomancy" ],
       "NIN": [ "Fastcast" ],
       "RUN": [ "FastcastEnhancing", "EnhancingAny" ],
@@ -641,7 +652,7 @@
       "BLU": [ "DEX_Crit_WS" ],
       "RNG": [ "Eagle Eye Shot" ],
       "RUN": [ "DEX_WS" ],
-      "THF": [ "DEX_WS", "DEX_Crit_WS" ]
+      "THF": [ "Evisceration", "Rudra's Storm" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -674,7 +685,7 @@
     "set_list": [ {
       "RNG": [ "STR_Melee_WS", "MeleeHybrid", "AM3" ],
       "RUN": [ "Tank_Physical", "Hybrid", "STR_WS" ],
-      "THF": [ "STR_WS", "Hybrid" ]
+      "THF": [ "Hybrid", "Savage Blade", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Gelos Earring",
@@ -692,7 +703,6 @@
     "name": "Hermetic Earring",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "MagicAcc" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Lunge" ],
       "THF": [ "MagicAtk" ]
@@ -746,7 +756,7 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "MagicAcc" ],
-      "DRK": [ "Hybrid" ],
+      "DRK": [ "Hybrid", "MagicAcc" ],
       "GEO": [ "Melee" ],
       "RNG": [ "Midshot", "MidshotDT" ]
     } ]
@@ -802,13 +812,13 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
+      "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "DrainAspir", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "MagicAtk", "STR_WS" ],
       "RNG": [ "STR_Melee_WS", "MagicAtk" ],
       "RUN": [ "EnhancingAny", "Tank_Physical", "Lunge", "MND_WS", "Hybrid", "STR_WS", "Tank_Magical", "Fastcast" ],
       "SMN": [ "MACC" ],
-      "THF": [ "DEX_WS", "MagicAtk", "STR_WS" ]
+      "THF": [ "MagicAtk", "Savage Blade", "Rudra's Storm" ]
     } ]
   }, {
     "augments": [ "HP+80", "MP+80", "Phys. dmg. taken -4" ],
@@ -894,7 +904,7 @@
     "set_list": [ {
       "BLU": [ "IdleRegen", "DEX_Crit_WS", "STR_WS", "MND_WS" ],
       "BST": [ "Call Beast", "Decimation", "IdleRegen" ],
-      "THF": [ "IdleRegen", "DEX_Crit_WS" ]
+      "THF": [ "IdleRegen", "Evisceration", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Erilaz Greaves +1",
@@ -942,10 +952,10 @@
       "DRK": [ "TH" ]
     } ]
   }, {
-    "name": "Igno. Sollerets +1",
-    "priority": 38,
+    "name": "Ig. Sollerets +2",
+    "priority": 57,
     "set_list": [ {
-      "DRK": [ "Arcane Circle" ]
+      "DRK": [ "Arcane Circle", "MagicAcc" ]
     } ]
   } ],
   "hands": [ {
@@ -954,7 +964,7 @@
     "set_list": [ {
       "RNG": [ "STR_Melee_WS", "Ranged_AGI_WS", "MeleeHybrid" ],
       "RUN": [ "MND_WS", "STR_WS", "DEX_WS" ],
-      "THF": [ "DEX_WS", "STR_WS" ]
+      "THF": [ "Savage Blade", "Rudra's Storm" ]
     } ]
   }, {
     "augments": [ "Rng.Atk.+20", "\"Mag.Atk.Bns.\"+12", "\"Store TP\"+6" ],
@@ -1067,7 +1077,7 @@
     "set_list": [ {
       "BLU": [ "MagicAtk" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc" ],
+      "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc", "HP" ],
       "GEO": [ "HealingFastcast", "IdleRefresh", "Elemental" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
       "RNG": [ "MagicAtk" ],
@@ -1088,7 +1098,7 @@
     "set_list": [ {
       "BLU": [ "IdleRegen", "DEX_Crit_WS" ],
       "BST": [ "Decimation", "IdleRegen" ],
-      "THF": [ "IdleRegen", "DEX_Crit_WS" ]
+      "THF": [ "IdleRegen", "Evisceration", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Mummu Wrists +2",
@@ -1153,6 +1163,12 @@
       "RNG": [ "RangedIdleDT", "AM3DT", "MidshotDT", "AM3", "Midshot" ],
       "THF": [ "Hybrid" ]
     } ]
+  }, {
+    "name": "Ig. Gauntlets +2",
+    "priority": 66,
+    "set_list": [ {
+      "DRK": [ "Weapon Bash" ]
+    } ]
   } ],
   "head": [ {
     "name": "Orion Beret +3",
@@ -1182,11 +1198,11 @@
     "set_list": [ {
       "BLU": [ "MagicAtk" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Hybrid", "Catastrophe", "MagicAcc" ],
+      "DRK": [ "Hybrid", "Catastrophe", "HP" ],
       "GEO": [ "IdleRefresh", "STR_Melee_WS", "MND_WS", "Elemental", "MACC", "Melee" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Tank_Physical", "Lunge", "MND_WS", "STR_WS", "Tank_Magical" ],
-      "THF": [ "MagicAtk", "STR_WS" ]
+      "THF": [ "MagicAtk", "Savage Blade" ]
     } ]
   }, {
     "name": "Rune. Bandeau +2",
@@ -1225,7 +1241,7 @@
     "name": "Pill. Bonnet +2",
     "priority": 54,
     "set_list": [ {
-      "THF": [ "DEX_WS" ]
+      "THF": [ "Rudra's Storm" ]
     } ]
   }, {
     "name": "Malignance Chapeau",
@@ -1276,7 +1292,7 @@
     "set_list": [ {
       "BLU": [ "IdleRegen", "DEX_Crit_WS" ],
       "BST": [ "Decimation", "IdleRegen" ],
-      "THF": [ "IdleRegen", "DEX_Crit_WS" ]
+      "THF": [ "IdleRegen", "Evisceration", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Wh. Rarab Cap +1",
@@ -1302,7 +1318,7 @@
     "priority": 38,
     "set_list": [ {
       "BLU": [ "Fastcast" ],
-      "DRK": [ "Fastcast" ],
+      "DRK": [ "Fastcast", "MagicAcc" ],
       "RNG": [ "Fastcast" ],
       "RUN": [ "Fastcast" ]
     } ]
@@ -1332,13 +1348,13 @@
     "set_list": [ {
       "BLU": [ "MagicAtk", "MagicAcc" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
+      "DRK": [ "DarkMagicAtk", "MagicAcc", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "Hybrid", "MagicAtk" ],
       "RNG": [ "MagicAtk", "MeleeHybrid" ],
       "RUN": [ "Tank_Physical", "Lunge", "STR_WS", "Tank_Magical", "Fastcast" ],
       "SMN": [ "MACC" ],
-      "THF": [ "DEX_WS", "MagicAtk", "STR_WS" ]
+      "THF": [ "MagicAtk", "Savage Blade", "Rudra's Storm" ]
     } ]
   }, {
     "name": "Orion Braccae +3",
@@ -1400,7 +1416,7 @@
     "set_list": [ {
       "BLU": [ "IdleRegen", "DEX_Crit_WS" ],
       "BST": [ "Decimation", "IdleRegen" ],
-      "THF": [ "IdleRegen", "DEX_Crit_WS" ]
+      "THF": [ "IdleRegen", "Evisceration", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "augments": [ "MP+40", "Pet: Mag. Acc.+9", "Pet: Damage taken -2%", "none", "none" ],
@@ -1459,17 +1475,17 @@
       "DRK": [ "Nether Void" ]
     } ]
   }, {
-    "augments": [ "none", "none", "Enhances \"Muted Soul\" effect", "none" ],
-    "name": "Fall. Flanchard +1",
-    "priority": 77,
-    "set_list": [ {
-      "DRK": [ "DarkSkill" ]
-    } ]
-  }, {
     "name": "Sakpata's Cuisses",
     "priority": 114,
     "set_list": [ {
       "DRK": [ "Hybrid", "Entropy", "Insurgency" ]
+    } ]
+  }, {
+    "augments": [ "none", "none", "Enhances \"Muted Soul\" effect", "none" ],
+    "name": "Fall. Flanchard +2",
+    "priority": 87,
+    "set_list": [ {
+      "DRK": [ "Catastrophe", "DarkSkill", "DrainAspir" ]
     } ]
   } ],
   "main": [ {
@@ -1551,7 +1567,7 @@
     "set_list": [ {
       "BLU": [ "IdleRegen", "MagicAtk", "MagicAcc" ],
       "BST": [ "IdleRegen", "Primal Rend" ],
-      "DRK": [ "IdleRegen", "DarkMagicAtk" ],
+      "DRK": [ "IdleRegen", "DarkMagicAtk", "HP" ],
       "GEO": [ "IdleRefresh", "Elemental", "MACC" ],
       "NIN": [ "IdleRegen", "MagicAtk" ],
       "RNG": [ "IdleRegen", "MagicAtk" ],
@@ -1568,19 +1584,18 @@
       "GEO": [ "Fotia" ],
       "RNG": [ "Fotia" ],
       "RUN": [ "Fotia" ],
-      "THF": [ "Fotia" ]
+      "THF": [ "Evisceration", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Caro Necklace",
     "priority": 0,
     "set_list": [ {
       "BLU": [ "DEX_Crit_WS", "STR_WS" ],
-      "DRK": [ "Catastrophe" ],
       "GEO": [ "STR_Melee_WS" ],
       "NIN": [ "STR_WS" ],
       "RNG": [ "STR_Melee_WS" ],
       "RUN": [ "STR_WS", "DEX_WS" ],
-      "THF": [ "DEX_WS", "STR_WS", "DEX_Crit_WS" ]
+      "THF": [ "Savage Blade", "Rudra's Storm" ]
     } ]
   }, {
     "name": "Marked Gorget",
@@ -1622,7 +1637,6 @@
     "set_list": [ {
       "BLU": [ "Hybrid" ],
       "BST": [ "Hybrid" ],
-      "DRK": [ "Hybrid" ],
       "NIN": [ "Hybrid" ],
       "RNG": [ "MeleeHybrid" ],
       "RUN": [ "Hybrid" ],
@@ -1672,7 +1686,13 @@
     "name": "Erra Pendant",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "MagicAcc", "DarkSkill", "DrainAspir" ]
+      "DRK": [ "DarkSkill", "DrainAspir", "MagicAcc" ]
+    } ]
+  }, {
+    "name": "Abyssal Beads",
+    "priority": 0,
+    "set_list": [ {
+      "DRK": [ "Hybrid", "Catastrophe" ]
     } ]
   } ],
   "range": [ {
@@ -1732,7 +1752,7 @@
       "GEO": [ "STR_Melee_WS" ],
       "NIN": [ "STR_WS" ],
       "RUN": [ "STR_WS" ],
-      "THF": [ "STR_WS" ]
+      "THF": [ "Savage Blade" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -1813,7 +1833,7 @@
     "priority": 0,
     "set_list": [ {
       "RNG": [ "Eagle Eye Shot", "AM3", "AM3DT" ],
-      "THF": [ "DEX_Crit_WS" ]
+      "THF": [ "Evisceration" ]
     } ]
   }, {
     "name": "Chirich Ring",
@@ -1845,7 +1865,7 @@
     "name": "Ilabrat Ring",
     "priority": 60,
     "set_list": [ {
-      "THF": [ "DEX_WS" ]
+      "THF": [ "Rudra's Storm", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -1859,6 +1879,12 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "DarkSkill" ]
+    } ]
+  }, {
+    "name": "Supershear Ring",
+    "priority": 30,
+    "set_list": [ {
+      "DRK": [ "HP" ]
     } ]
   } ],
   "ring2": [ {
@@ -1877,14 +1903,13 @@
       "GEO": [ "STR_Melee_WS", "MND_WS" ],
       "NIN": [ "STR_WS" ],
       "RUN": [ "MND_WS", "STR_WS" ],
-      "THF": [ "STR_WS" ]
+      "THF": [ "Savage Blade" ]
     } ]
   }, {
     "name": "Kishar Ring",
     "priority": 0,
     "set_list": [ {
       "BLU": [ "Fastcast" ],
-      "DRK": [ "MagicAcc" ],
       "NIN": [ "Fastcast" ],
       "RUN": [ "FastcastEnhancing", "Lunge" ],
       "SMN": [ "Fastcast", "Idle", "MACC" ]
@@ -1893,7 +1918,7 @@
     "name": "Mallquis Ring",
     "priority": 0,
     "set_list": [ {
-      "GEO": [ "ElementalFastcast", "Elemental", "MACC" ]
+      "GEO": [ "ElementalFastcast", "MACC" ]
     } ]
   }, {
     "name": "Vocane Ring +1",
@@ -1924,6 +1949,7 @@
     "priority": 10,
     "set_list": [ {
       "BLU": [ "DT" ],
+      "DRK": [ "HP" ],
       "RNG": [ "Flurry2", "Flurry1", "MidshotDT" ],
       "RUN": [ "Hybrid" ],
       "SMN": [ "IdleDT" ]
@@ -1968,13 +1994,13 @@
       "BLU": [ "DEX_Crit_WS" ],
       "RNG": [ "Ranged_AGI_WS", "MeleeHybrid", "Midshot" ],
       "RUN": [ "DEX_WS" ],
-      "THF": [ "DEX_Crit_WS" ]
+      "THF": [ "Evisceration" ]
     } ]
   }, {
     "name": "Crepuscular Ring",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "Hybrid" ],
+      "DRK": [ "Hybrid", "MagicAcc" ],
       "RNG": [ "Flurry0" ]
     } ]
   }, {
@@ -2015,13 +2041,19 @@
     "name": "Cacoethic Ring +1",
     "priority": 0,
     "set_list": [ {
-      "THF": [ "DEX_WS" ]
+      "THF": [ "Rudra's Storm", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Evanescence Ring",
     "priority": 0,
     "set_list": [ {
       "DRK": [ "DrainAspir" ]
+    } ]
+  }, {
+    "name": "Freke Ring",
+    "priority": 0,
+    "set_list": [ {
+      "GEO": [ "Elemental" ]
     } ]
   } ],
   "sub": [ {
@@ -2084,7 +2116,7 @@
       "GEO": [ "Fotia" ],
       "RNG": [ "Fotia" ],
       "RUN": [ "Fotia" ],
-      "THF": [ "Fotia" ]
+      "THF": [ "Evisceration", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
     "name": "Tellen Belt",
@@ -2111,7 +2143,7 @@
     "priority": 20,
     "set_list": [ {
       "BST": [ "Primal Rend" ],
-      "DRK": [ "DarkMagicAtk", "MagicAcc", "DrainAspir" ],
+      "DRK": [ "DarkMagicAtk", "DrainAspir", "MagicAcc", "HP" ],
       "NIN": [ "MagicAtk" ],
       "RUN": [ "Lunge", "Fastcast" ],
       "SMN": [ "MACC" ],
@@ -2159,7 +2191,7 @@
       "GEO": [ "STR_Melee_WS" ],
       "NIN": [ "STR_WS" ],
       "RUN": [ "DEX_WS" ],
-      "THF": [ "DEX_WS", "DEX_Crit_WS" ]
+      "THF": [ "Rudra's Storm" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -2172,7 +2204,7 @@
       "NIN": [ "Hybrid" ],
       "RNG": [ "STR_Melee_WS", "MeleeHybrid" ],
       "RUN": [ "Hybrid", "STR_WS" ],
-      "THF": [ "STR_WS", "Hybrid" ]
+      "THF": [ "Hybrid", "Savage Blade" ]
     } ]
   }, {
     "name": "Incarnation Sash",

@@ -28,13 +28,15 @@ function get_sets()
 	WS["Steel Cyclone"] = { set = sets["Catastrophe"], tp_bonus = true }
 	WS["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
 	WS["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
+	WS["Upheaval"] = { set = sets["Insurgency"], tp_bonus = true }
 	
 	absorbs = {}
-	absorbs[1] = { buff = "STR Boost", spell = "Absorb-STR", recast_id = 266 }
-	absorbs[2] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }
+	absorbs[1] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }
+	absorbs[2] = { buff = "STR Boost", spell = "Absorb-STR", recast_id = 266 }
 	absorbs[3] = { buff = "INT Boost", spell = "Absorb-INT", recast_id = 270 }
 	absorbs[4] = { buff = "DEX Boost", spell = "Absorb-DEX", recast_id = 267 }
 	absorbs[5] = { buff = "MND Boost", spell = "Absorb-MND", recast_id = 271 }
+	absorbs[6] = { buff = "VIT Boost", spell = "Absorb-VIT", recast_id = 268 }
  	
 	cancel_haste = 1
 	
@@ -51,6 +53,13 @@ function precast(spell)
 			local setToUse = WS[spell.english].set
 			if WS[spell.english].tp_bonus then
 				local maxTP = 3000
+				local equipment = windower.ffxi.get_items().equipment
+				local main = windower.ffxi.get_items(equipment.main_bag, equipment.main)
+				if res.items[main.id].name == "Lycurgos" then
+					local hp_bonus = math.floor(player.hp / 5)
+					if hp_bonus > 1000 then hp_bonus = 1000 end
+					maxTP = maxTP - hp_bonus
+				end
 				if player.tp < maxTP then
 					setToUse = set_combine(setToUse, sets["TPBonus"])
 				end
@@ -74,13 +83,12 @@ function midcast(spell)
 				set_to_use = set_combine(set_to_use, sets["WeatherObi"])
 			end
 		elseif spell.skill == "Dark Magic" then
-			set_to_use = sets["DarkSkill"]
 			if spell.english == "Dread Spikes" then
-				set_to_use = set_combine(set_to_use, sets["DreadSpikes"])
+				set_to_use = set_combine(sets["HP"], sets["DreadSpikes"])
 			elseif spell.english:startswith("Drain") or spell.english:startswith("Aspir") then
-				set_to_use = set_combine(set_to_use, sets["DrainAspir"])
+				set_to_use = set_combine(sets["MagicAcc"], sets["DarkSkill"], sets["DrainAspir"])
 			elseif spell.english:startswith("Absorb") and (spell.english ~= "Absorb-TP" or spell.english ~= "Absorb-Attri") then
-				set_to_use = set_combine(set_to_use, sets["AbsorbDuration"])
+				set_to_use = set_combine(sets["MagicAcc"], sets["DarkSkill"], sets["AbsorbDuration"])
 			end
 			if buffactive['Dark Seal'] then 
 				set_to_use = set_combine(set_to_use, sets["DarkSeal"])

@@ -18,13 +18,13 @@ function get_sets()
 	sets.SATA = set_combine(sets["SneakAttack"], sets["TrickAttack"])
 	
 	WS = {}
-	WS["Rudra's Storm"] = { set = sets["DEX_WS"], tp_bonus = true }
-	WS["Mandalic Stab"] = { set = sets["DEX_WS"], tp_bonus = true }
-	WS["Shark Bite"] = { set = sets["DEX_WS"], tp_bonus = true }
+	WS["Rudra's Storm"] = { set = sets["Rudra's Storm"], tp_bonus = true }
+	WS["Mandalic Stab"] = { set = sets["Rudra's Storm"], tp_bonus = true }
+	WS["Shark Bite"] = { set = sets["Rudra's Storm"], tp_bonus = true }
 	WS["Savage Blade"] = { set = sets["STR_WS"], tp_bonus = true }
-	WS["Dancing Edge"] = { set = set_combine(sets["DEX_WS"], sets["Fotia"]), tp_bonus = false }
-	WS["Exenterator"] = { set = set_combine(sets["DEX_WS"], sets["Fotia"]), tp_bonus = false }
-	WS["Evisceration"] = { set = set_combine(sets["DEX_Crit_WS"], sets["Fotia"]), tp_bonus = false }
+	WS["Dancing Edge"] = { set = set_combine(sets["Dancing Edge"], sets["Fotia"]), tp_bonus = false }
+	WS["Exenterator"] = { set = set_combine(sets["Exenterator"], sets["Fotia"]), tp_bonus = false }
+	WS["Evisceration"] = { set = set_combine(sets["Evisceration"]), tp_bonus = false }
 	WS["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
 	WS["Cyclone"] = { set = sets["MagicAtk"], tp_bonus = true }
 	WS["Gust Slash"] = { set = sets["MagicAtk"], tp_bonus = true }
