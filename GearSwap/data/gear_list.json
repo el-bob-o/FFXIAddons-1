@@ -256,13 +256,6 @@
       "DRK": [ "Hybrid", "Insurgency", "Entropy", "Last Resort" ]
     } ]
   }, {
-    "augments": [ "none", "none", "none", "\"Fast Cast\"+10", "Spell interruption rate down-10%" ],
-    "name": "Ankou's Mantle",
-    "priority": 0,
-    "set_list": [ {
-      "DRK": [ "Fastcast", "AbsorbDuration", "MagicAcc", "HP" ]
-    } ]
-  }, {
     "augments": [ "MND+20", "Accuracy+20 Attack+20", "MND+10", "Weapon skill damage +10%", "Damage taken-5%" ],
     "name": "Nantosuelta's Cape",
     "priority": 0,
@@ -289,6 +282,13 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "Fastcast" ]
+    } ]
+  }, {
+    "augments": [ "none", "Mag. Acc+20 /Mag. Dmg.+20", "none", "\"Fast Cast\"+10", "Spell interruption rate down-10%" ],
+    "name": "Ankou's Mantle",
+    "priority": 0,
+    "set_list": [ {
+      "DRK": [ "Fastcast", "MagicAcc", "AbsorbDuration" ]
     } ]
   } ],
   "body": [ {
