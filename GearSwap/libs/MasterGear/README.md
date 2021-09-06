@@ -1,4 +1,7 @@
 # MasterGear
+1.3.0
+- Added PorterPacker support: slipstore and slipget commands to store and get gear from storage slips.
+
 1.2.0
 - Changed removeset function to take slots
 - Removed the removebyname function since removeset with new slot functionality is better.
@@ -84,5 +87,15 @@ Updates name of gear from gear_1_name to gear_2_name.
 
 Changes the name of gear in sets named Meg. Gloves +1 to Meg. Gloves +2
 
+## //gs mastergear slipstore (jobs:csv)
+
+Stores all gear that can be stored on slips except for gear for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.
+
+## //gs mastergear slipget (jobs:csv)
+
+Gets all gear that is stored on slips for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.
+
 # Limitations
-- Doesn't care about inventory. If you want to care about gear in inventory, uncomment the "--0" in equipable_bags
+- No support for items with the same name (e.g 2x Varar Ring +1). Need to edit the json and add in the bag info yourself.
+> "name": "Varar Ring +1",
+> "bag": "wardrobe",

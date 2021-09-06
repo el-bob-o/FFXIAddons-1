@@ -1,4 +1,4 @@
--- Version 1.2.0
+-- Version 1.3.0
 
 res = require 'resources'
 slips = require 'slips'
@@ -26,12 +26,13 @@ local default_gear_list = {
 
 jobs = { "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN" }
 
-equipable_bags = { --0, -- don't care inventory 
-					8, 10, 11, 12 } -- Mog Wardrobes
+equipable_bags = { 0, 8, 10, 11, 12 } -- Mog Wardrobes
 					
--- storage_bags = { 1, 2, 5, 6, 7, 9 }  -- Maybe for future use when doing something like porterpacker
+storage_bags = { 0, 1, 2, 5, 6, 7, 9 }  -- Maybe for future use when doing something like porterpacker
 
 gear_list_file_path = windower.addon_path .. "data/gear_list.json"
+
+packer_export_file_name = "mastergearexport"
 
 function load_json_setting()
 	local f = io.open(gear_list_file_path,'r')
@@ -525,6 +526,83 @@ function get_list_of_extra_gear(gears)
 	return extraGears
 end
 
+function find_item_in_bag(bag, item_id)
+	for i = 1, bag.count do
+		if item_id == bag[i].id then return bag[i] end
+	end
+	return nil
+end
+
+function store_gear_to_slips(filter, packer_path)
+	local str = 'return {\n'
+	local gear_to_exclude = get_list_of_gear_in_json(filter, true)
+	local extra_gear = get_list_of_extra_gear(gear_to_exclude)
+	for bag_id, item_list in pairs(extra_gear) do
+		for _, item in pairs(item_list) do
+			local slip_id = slips.get_slip_id_by_item_id(item.id)
+			if slip_id and res.items[item.id] then
+				for _, storage_id in pairs(storage_bags) do
+					local slip_item = find_item_in_bag(windower.ffxi.get_items(storage_id), slip_id)
+					if slip_item then
+						if storage_id ~= 0 then windower.ffxi.get_item(storage_id, slip_item.slot) end
+						str = str .. '    "%s",\n':format(res.items[item.id].name)
+						windower.ffxi.get_item(bag_id, item.slot)
+					else
+						windower.add_to_chat(122, "Couldn't find slip " .. slips.get_slip_number_by_id(slip_id))
+					end
+				end
+			end
+		end
+	end
+	str = str .. '}\n'
+	write_lua_to_packer_folder(str, packer_path)
+	windower.send_command('wait 2; input //porterpacker pack ' .. packer_export_file_name)
+end
+
+function get_gear_from_slips(filter, packer_path)
+	local str = 'return {\n'
+	local gear_to_get = get_list_of_gear_in_json(filter)
+	local player_items = slips.get_player_items()
+	for _, gear in pairs(gear_to_get) do
+		for _, slip_id in ipairs(slips.storages) do
+			local found = false
+			local slip = slips.get_slip_by_id(slip_id)
+			local player_slip_items = S(player_items[slip_id])
+			for item_position, item_id in ipairs(slip) do
+				if item_id ~= 0 and player_slip_items:contains(item_id) then
+					if gear.name == res.items[item_id].name then
+						for _, storage_id in pairs(storage_bags) do
+							local slip_item = find_item_in_bag(windower.ffxi.get_items(storage_id), slip_id)
+							if slip_item then
+								if storage_id ~= 0 then windower.ffxi.get_item(storage_id, slip_item.slot) end
+								str = str .. '    "%s",\n':format(res.items[item_id].name)
+							else
+								windower.add_to_chat(122, "Couldn't find slip " .. slips.get_slip_number_by_id(slip_id))
+							end
+						end
+						found = true
+						break
+					end
+				end
+			if found then break end
+			end
+		end
+	end
+	str = str .. '}\n'
+	write_lua_to_packer_folder(str, packer_path)
+	windower.send_command('input //porterpacker unpack ' .. packer_export_file_name)
+end
+
+function write_lua_to_packer_folder(lua_string, packer_path)
+	local data_path = packer_path .. "data/"
+	if not windower.dir_exists(data_path) then
+		windower.create_dir(data_path)
+	end
+	local export = io.open(data_path .. packer_export_file_name .. '.lua', "w")
+	export:write(lua_string)
+	export:close()
+end
+
 -- command functions
 
 function print_help()
@@ -537,6 +615,8 @@ function print_help()
 	windower.add_to_chat(122, "//gs mastergear saveslots (slots:csv) (set_name): Saved gear in specified slots to a set.")
 	windower.add_to_chat(122, "//gs mastergear removeset (slot, set_name): Remove specified set from slot. Use 'all' for all slots.")
 	windower.add_to_chat(122, "//gs mastergear update (gear_1_name,gear_2_name): Updates name of gear from gear_1_name to gear_2_name.")
+	windower.add_to_chat(122, "//gs mastergear slipstore (jobs:csv): Stores all gear that can be stored on slips except for gear for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.")
+	windower.add_to_chat(122, "//gs mastergear slipget (jobs:csv): Gets all gear that is stored on slips for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.")
 end
 
 function parse_command(...)
@@ -595,6 +675,28 @@ function parse_command(...)
 				end
 			else
 				windower.add_to_chat(122, "Please input 2 names separated by comma: " .. commandstring)
+			end
+		elseif args[1] == 'slipstore' then
+			local packer_path = windower.windower_path  .. "addons/PorterPacker/"
+			if windower.dir_exists(packer_path) then
+				local filter = T{}
+				if args[2] then filter = string.lower(args[2]):split(',')
+				else filter = T{ string.lower(player.main_job) }
+				end
+				store_gear_to_slips(filter, packer_path)
+			else
+				windower.add_to_chat(122, packer_path .. " doesn't exist")
+			end
+		elseif args[1] == 'slipget' then
+			local packer_path = windower.windower_path  .. "addons/PorterPacker/"
+			if windower.dir_exists(packer_path) then
+				local filter = T{}
+				if args[2] then filter = string.lower(args[2]):split(',')
+				else filter = T{ string.lower(player.main_job) }
+				end
+				get_gear_from_slips(filter, packer_path)
+			else
+				windower.add_to_chat(122, packer_path .. " doesn't exist")
 			end
 		else
 			print_help()
