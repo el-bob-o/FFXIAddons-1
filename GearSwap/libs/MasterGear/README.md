@@ -1,4 +1,7 @@
 # MasterGear
+1.2.0
+- Changed removeset function to take slots
+- Removed the removebyname function since removeset with new slot functionality is better.
 
 1.1
 - Fix exportsets function
@@ -65,9 +68,9 @@ Saved gear in specified slots to a set.
 
 Saves equipment in head, feet, ring1, ring2 slots to a set called IdleRefresh.
 
-## //gs mastergear removeset (set_name)
+## //gs mastergear removeset (slot, set_name)
 
-Remove specified set.
+Remove specified set from slot. Use 'all' for all slots.
 
 > //gs mastergear removeset IdleRefresh
 
@@ -80,14 +83,6 @@ Updates name of gear from gear_1_name to gear_2_name.
 > //gs mastergear update Meg. Gloves +1, Meg. Gloves +2
 
 Changes the name of gear in sets named Meg. Gloves +1 to Meg. Gloves +2
-
-## //gs mastergear removename (slot)
-
-Removes from gear list item with the same name as the gear that is equipped in specified slot.
-
-> //gs mastergear removename back
-
-Removes from sets any gear with the same name as the gear equipped in the back slot. E.g if Ankou's Mantle is equipped in back slot then all Ankou's Mantle will be removed, even ones with different augments. If you want to update just the augments on 1 piece, can just edit the json by yourself.
 
 # Limitations
 - Doesn't care about inventory. If you want to care about gear in inventory, uncomment the "--0" in equipable_bags

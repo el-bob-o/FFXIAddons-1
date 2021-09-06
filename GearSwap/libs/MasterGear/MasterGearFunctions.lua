@@ -1,4 +1,4 @@
--- Version 1.1
+-- Version 1.2.0
 
 res = require 'resources'
 slips = require 'slips'
@@ -164,23 +164,23 @@ function save_gear_to_slot(item, slot, set_name)
 	table.insert(slot, gear)
 end
 
-function remove_set(set_name)
-	remove_set_from_slot(gear_list.main, set_name)
-	remove_set_from_slot(gear_list.sub, set_name)
-	remove_set_from_slot(gear_list.range, set_name)
-	remove_set_from_slot(gear_list.ammo, set_name)
-	remove_set_from_slot(gear_list.head, set_name)
-	remove_set_from_slot(gear_list.neck, set_name)
-	remove_set_from_slot(gear_list.ear1, set_name)
-	remove_set_from_slot(gear_list.ear2, set_name)
-	remove_set_from_slot(gear_list.body, set_name)
-	remove_set_from_slot(gear_list.hands, set_name)
-	remove_set_from_slot(gear_list.ring1, set_name)
-	remove_set_from_slot(gear_list.ring2, set_name)
-	remove_set_from_slot(gear_list.back, set_name)
-	remove_set_from_slot(gear_list.waist, set_name)
-	remove_set_from_slot(gear_list.legs, set_name)
-	remove_set_from_slot(gear_list.feet, set_name)
+function remove_set(set_name, slot_name)
+	if slot_name == "all" or slot_name == "main" then remove_set_from_slot(gear_list.main, set_name) end
+	if slot_name == "all" or slot_name == "sub" then remove_set_from_slot(gear_list.sub, set_name) end
+	if slot_name == "all" or slot_name == "range" then remove_set_from_slot(gear_list.range, set_name) end
+	if slot_name == "all" or slot_name == "ammo" then remove_set_from_slot(gear_list.ammo, set_name) end
+	if slot_name == "all" or slot_name == "head" then remove_set_from_slot(gear_list.head, set_name) end
+	if slot_name == "all" or slot_name == "neck" then remove_set_from_slot(gear_list.neck, set_name) end
+	if slot_name == "all" or slot_name == "ear1" then remove_set_from_slot(gear_list.ear1, set_name) end
+	if slot_name == "all" or slot_name == "ear2" then remove_set_from_slot(gear_list.ear2, set_name) end
+	if slot_name == "all" or slot_name == "body" then remove_set_from_slot(gear_list.body, set_name) end
+	if slot_name == "all" or slot_name == "hands" then remove_set_from_slot(gear_list.hands, set_name) end
+	if slot_name == "all" or slot_name == "ring1" then remove_set_from_slot(gear_list.ring1, set_name) end
+	if slot_name == "all" or slot_name == "ring2" then remove_set_from_slot(gear_list.ring2, set_name) end
+	if slot_name == "all" or slot_name == "back" then remove_set_from_slot(gear_list.back, set_name) end
+	if slot_name == "all" or slot_name == "waist" then remove_set_from_slot(gear_list.waist, set_name) end
+	if slot_name == "all" or slot_name == "legs" then remove_set_from_slot(gear_list.legs, set_name) end
+	if slot_name == "all" or slot_name == "feet" then remove_set_from_slot(gear_list.feet, set_name) end
 	save_json_setting()
 end
 
@@ -449,59 +449,6 @@ function update_gear_name_in_slot(slot, name1, name2)
 	return false
 end
 
-function remove_item_by_name(slot)
-	local equipment = windower.ffxi.get_items().equipment
-	if slot == 'main' then
-		local main = windower.ffxi.get_items(equipment.main_bag, equipment.main)
-		return remove_item_by_name_in_slot(main, gear_list.main)
-	elseif slot == 'sub' then
-		local sub = windower.ffxi.get_items(equipment.sub_bag, equipment.sub)
-		return remove_item_by_name_in_slot(sub, gear_list.sub)
-	elseif slot == 'range' then
-		local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
-		return remove_item_by_name_in_slot(range, gear_list.range)
-	elseif slot == 'ammo' then
-		local ammo = windower.ffxi.get_items(equipment.ammo_bag, equipment.ammo)
-		return remove_item_by_name_in_slot(ammo, gear_list.ammo)
-	elseif slot == 'head' then
-		local head = windower.ffxi.get_items(equipment.head_bag, equipment.head)
-		return remove_item_by_name_in_slot(head, gear_list.head)
-	elseif slot == 'neck' then
-		local neck = windower.ffxi.get_items(equipment.neck_bag, equipment.neck)
-		return remove_item_by_name_in_slot(neck, gear_list.neck)
-	elseif slot == 'ear1' then
-		local ear1 = windower.ffxi.get_items(equipment.left_ear_bag, equipment.left_ear)
-		return remove_item_by_name_in_slot(ear1, gear_list.ear1)
-	elseif slot == 'ear2' then
-		local ear2 = windower.ffxi.get_items(equipment.right_ear_bag, equipment.right_ear)
-		return remove_item_by_name_in_slot(ear2, gear_list.ear2)
-	elseif slot == 'body' then
-		local body = windower.ffxi.get_items(equipment.body_bag, equipment.body)
-		return remove_item_by_name_in_slot(body, gear_list.body)
-	elseif slot == 'hands' then
-		local hands = windower.ffxi.get_items(equipment.hands_bag, equipment.hands)
-		return remove_item_by_name_in_slot(hands, gear_list.hands)
-	elseif slot == 'ring1' then
-		local ring1 = windower.ffxi.get_items(equipment.left_ring_bag, equipment.left_ring)
-		return remove_item_by_name_in_slot(ring1, gear_list.ring1)
-	elseif slot == 'ring2' then
-		local ring2 = windower.ffxi.get_items(equipment.right_ring_bag, equipment.right_ring)
-		return remove_item_by_name_in_slot(ring2, gear_list.ring2)
-	elseif slot == 'back' then
-		local back = windower.ffxi.get_items(equipment.back_bag, equipment.back)
-		return remove_item_by_name_in_slot(back, gear_list.back)
-	elseif slot == 'waist' then
-		local waist = windower.ffxi.get_items(equipment.waist_bag, equipment.waist)
-		return remove_item_by_name_in_slot(waist, gear_list.waist)
-	elseif slot == 'legs' then
-		local legs = windower.ffxi.get_items(equipment.legs_bag, equipment.legs)
-		return remove_item_by_name_in_slot(legs, gear_list.legs)
-	elseif slot == 'feet' then
-		local feet = windower.ffxi.get_items(equipment.feet_bag, equipment.feet)
-		return remove_item_by_name_in_slot(feet, gear_list.feet)
-	end
-end
-
 function remove_item_by_name_in_slot(item, slot)
 	local item_name = res.items[item.id].name
 	for k,v in pairs(slot) do
@@ -588,9 +535,8 @@ function print_help()
 	windower.add_to_chat(122, "//gs mastergear exportsets: Export all sets to a txt file")
 	windower.add_to_chat(122, "//gs mastergear saveeq (set_name): Saved equipped gear to a set. Won't save main, sub, ranged.")
 	windower.add_to_chat(122, "//gs mastergear saveslots (slots:csv) (set_name): Saved gear in specified slots to a set.")
-	windower.add_to_chat(122, "//gs mastergear removeset (set_name): Remove specified set.")
+	windower.add_to_chat(122, "//gs mastergear removeset (slot, set_name): Remove specified set from slot. Use 'all' for all slots.")
 	windower.add_to_chat(122, "//gs mastergear update (gear_1_name,gear_2_name): Updates name of gear from gear_1_name to gear_2_name.")
-	windower.add_to_chat(122, "//gs mastergear removename (slot): Removes from gear list item with the same name as the gear that is equipped in specified slot.")
 end
 
 function parse_command(...)
@@ -624,14 +570,15 @@ function parse_command(...)
 			save_gear_slots(args[2], set_name)
 			save_json_setting()
 			windower.add_to_chat(122, args[2] .. " saved to " .. set_name)
-		elseif args[1] == 'removeset' and args[2] then
+		elseif args[1] == 'removeset' and args[2] and args[3] then
+			local slot_name = string.lower(args[2])
 			local set_name = ""
-			for i = 2, #args do
+			for i = 3, #args do
 				set_name = set_name .. args[i] .. " "
 			end
 			set_name = string.sub(set_name, 1, #set_name - 1)
-			remove_set(set_name)
-			windower.add_to_chat(122, "Removing " .. set_name)
+			remove_set(set_name, slot_name)
+			windower.add_to_chat(122, "Removing " .. slot_name .. " from " .. set_name)
 		elseif args[1] == 'update' and args[2] then
 			local commandstring = ""
 			for i = 2, #args do
@@ -648,13 +595,6 @@ function parse_command(...)
 				end
 			else
 				windower.add_to_chat(122, "Please input 2 names separated by comma: " .. commandstring)
-			end
-		elseif args[1] == 'removename' and args[2] then
-			if remove_item_by_name(args[2]) then
-				windower.add_to_chat(122, "Removed " .. args[2] .. " item by name")
-				save_json_setting()
-			else
-				windower.add_to_chat(122, "Couldn't find any gear with same name as item in " .. args[2] .. " slot.")
 			end
 		else
 			print_help()
