@@ -547,8 +547,7 @@ function store_gear_to_slips(filter, packer_path)
 						if storage_id ~= 0 then windower.ffxi.get_item(storage_id, slip_item.slot) end
 						str = str .. '    "%s",\n':format(res.items[item.id].name)
 						windower.ffxi.get_item(bag_id, item.slot)
-					else
-						windower.add_to_chat(122, "Couldn't find slip " .. slips.get_slip_number_by_id(slip_id))
+						break
 					end
 				end
 			end
@@ -576,8 +575,7 @@ function get_gear_from_slips(filter, packer_path)
 							if slip_item then
 								if storage_id ~= 0 then windower.ffxi.get_item(storage_id, slip_item.slot) end
 								str = str .. '    "%s",\n':format(res.items[item_id].name)
-							else
-								windower.add_to_chat(122, "Couldn't find slip " .. slips.get_slip_number_by_id(slip_id))
+								break
 							end
 						end
 						found = true
@@ -603,6 +601,50 @@ function write_lua_to_packer_folder(lua_string, packer_path)
 	export:close()
 end
 
+function got_space(bag_id)
+	local bag_info = windower.ffxi.get_bag_info(bag_id)
+	if bag_info then
+		return bag_info.enabled and bag_info.count < bag_info.max
+	else
+		return false
+	end
+end
+
+function move_all_slip_gear()
+	if move_slip_gear() then
+		coroutine.schedule(move_all_slip_gear, 0.5)
+	end
+end
+
+function move_slip_gear()
+	local inventory = windower.ffxi.get_items(0)
+	for _, item in ipairs(inventory) do
+		if item.id ~= 0 then
+			if slips.storages:contains(item.id) then
+				for j = 2, #storage_bags do
+					if got_space(storage_bags[j]) then
+						windower.ffxi.put_item(storage_bags[j], item.slot)
+						windower.add_to_chat(122, "moving [" .. item.slot .. "] " .. res.items[item.id].name .. " to " .. res.bags[storage_bags[j]].name)
+						return true
+					end
+				end
+			elseif res.items[item.id].type == 4 or res.items[item.id].type == 5 then	
+				local slip_id = slips.get_slip_id_by_item_id(item.id)
+				if slip_id then
+					for j = 2, #equipable_bags do
+						if got_space(equipable_bags[j]) then
+							windower.ffxi.put_item(equipable_bags[j], item.slot)
+							windower.add_to_chat(122, "moving [" .. item.slot .. "] " .. res.items[item.id].name .. " to " .. res.bags[equipable_bags[j]].name)
+							return true
+						end
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
 -- command functions
 
 function print_help()
@@ -617,6 +659,7 @@ function print_help()
 	windower.add_to_chat(122, "//gs mastergear update (gear_1_name,gear_2_name): Updates name of gear from gear_1_name to gear_2_name.")
 	windower.add_to_chat(122, "//gs mastergear slipstore (jobs:csv): Stores all gear that can be stored on slips except for gear for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.")
 	windower.add_to_chat(122, "//gs mastergear slipget (jobs:csv): Gets all gear that is stored on slips for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.")
+	windower.add_to_chat(122, "//gs mastergear moveslipgear: Moves slips to storage bags and slip gear to wardrobes.")
 end
 
 function parse_command(...)
@@ -698,6 +741,8 @@ function parse_command(...)
 			else
 				windower.add_to_chat(122, packer_path .. " doesn't exist")
 			end
+		elseif args[1] == 'moveslipgear' then
+			move_all_slip_gear()
 		else
 			print_help()
 		end

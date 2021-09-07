@@ -1,4 +1,8 @@
 # MasterGear
+1.3.1
+- Fix some chat spam issues
+- Added moveslipgear command to move slips to storage bags and slip gear to wardrobes
+
 1.3.0
 - Added PorterPacker support: slipstore and slipget commands to store and get gear from storage slips.
 
@@ -94,6 +98,10 @@ Stores all gear that can be stored on slips except for gear for jobs specified. 
 ## //gs mastergear slipget (jobs:csv)
 
 Gets all gear that is stored on slips for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.
+
+## //gs mastergear moveslipgear
+
+Moves slips to storage bags and slip gear to wardrobes.
 
 # Limitations
 - No support for items with the same name (e.g 2x Varar Ring +1). Need to edit the json and add in the bag info yourself.
