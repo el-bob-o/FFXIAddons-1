@@ -1,4 +1,8 @@
 # MasterGear
+1.3.2
+- Delay moving by 1 sec since 0.5 sec seems to have some repeats
+- Delay sending command to porterpacker for getting slip items by 2sec, to have time to move slips into inventory 
+
 1.3.1
 - Fix some chat spam issues
 - Added moveslipgear command to move slips to storage bags and slip gear to wardrobes

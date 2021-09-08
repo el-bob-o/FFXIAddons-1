@@ -1,4 +1,4 @@
--- Version 1.3.0
+-- Version 1.3.2
 
 res = require 'resources'
 slips = require 'slips'
@@ -588,7 +588,7 @@ function get_gear_from_slips(filter, packer_path)
 	end
 	str = str .. '}\n'
 	write_lua_to_packer_folder(str, packer_path)
-	windower.send_command('input //porterpacker unpack ' .. packer_export_file_name)
+	windower.send_command('wait 2; input //porterpacker unpack ' .. packer_export_file_name)
 end
 
 function write_lua_to_packer_folder(lua_string, packer_path)
@@ -612,7 +612,7 @@ end
 
 function move_all_slip_gear()
 	if move_slip_gear() then
-		coroutine.schedule(move_all_slip_gear, 0.5)
+		coroutine.schedule(move_all_slip_gear, 1)
 	end
 end
 
