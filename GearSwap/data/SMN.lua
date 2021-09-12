@@ -5,23 +5,23 @@ texts = require('texts')
 BPs = {
 	["Carbuncle"] = 
 		{
-			["Rage1"] = { name = "Poison Nails",		target = "stnpc", 		description = "Pierce + poison" },
-			["Rage2"] = { name = "Holy Mist",			target = "stnpc", 		description = "Light Atk" },
-			["Ward1"] = { name = "Healing Ruby II", 	target = "stpt", 		description = "Healing" },
-			["Ward2"] = { name = "Soothing Ruby", 		target = "stpt", 		description = "Erase" },
-			["Ward3"] = { name = "Pacifying Ruby", 		target = "stpt",		description = "-Emnity" },
+			["Rage1"] = { name = "Poison Nails",		target = "stnpc", 		set = "PhyBPDmg", 	description = "Pierce + poison" },
+			["Rage2"] = { name = "Holy Mist",			target = "stnpc", 		set = "MagicBPDmg",	description = "Light Atk" },
+			["Ward1"] = { name = "Healing Ruby II", 	target = "stpt", 							description = "Healing" },
+			["Ward2"] = { name = "Soothing Ruby", 		target = "stpt", 							description = "Erase" },
+			["Ward3"] = { name = "Pacifying Ruby", 		target = "stpt",							description = "-Emnity" },
 		},
 	["Ifrit"] = 
 		{
-			["Rage1"] = { name = "Flaming Crush",		target = "stnpc",	 	description = "Blunt + Fire" },
-			["Rage2"] = { name = "Conflag Strike",		target = "stnpc", 		description = "Fire + Burn" },
+			["Rage1"] = { name = "Flaming Crush",		target = "stnpc",	 	set = "MagicBPDmg",	description = "Blunt + Fire" },
+			["Rage2"] = { name = "Conflag Strike",		target = "stnpc", 		set = "MagicBPDmg", description = "Fire + Burn" },
 			["Ward1"] = { name = "Crimson Howl", 		target = "stpt", 		description = "+10% Atk" },
 			["Ward2"] = { name = "Inferno Howl", 		target = "stpt", 		description = "Enfire" },
 		},
 	["Shiva"] = 
 		{
-			["Rage1"] = { name = "Rush",				target = "stnpc",	 	description = "Blunt" },
-			["Rage2"] = { name = "Heavenly Strike",		target = "stnpc", 		description = "Ice Nuke" },
+			["Rage1"] = { name = "Rush",				target = "stnpc",	 	set = "PhyBPDmg",	description = "Blunt" },
+			["Rage2"] = { name = "Heavenly Strike",		target = "stnpc", 		set = "MagicBPDmg", description = "Ice Nuke" },
 			["Ward1"] = { name = "Frost Armor", 		target = "stpt", 		description = "Ice Spikes" },
 			["Ward2"] = { name = "Sleepga", 			target = "stnpc", 		description = "Sleepga" },
 			["Ward3"] = { name = "Diamond Storm", 		target = "stnpc", 		description = "-Evasion" },
@@ -29,8 +29,8 @@ BPs = {
 		},
 	["Garuda"] = 
 		{
-			["Rage1"] = { name = "Predator Claws",		target = "stnpc",	 	description = "Slash" },
-			["Rage2"] = { name = "Aero IV",				target = "stnpc", 		description = "Wind Nuke" },
+			["Rage1"] = { name = "Predator Claws",		target = "stnpc",	 	set = "PhyBPDmg", 	description = "Slash" },
+			["Rage2"] = { name = "Aero IV",				target = "stnpc", 		set = "MagicBPDmg", description = "Wind Nuke" },
 			["Ward1"] = { name = "Aerial Armor", 		target = "stpt", 		description = "Blink" },
 			["Ward2"] = { name = "Whispering Wind", 	target = "stpt", 		description = "Heal" },
 			["Ward3"] = { name = "Fleet Wind", 			target = "stpt", 		description = "Movement" },
@@ -38,25 +38,25 @@ BPs = {
 		},
 	["Titan"] = 
 		{
-			["Rage1"] = { name = "Mountain Buster",		target = "stnpc",	 	description = "Blunt" },
-			["Rage2"] = { name = "Stone IV",			target = "stnpc", 		description = "Earth Nuke" },
+			["Rage1"] = { name = "Mountain Buster",		target = "stnpc",	 	set = "PhyBPDmg",	description = "Blunt" },
+			["Rage2"] = { name = "Stone IV",			target = "stnpc", 		set = "MagicBPDmg",	description = "Earth Nuke" },
 			["Ward1"] = { name = "Earthen Ward", 		target = "stpt", 		description = "Stoneskin" },
 			["Ward2"] = { name = "Earthen Armor", 		target = "stpt", 		description = "Heavy Dmg Reduction" },
 		},
 	["Ramuh"] = 
 		{
-			["Rage1"] = { name = "Chaotic Strike",		target = "stnpc",	 	description = "Blunt" },
-			["Rage2"] = { name = "Volt Strike",			target = "stnpc",	 	description = "Blunt" },
-			["Rage3"] = { name = "Thunderstorm",		target = "stnpc", 		description = "Thunder Nuke" },
-			["Rage4"] = { name = "Thunderspark",		target = "stnpc", 		description = "AOE Thunder Paralyze" },
+			["Rage1"] = { name = "Chaotic Strike",		target = "stnpc",	 	set = "PhyBPDmg",	description = "Blunt" },
+			["Rage2"] = { name = "Volt Strike",			target = "stnpc",	 	set = "PhyBPDmg",	description = "Blunt" },
+			["Rage3"] = { name = "Thunderstorm",		target = "stnpc", 		set = "MagicBPDmg",	description = "Thunder Nuke" },
+			["Rage4"] = { name = "Thunderspark",		target = "stnpc", 		set = "MagicBPDmg",	description = "AOE Thunder Paralyze" },
 			["Ward1"] = { name = "Rolling Thunder", 	target = "stpt", 		description = "Enthunder" },
 			["Ward2"] = { name = "Lightning Armor", 	target = "stpt", 		description = "Shock Spikes" },
 			["Ward3"] = { name = "Shock Squall", 		target = "stnpc", 		description = "Stun" },
 		},
 	["Leviathan"] = 
 		{
-			["Rage1"] = { name = "Spinning Dive",		target = "stnpc",	 	description = "Slash" },
-			["Rage2"] = { name = "Water IV",			target = "stnpc", 		description = "Water Nuke" },
+			["Rage1"] = { name = "Spinning Dive",		target = "stnpc",	 	set = "PhyBPDmg",	description = "Slash" },
+			["Rage2"] = { name = "Water IV",			target = "stnpc", 		set = "MagicBPDmg", description = "Water Nuke" },
 			["Ward1"] = { name = "Slowga", 				target = "stnpc", 		description = "Slow" },
 			["Ward2"] = { name = "Spring Water", 		target = "stpt", 		description = "Heal & Erase" },
 			["Ward3"] = { name = "Tidal Roar", 			target = "stnpc", 		description = "-Atk" },
@@ -64,8 +64,8 @@ BPs = {
 		},
 	["Cait Sith"] = 
 		{
-			["Rage1"] = { name = "Regal Gash",			target = "stnpc",	 	description = "Slash" },
-			["Rage2"] = { name = "Level ? Holy",		target = "stnpc", 		description = "Light Nuke" },
+			["Rage1"] = { name = "Regal Gash",			target = "stnpc",	 	set = "PhyBPDmg",	description = "Slash" },
+			["Rage2"] = { name = "Level ? Holy",		target = "stnpc", 		set = "MagicBPDmg",	description = "Light Nuke" },
 			["Ward1"] = { name = "Raise II", 			target = "stpt", 		description = "Raise" },
 			["Ward2"] = { name = "Mewing Lullaby", 		target = "stnpc", 		description = "-TP & Sleep" },
 			["Ward3"] = { name = "Reraise II", 			target = "stpt", 		description = "Reraise" },
@@ -73,9 +73,9 @@ BPs = {
 		},
 	["Fenrir"] = 
 		{
-			["Rage1"] = { name = "Eclipse Bite",		target = "stnpc",	 	description = "Slash" },
-			["Rage2"] = { name = "Lunar Bay",			target = "stnpc", 		description = "Dark Nuke" },
-			["Rage3"] = { name = "Impact",				target = "stnpc", 		description = "Dark & -Attr" },
+			["Rage1"] = { name = "Eclipse Bite",		target = "stnpc",	 	set = "PhyBPDmg", 	description = "Slash" },
+			["Rage2"] = { name = "Lunar Bay",			target = "stnpc", 		set = "MagicBPDmg", description = "Dark Nuke" },
+			["Rage3"] = { name = "Impact",				target = "stnpc", 		set = "MagicBPDmg", description = "Dark & -Attr" },
 			["Ward1"] = { name = "Lunar Cry", 			target = "stnpc", 		description = "-Evasion" },
 			["Ward2"] = { name = "Lunar Roar", 			target = "stnpc", 		description = "Dispel x2" },
 			["Ward3"] = { name = "Ecliptic Growl", 		target = "stpt", 		description = "+Attr" },
@@ -84,10 +84,10 @@ BPs = {
 		},
 	["Diabolos"] = 
 		{
-			["Rage1"] = { name = "Blindside",			target = "stnpc",	 	description = "Slash" },
-			["Rage2"] = { name = "Nether Blast",		target = "stnpc", 		description = "Dark Ranged Atk" },
-			["Rage3"] = { name = "Night Terror",		target = "stnpc", 		description = "Dark Nuke" },
-			["Ward1"] = { name = "Somnolence", 			target = "stnpc", 		description = "Gravity & Magic Dmg" },
+			["Rage1"] = { name = "Blindside",			target = "stnpc",	 	set = "PhyBPDmg", 	description = "Slash" },
+			["Rage2"] = { name = "Nether Blast",		target = "stnpc", 		set = "MagicBPDmg",	description = "Dark Ranged Atk" },
+			["Rage3"] = { name = "Night Terror",		target = "stnpc", 		set = "MagicBPDmg",	description = "Dark Nuke" },
+			["Ward1"] = { name = "Somnolence", 			target = "stnpc", 		set = "MagicBPDmg",	description = "Gravity & Magic Dmg" },
 			["Ward2"] = { name = "Nightmare", 			target = "stnpc", 		description = "AOE Sleep & Dark Dmg" },
 			["Ward3"] = { name = "Ultimate Terror", 	target = "stnpc", 		description = "AOE -Attr" },
 			["Ward4"] = { name = "Noctoshield", 		target = "stpt", 		description = "Phalanx" },
@@ -96,9 +96,9 @@ BPs = {
 		},
 	["Siren"] = 
 		{
-			["Rage1"] = { name = "Hysteric Assault",	target = "stnpc",	 	description = "Pierce" },
-			["Rage2"] = { name = "Tornado II",			target = "stnpc", 		description = "Wind Nuke" },
-			["Rage3"] = { name = "Sonic Buffet",		target = "stnpc", 		description = "Wind Nuke & Dispel" },
+			["Rage1"] = { name = "Hysteric Assault",	target = "stnpc",	 	set = "PhyBPDmg",	description = "Pierce" },
+			["Rage2"] = { name = "Tornado II",			target = "stnpc", 		set = "MagicBPDmg", description = "Wind Nuke" },
+			["Rage3"] = { name = "Sonic Buffet",		target = "stnpc", 		set = "MagicBPDmg", description = "Wind Nuke & Dispel" },
 			["Ward1"] = { name = "Lunatic Voice", 		target = "stnpc", 		description = "AOE Silence" },
 			["Ward2"] = { name = "Katabatic Blades", 	target = "stpt", 		description = "Enaero" },
 			["Ward3"] = { name = "Chinook", 			target = "stpt", 		description = "Aquaveil" },
@@ -162,7 +162,7 @@ function get_sets()
 	Combat = false
 	StartedBPWard = false
 	StartedBPRage = false
-	StartedMeritBP = false
+	RageSetToUse = ""
 	BuffBot = false
 	WardRecastId = 0
 	Buffs = {}
@@ -178,6 +178,17 @@ function get_sets()
 	send_command('@input /macro book 4;wait 1;input /macro set 1')
 end
 
+function get_set_to_use(spell_name)
+	if BPs[pet.name] then
+		for _, v in pairs(BPs[pet.name]) do 
+			if v.name == spell_name and v.setToUse then
+				return v.setToUse
+			end
+		end
+	end
+	return "MagicBPDmg"
+end
+
 function precast(spell)
 	if spell.type == "JobAbility" then
 		if sets[spell.english] then
@@ -188,19 +199,21 @@ function precast(spell)
 		coroutine.schedule(check_pet_midcast, TimerFromPrecast)
 	elseif spell.english == "Odin" then
 		StartedBPRage = true
+		RageSetToUse = "PhyBPDmg",
 		coroutine.schedule(check_pet_midcast, TimerFromPrecast)
 	elseif spell.action_type == 'Magic' then
 		equip(sets["Fastcast"])
 	elseif spell.type=="BloodPactWard" then
 		if buffactive["Astral Conduit"] then
 			if spell.name == "Somnolence" then
-				equip(sets["BPDmg"])
+				equip(sets[get_set_to_use(spell.name)])
 			else
 				equip(sets["SmnSkill"])
 			end
 		else
 			equip(sets["PrecastBP"])
 			if spell.name == "Somnolence" then
+				RageSetToUse = get_set_to_use(spell.name)
 				StartedBPRage = true
 			else
 				StartedBPWard = true
@@ -209,16 +222,16 @@ function precast(spell)
         end
 	elseif spell.type=="BloodPactRage" then
         if buffactive["Astral Conduit"] then
-			local setToUse = sets["BPDmg"]
+			local setToUse = sets[get_set_to_use(spell.name)]
 			if MeritBPs:contains(spell.name) then setToUse = set_combine(setToUse, sets["MeritBPBurst"]) end
 			equip(setToUse)
 		else
 			equip(sets["PrecastBP"])
 			StartedBPRage = true
 			if MeritBPs:contains(spell.name) then 
-				StartedMeritBP = true 
+				RageSetToUse = "MeritBPBurst"
 			else 
-				StartedMeritBP = false
+				RageSetToUse = get_set_to_use(spell.name)
 			end
 			coroutine.schedule(check_pet_midcast, TimerFromPrecast)
         end
@@ -246,8 +259,7 @@ end
 
 function check_pet_midcast()
 	if StartedBPRage then
-		local setToUse = sets["BPDmg"]
-		if StartedMeritBP then setToUse = set_combine(setToUse, sets["MeritBPBurst"]) end
+		local setToUse = sets[RageSetToUse]
 		equip(setToUse)
 	elseif StartedBPWard then
 		equip(sets["SmnSkill"])	

@@ -476,7 +476,11 @@ function rng_action_helper(act)
 			for k,v in pairs(act.targets) do
 				if HoverShot then HoverShotTarget = v.id end
 				for k2, v2 in pairs(v.actions) do
-					ranger_info_hub.dmg = v2.param
+					if v2.message == 188 then
+						ranger_info_hub.dmg = 0
+					else 
+						ranger_info_hub.dmg = v2.param 
+					end
 				end
 			end
 			if HoverShot then

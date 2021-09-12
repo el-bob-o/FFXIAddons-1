@@ -50,7 +50,7 @@
     "name": "Epitaph",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "Fastcast", "BPDmg", "PrecastBP", "Idle", "MACC", "IdleDT", "SmnSkill" ]
+      "SMN": [ "Fastcast", "PrecastBP", "Idle", "MACC", "IdleDT", "SmnSkill" ]
     } ]
   }, {
     "name": "Aurgelmir Orb",
@@ -138,7 +138,7 @@
     "name": "Lifestream Cape",
     "priority": 50,
     "set_list": [ {
-      "GEO": [ "HealingFastcast", "Fastcast", "ElementalFastcast", "Geomancy", "CombatIdleDT" ]
+      "GEO": [ "HealingFastcast", "ElementalFastcast", "Geomancy", "CombatIdleDT" ]
     } ]
   }, {
     "name": "Solemnity Cape",
@@ -166,7 +166,7 @@
     "name": "Campestres's Cape",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "Fastcast", "BPDmg", "Idle", "IdleDT" ]
+      "SMN": [ "Fastcast", "Idle", "IdleDT", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "augments": [ "Summoning magic skill +5", "Pet: Enmity+14", "Blood Pact Dmg.+2", "Blood Pact ab. del. II -2", "none" ],
@@ -281,7 +281,8 @@
     "name": "Fi Follet Cape +1",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "Fastcast" ]
+      "BLU": [ "Fastcast" ],
+      "GEO": [ "Fastcast" ]
     } ]
   }, {
     "augments": [ "none", "Mag. Acc+20 /Mag. Dmg.+20", "none", "\"Fast Cast\"+10", "Spell interruption rate down-10%" ],
@@ -386,17 +387,10 @@
       "THF": [ "Hybrid" ]
     } ]
   }, {
-    "augments": [ "Pet: Attack+25", "Pet: \"Mag.Atk.Bns.\"+25", "Blood Pact Dmg.+8" ],
-    "name": "Apo. Dalmatica +1",
-    "priority": -160,
-    "set_list": [ {
-      "SMN": [ "BPDmg" ]
-    } ]
-  }, {
     "name": "Con. Doublet +3",
     "priority": 85,
     "set_list": [ {
-      "SMN": [ "PrecastBP", "SmnSkill" ]
+      "SMN": [ "PrecastBP", "SmnSkill", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Orion Jerkin +1",
@@ -539,7 +533,7 @@
     "name": "Lugalbanda Earring",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg" ]
+      "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Lodurr Earring",
@@ -560,7 +554,7 @@
     "set_list": [ {
       "DRK": [ "HP" ],
       "GEO": [ "Geomancy" ],
-      "RNG": [ "Flurry2", "Flurry1", "RangedIdleDT", "Flurry0" ]
+      "RNG": [ "RangedIdleDT" ]
     } ]
   }, {
     "name": "Friomisi Earring",
@@ -691,13 +685,7 @@
     "name": "Gelos Earring",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg", "PrecastBP" ]
-    } ]
-  }, {
-    "name": "Enervating Earring",
-    "priority": 0,
-    "set_list": [ {
-      "RNG": [ "Flurry2", "Flurry1", "RangedIdleDT", "Flurry0" ]
+      "SMN": [ "PrecastBP", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Hermetic Earring",
@@ -834,6 +822,7 @@
     "name": "Herculean Boots",
     "priority": 9,
     "set_list": [ {
+      "BLU": [ "Phalanx" ],
       "RUN": [ "EnhancingPhalanx" ]
     } ]
   }, {
@@ -871,7 +860,7 @@
     "name": "Apogee Pumps +1",
     "priority": -90,
     "set_list": [ {
-      "SMN": [ "BPDmg", "Idle", "IdleDT" ]
+      "SMN": [ "Idle", "IdleDT", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "augments": [ "none", "none", "Inc. Sp. \"Blood Pact\" magic crit. dmg.", "none" ],
@@ -930,7 +919,8 @@
     "name": "Merlinic Crackows",
     "priority": 4,
     "set_list": [ {
-      "GEO": [ "TH" ]
+      "GEO": [ "TH" ],
+      "SMN": [ "TH" ]
     } ]
   }, {
     "name": "Flam. Gambieras +2",
@@ -962,7 +952,7 @@
     "name": "Meg. Gloves +2",
     "priority": 30,
     "set_list": [ {
-      "RNG": [ "STR_Melee_WS", "Ranged_AGI_WS", "MeleeHybrid" ],
+      "RNG": [ "STR_Melee_WS", "Ranged_AGI_WS" ],
       "RUN": [ "MND_WS", "STR_WS", "DEX_WS" ],
       "THF": [ "Savage Blade", "Rudra's Storm" ]
     } ]
@@ -1024,6 +1014,7 @@
     "name": "Taeon Gloves",
     "priority": 25,
     "set_list": [ {
+      "BLU": [ "Phalanx" ],
       "RUN": [ "EnhancingPhalanx" ]
     } ]
   }, {
@@ -1056,7 +1047,7 @@
     "name": "Merlinic Dastanas",
     "priority": 9,
     "set_list": [ {
-      "SMN": [ "BPDmg" ]
+      "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Lamassu Mitts +1",
@@ -1160,7 +1151,7 @@
       "BLU": [ "Hybrid" ],
       "BST": [ "Hybrid" ],
       "NIN": [ "Hybrid" ],
-      "RNG": [ "RangedIdleDT", "AM3DT", "MidshotDT", "AM3", "Midshot" ],
+      "RNG": [ "RangedIdleDT", "AM3DT", "MidshotDT", "AM3", "Midshot", "MeleeHybrid" ],
       "THF": [ "Hybrid" ]
     } ]
   }, {
@@ -1258,7 +1249,7 @@
     "name": "Apogee Crown +1",
     "priority": -110,
     "set_list": [ {
-      "SMN": [ "BPDmg" ]
+      "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Beckoner's Horn +1",
@@ -1351,7 +1342,7 @@
       "DRK": [ "DarkMagicAtk", "MagicAcc", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "Hybrid", "MagicAtk" ],
-      "RNG": [ "MagicAtk", "MeleeHybrid" ],
+      "RNG": [ "MagicAtk" ],
       "RUN": [ "Tank_Physical", "Lunge", "STR_WS", "Tank_Magical", "Fastcast" ],
       "SMN": [ "MACC" ],
       "THF": [ "MagicAtk", "Savage Blade", "Rudra's Storm" ]
@@ -1423,7 +1414,7 @@
     "name": "Enticer's Pants",
     "priority": 38,
     "set_list": [ {
-      "SMN": [ "BPDmg" ]
+      "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Beck. Spats +1",
@@ -1446,7 +1437,7 @@
     "set_list": [ {
       "BLU": [ "Hybrid" ],
       "BST": [ "Hybrid" ],
-      "RNG": [ "RangedIdleDT", "Midshot", "MidshotDT", "AM3DT" ],
+      "RNG": [ "RangedIdleDT", "Midshot", "MidshotDT", "AM3DT", "MeleeHybrid" ],
       "THF": [ "Hybrid" ]
     } ]
   }, {
@@ -1506,6 +1497,7 @@
     "name": "Naegling",
     "priority": 0,
     "set_list": [ {
+      "BLU": [ "Naegling" ],
       "NIN": [ "PhyWeps" ]
     } ]
   }, {
@@ -1525,7 +1517,7 @@
     "name": "Tauret",
     "priority": 0,
     "set_list": [ {
-      "THF": [ "ThfWeps" ]
+      "THF": [ "ThfWeps", "Tauret" ]
     } ]
   }, {
     "name": "Oneiros Knife",
@@ -1559,6 +1551,32 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "DrkWep" ]
+    } ]
+  }, {
+    "name": "Lycurgos",
+    "priority": 0,
+    "set_list": [ {
+      "DRK": [ "DrkGAxe" ]
+    } ]
+  }, {
+    "augments": [ "Blood Pact Dmg.+8", "Pet: AGI+2", "Pet: Mag. Acc.+18", "Pet: \"Mag.Atk.Bns.\"+23", "DMG:+8" ],
+    "name": "Grioavolr",
+    "priority": 0,
+    "set_list": [ {
+      "SMN": [ "MagicBPDmg" ]
+    } ]
+  }, {
+    "augments": [ "Pet: Attack+20 Pet: Rng.Atk.+20", "Pet: \"Dbl.Atk.\"+2 Pet: Crit.hit rate +2", "Blood Pact Dmg.+9", "none", "none" ],
+    "name": "Keraunos",
+    "priority": 0,
+    "set_list": [ {
+      "SMN": [ "PhyBPDmg" ]
+    } ]
+  }, {
+    "name": "Dolichenus",
+    "priority": 0,
+    "set_list": [ {
+      "BST": [ "Doli" ]
     } ]
   } ],
   "neck": [ {
@@ -1601,7 +1619,7 @@
     "name": "Marked Gorget",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "Ranged_AGI_WS", "Eagle Eye Shot", "Midshot", "AM3", "AM3DT" ]
+      "RNG": [ "Ranged_AGI_WS", "Eagle Eye Shot", "Midshot", "AM3" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -1647,7 +1665,7 @@
     "name": "Summoner's Collar",
     "priority": 30,
     "set_list": [ {
-      "SMN": [ "BPDmg", "IdleDT" ]
+      "SMN": [ "IdleDT", "MagicBPDmg" ]
     } ]
   }, {
     "name": "Caller's Pendant",
@@ -1661,7 +1679,7 @@
     "priority": 0,
     "set_list": [ {
       "GEO": [ "CombatIdleDT" ],
-      "RNG": [ "Flurry2", "Flurry1", "RangedIdleDT", "Flurry0", "MidshotDT" ],
+      "RNG": [ "RangedIdleDT", "MidshotDT", "AM3DT" ],
       "RUN": [ "SIR" ]
     } ]
   }, {
@@ -1693,6 +1711,12 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "Hybrid", "Catastrophe" ]
+    } ]
+  }, {
+    "name": "Shulmanu Collar",
+    "priority": 0,
+    "set_list": [ {
+      "SMN": [ "PhyBPDmg" ]
     } ]
   } ],
   "range": [ {
@@ -1735,7 +1759,8 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "Hybrid" ],
-      "RUN": [ "Tank_Physical", "Hybrid", "Emnity" ]
+      "RUN": [ "Tank_Physical", "Hybrid", "Emnity" ],
+      "THF": [ "Hybrid" ]
     } ]
   }, {
     "name": "Vertigo Ring",
@@ -1781,8 +1806,7 @@
       "BLU": [ "Fastcast" ],
       "GEO": [ "Healing", "Geomancy", "CombatIdleDT" ],
       "NIN": [ "Hybrid" ],
-      "RUN": [ "Tank_Magical" ],
-      "THF": [ "Hybrid" ]
+      "RUN": [ "Tank_Magical" ]
     } ]
   }, {
     "name": "Rajas Ring",
@@ -1803,7 +1827,7 @@
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg" ]
+      "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Vocane Ring +1",
@@ -1811,7 +1835,7 @@
     "set_list": [ {
       "BLU": [ "DT" ],
       "GEO": [ "IdleRefresh" ],
-      "RNG": [ "Flurry2", "Flurry1", "RangedIdleDT", "Flurry0", "MidshotDT" ],
+      "RNG": [ "RangedIdleDT", "MidshotDT" ],
       "SMN": [ "IdleDT" ]
     } ]
   }, {
@@ -1932,7 +1956,7 @@
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg", "PrecastBP", "SmnSkill" ]
+      "SMN": [ "PrecastBP", "SmnSkill", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Chirich Ring",
@@ -1940,8 +1964,7 @@
     "set_list": [ {
       "BLU": [ "Hybrid" ],
       "GEO": [ "IdleRefresh" ],
-      "RNG": [ "RangedIdleDT" ],
-      "THF": [ "Hybrid" ]
+      "RNG": [ "RangedIdleDT" ]
     } ]
   }, {
     "augments": [ "Path: A" ],
@@ -1950,7 +1973,6 @@
     "set_list": [ {
       "BLU": [ "DT" ],
       "DRK": [ "HP" ],
-      "RNG": [ "Flurry2", "Flurry1", "MidshotDT" ],
       "RUN": [ "Hybrid" ],
       "SMN": [ "IdleDT" ]
     } ]
@@ -1973,7 +1995,8 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "Catastrophe" ],
-      "NIN": [ "Hybrid" ]
+      "NIN": [ "Hybrid" ],
+      "THF": [ "Hybrid" ]
     } ]
   }, {
     "name": "Jhakri Ring",
@@ -2001,7 +2024,7 @@
     "priority": 0,
     "set_list": [ {
       "DRK": [ "Hybrid", "MagicAcc" ],
-      "RNG": [ "Flurry0" ]
+      "RNG": [ "Flurry0", "MidshotDT" ]
     } ]
   }, {
     "name": "Petrov Ring",
@@ -2067,6 +2090,7 @@
     "name": "Ternion Dagger +1",
     "priority": 45,
     "set_list": [ {
+      "BST": [ "Ternion" ],
       "NIN": [ "PhyWeps" ]
     } ]
   }, {
@@ -2099,12 +2123,18 @@
     "set_list": [ {
       "THF": [ "ThfWeps" ]
     } ]
+  }, {
+    "name": "Maxentius",
+    "priority": 0,
+    "set_list": [ {
+      "BLU": [ "Maxentius" ]
+    } ]
   } ],
   "waist": [ {
     "name": "Ponente Sash",
     "priority": 0,
     "set_list": [ {
-      "RNG": [ "Flurry2", "Flurry1" ]
+      "RNG": [ "Flurry1", "Flurry2" ]
     } ]
   }, {
     "name": "Fotia Belt",
@@ -2210,7 +2240,7 @@
     "name": "Incarnation Sash",
     "priority": 0,
     "set_list": [ {
-      "SMN": [ "BPDmg" ]
+      "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
     "name": "Lucidity Sash",
