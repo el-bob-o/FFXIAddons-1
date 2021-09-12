@@ -1824,6 +1824,7 @@
       "SMN": [ "Fastcast", "PrecastBP", "SmnSkill" ]
     } ]
   }, {
+    "bag": "wardrobe2",
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
@@ -1953,6 +1954,7 @@
       "RUN": [ "Tank_Magical", "Fastcast" ]
     } ]
   }, {
+    "bag": "wardrobe3",
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
