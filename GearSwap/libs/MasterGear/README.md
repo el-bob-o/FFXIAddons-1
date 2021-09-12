@@ -1,4 +1,8 @@
 # MasterGear
+1.3.3
+- Updated the porterpacker integration to produce error if slips are not in inventory and user not in mog garden
+- Changed moveslipgear to slipmove to make it easier to up arrow and change the command. Slipmove can only be used in mog garden.
+
 1.3.2
 - Delay moving by 1 sec since 0.5 sec seems to have some repeats
 - Delay sending command to porterpacker for getting slip items by 2sec, to have time to move slips into inventory 

@@ -1,4 +1,4 @@
--- Version 1.3.2
+-- Version 1.3.3
 
 res = require 'resources'
 slips = require 'slips'
@@ -544,7 +544,13 @@ function store_gear_to_slips(filter, packer_path)
 				for _, storage_id in pairs(storage_bags) do
 					local slip_item = find_item_in_bag(windower.ffxi.get_items(storage_id), slip_id)
 					if slip_item then
-						if storage_id ~= 0 then windower.ffxi.get_item(storage_id, slip_item.slot) end
+						if storage_id ~= 0 then 
+							if world.zone_id ~= 280 then
+								windower.add_to_chat(122, "Slips need to be in inventory or you need to be in Mog Garden")
+								return true
+							end
+							windower.ffxi.get_item(storage_id, slip_item.slot) 
+						end
 						str = str .. '    "%s",\n':format(res.items[item.id].name)
 						windower.ffxi.get_item(bag_id, item.slot)
 						break
@@ -573,7 +579,13 @@ function get_gear_from_slips(filter, packer_path)
 						for _, storage_id in pairs(storage_bags) do
 							local slip_item = find_item_in_bag(windower.ffxi.get_items(storage_id), slip_id)
 							if slip_item then
-								if storage_id ~= 0 then windower.ffxi.get_item(storage_id, slip_item.slot) end
+								if storage_id ~= 0 then 
+									if world.zone_id ~= 280 then
+										windower.add_to_chat(122, "Slips need to be in inventory or you need to be in Mog Garden")
+										return true
+									end
+									windower.ffxi.get_item(storage_id, slip_item.slot) 
+								end
 								str = str .. '    "%s",\n':format(res.items[item_id].name)
 								break
 							end
@@ -659,7 +671,7 @@ function print_help()
 	windower.add_to_chat(122, "//gs mastergear update (gear_1_name,gear_2_name): Updates name of gear from gear_1_name to gear_2_name.")
 	windower.add_to_chat(122, "//gs mastergear slipstore (jobs:csv): Stores all gear that can be stored on slips except for gear for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.")
 	windower.add_to_chat(122, "//gs mastergear slipget (jobs:csv): Gets all gear that is stored on slips for jobs specified. If no jobs specified, will use current job. Requires PorterPacker to be loaded.")
-	windower.add_to_chat(122, "//gs mastergear moveslipgear: Moves slips to storage bags and slip gear to wardrobes.")
+	windower.add_to_chat(122, "//gs mastergear slipmove: Moves slips to storage bags and slip gear to wardrobes.")
 end
 
 function parse_command(...)
@@ -741,7 +753,11 @@ function parse_command(...)
 			else
 				windower.add_to_chat(122, packer_path .. " doesn't exist")
 			end
-		elseif args[1] == 'moveslipgear' then
+		elseif args[1] == 'slipmove' then
+			if world.zone_id ~= 280 then
+				windower.add_to_chat(122, "Need to be in Mog Garden")
+				return true
+			end
 			move_all_slip_gear()
 		else
 			print_help()
