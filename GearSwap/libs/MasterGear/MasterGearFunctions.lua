@@ -1,4 +1,4 @@
--- Version 1.3.3
+-- Version 1.3.4
 
 res = require 'resources'
 slips = require 'slips'
@@ -570,7 +570,6 @@ function get_gear_from_slips(filter, packer_path)
 	local player_items = slips.get_player_items()
 	for _, gear in pairs(gear_to_get) do
 		for _, slip_id in ipairs(slips.storages) do
-			local found = false
 			local slip = slips.get_slip_by_id(slip_id)
 			local player_slip_items = S(player_items[slip_id])
 			for item_position, item_id in ipairs(slip) do
@@ -584,17 +583,13 @@ function get_gear_from_slips(filter, packer_path)
 										windower.add_to_chat(122, "Slips need to be in inventory or you need to be in Mog Garden")
 										return true
 									end
-									windower.ffxi.get_item(storage_id, slip_item.slot) 
-								end
-								str = str .. '    "%s",\n':format(res.items[item_id].name)
-								break
+									windower.ffxi.get_item(storage_id, slip_item.slot)
+								end	
 							end
 						end
-						found = true
-						break
+						str = str .. '    "%s",\n':format(res.items[item_id].name)
 					end
 				end
-			if found then break end
 			end
 		end
 	end

@@ -1,4 +1,8 @@
 # HasteTracker
+1.0.1
+- Will only cancel if everyone finished casting to minimize chances of cancelling a haste buff that user actually wants
+- Keep track of Ygnas' Phototropic Wrath also
+- Added in debug logging
 
 1.0
 - Initial commit

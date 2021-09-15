@@ -1,4 +1,7 @@
 # MasterGear
+1.3.4
+- Fix logic problem that prevented getting all the gear with slipget and made it necessary to run the command multiple times
+
 1.3.3
 - Updated the porterpacker integration to produce error if slips are not in inventory and user not in mog garden
 - Changed moveslipgear to slipmove to make it easier to up arrow and change the command. Slipmove can only be used in mog garden.
