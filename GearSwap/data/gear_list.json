@@ -16,6 +16,7 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "Fastcast" ],
+      "BST": [ "IdleRegen" ],
       "NIN": [ "Fastcast" ],
       "RUN": [ "Emnity", "Tank_Physical", "Tank_Magical", "Fastcast", "SIR" ]
     } ]
@@ -86,7 +87,7 @@
     } ]
   } ],
   "back": [ {
-    "augments": [ "AGI+20", "Rng.Acc.+20 Rng.Atk.+20", "AGI+10", "\"Store TP\"+10", "\"Regen\"+5" ],
+    "augments": [ "AGI+20", "Rng.Acc.+20 Rng.Atk.+20", "AGI+10", "\"Store TP\"+10", "Phys. dmg. taken-10%" ],
     "name": "Belenus's Cape",
     "priority": 0,
     "set_list": [ {
@@ -148,7 +149,7 @@
       "NIN": [ "Fastcast" ]
     } ]
   }, {
-    "augments": [ "DEX+20", "Accuracy+20 Attack+20", "DEX+10", "\"Store TP\"+10", "Phys. dmg. taken-10%" ],
+    "augments": [ "DEX+20", "Accuracy+20 Attack+20", "DEX+10", "\"Dbl.Atk.\"+10", "Phys. dmg. taken-10%" ],
     "name": "Toutatis's Cape",
     "priority": 0,
     "set_list": [ {
@@ -218,7 +219,8 @@
       "BLU": [ "CP" ],
       "BST": [ "CP" ],
       "DRK": [ "CP" ],
-      "NIN": [ "CP" ]
+      "NIN": [ "CP" ],
+      "PUP": [ "CP", "HybridSet" ]
     } ]
   }, {
     "augments": [ "DEX+20", "Accuracy+20 Attack+20", "DEX+5", "\"Dbl.Atk.\"+10", "none" ],
@@ -313,6 +315,7 @@
       "DRK": [ "Adoulin" ],
       "GEO": [ "Adoulin" ],
       "NIN": [ "Adoulin" ],
+      "PUP": [ "Adoulin" ],
       "RNG": [ "Adoulin" ],
       "RUN": [ "Adoulin" ],
       "SMN": [ "Adoulin" ],
@@ -326,6 +329,7 @@
       "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "DrainAspir", "MagicAcc", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "MACC", "Melee" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
+      "PUP": [ "HybridSet" ],
       "RNG": [ "STR_Melee_WS" ],
       "RUN": [ "EnhancingAny", "Tank_Physical", "Lunge", "MND_WS", "Hybrid", "STR_WS", "Fastcast", "DEX_WS" ],
       "THF": [ "MagicAtk", "Savage Blade" ]
@@ -412,7 +416,7 @@
     "priority": 91,
     "set_list": [ {
       "BLU": [ "DEX_Crit_WS", "STR_WS", "MND_WS" ],
-      "BST": [ "Decimation", "IdleRegen" ],
+      "BST": [ "Decimation" ],
       "THF": [ "IdleRegen", "Dancing Edge", "Exenterator" ]
     } ]
   }, {
@@ -420,6 +424,7 @@
     "name": "Herculean Vest",
     "priority": 61,
     "set_list": [ {
+      "PUP": [ "TH" ],
       "RNG": [ "TH" ]
     } ]
   }, {
@@ -451,6 +456,7 @@
     "name": "Sacro Breastplate",
     "priority": 182,
     "set_list": [ {
+      "BST": [ "IdleRegen" ],
       "DRK": [ "Fastcast", "IdleRegen" ]
     } ]
   }, {
@@ -503,7 +509,8 @@
     "name": "Handler's Earring +1",
     "priority": 0,
     "set_list": [ {
-      "GEO": [ "IdleRefresh", "CombatIdleDT" ]
+      "GEO": [ "IdleRefresh", "CombatIdleDT" ],
+      "PUP": [ "HybridSet" ]
     } ]
   }, {
     "name": "Malignance Earring",
@@ -552,6 +559,7 @@
     "name": "Odnowa Earring +1",
     "priority": 0,
     "set_list": [ {
+      "BST": [ "IdleRegen" ],
       "DRK": [ "HP" ],
       "GEO": [ "Geomancy" ],
       "RNG": [ "RangedIdleDT" ]
@@ -746,6 +754,7 @@
       "BLU": [ "MagicAcc" ],
       "DRK": [ "Hybrid", "MagicAcc" ],
       "GEO": [ "Melee" ],
+      "PUP": [ "HybridSet" ],
       "RNG": [ "Midshot", "MidshotDT" ]
     } ]
   }, {
@@ -771,6 +780,12 @@
     "priority": 0,
     "set_list": [ {
       "SMN": [ "SmnSkill" ]
+    } ]
+  }, {
+    "name": "Eabani Earring",
+    "priority": 45,
+    "set_list": [ {
+      "RNG": [ "IdleRegen" ]
     } ]
   } ],
   "feet": [ {
@@ -803,6 +818,7 @@
       "DRK": [ "Entropy", "Insurgency", "DarkMagicAtk", "DrainAspir", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "MagicAtk", "STR_WS" ],
+      "PUP": [ "HybridSet" ],
       "RNG": [ "STR_Melee_WS", "MagicAtk" ],
       "RUN": [ "EnhancingAny", "Tank_Physical", "Lunge", "MND_WS", "Hybrid", "STR_WS", "Tank_Magical", "Fastcast" ],
       "SMN": [ "MACC" ],
@@ -947,6 +963,12 @@
     "set_list": [ {
       "DRK": [ "Arcane Circle", "MagicAcc" ]
     } ]
+  }, {
+    "name": "Hermes' Sandals",
+    "priority": 12,
+    "set_list": [ {
+      "PUP": [ "Movement" ]
+    } ]
   } ],
   "hands": [ {
     "name": "Meg. Gloves +2",
@@ -970,6 +992,7 @@
     "set_list": [ {
       "BLU": [ "TH" ],
       "NIN": [ "TH" ],
+      "PUP": [ "TH" ],
       "RNG": [ "TH" ],
       "RUN": [ "TH", "Flash" ]
     } ]
@@ -1071,6 +1094,7 @@
       "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc", "HP" ],
       "GEO": [ "HealingFastcast", "IdleRefresh", "Elemental" ],
       "NIN": [ "MagicAtk", "STR_WS" ],
+      "PUP": [ "HybridSet" ],
       "RNG": [ "MagicAtk" ],
       "RUN": [ "Lunge", "Hybrid", "Fastcast" ],
       "SMN": [ "MACC" ],
@@ -1189,9 +1213,10 @@
     "set_list": [ {
       "BLU": [ "MagicAtk" ],
       "BST": [ "Primal Rend" ],
-      "DRK": [ "Hybrid", "Catastrophe", "HP" ],
+      "DRK": [ "Catastrophe", "HP" ],
       "GEO": [ "IdleRefresh", "STR_Melee_WS", "MND_WS", "Elemental", "MACC", "Melee" ],
       "NIN": [ "MagicAtk" ],
+      "PUP": [ "HybridSet" ],
       "RUN": [ "Tank_Physical", "Lunge", "MND_WS", "STR_WS", "Tank_Magical" ],
       "THF": [ "MagicAtk", "Savage Blade" ]
     } ]
@@ -1301,7 +1326,7 @@
     "name": "Flam. Zucchetto +2",
     "priority": 80,
     "set_list": [ {
-      "DRK": [ "Entropy", "Insurgency" ]
+      "DRK": [ "Entropy", "Insurgency", "Hybrid" ]
     } ]
   }, {
     "augments": [ "Accuracy+20", "Mag. Acc.+12", "\"Fast Cast\"+4" ],
@@ -1342,6 +1367,7 @@
       "DRK": [ "DarkMagicAtk", "MagicAcc", "HP" ],
       "GEO": [ "STR_Melee_WS", "MND_WS", "Elemental", "CombatIdleDT", "Melee" ],
       "NIN": [ "Fastcast", "Hybrid", "MagicAtk" ],
+      "PUP": [ "HybridSet" ],
       "RNG": [ "MagicAtk" ],
       "RUN": [ "Tank_Physical", "Lunge", "STR_WS", "Tank_Magical", "Fastcast" ],
       "SMN": [ "MACC" ],
@@ -1576,7 +1602,8 @@
     "name": "Dolichenus",
     "priority": 0,
     "set_list": [ {
-      "BST": [ "Doli" ]
+      "BST": [ "Doli" ],
+      "RNG": [ "Doli" ]
     } ]
   } ],
   "neck": [ {
@@ -1588,6 +1615,7 @@
       "DRK": [ "IdleRegen", "DarkMagicAtk", "HP" ],
       "GEO": [ "IdleRefresh", "Elemental", "MACC" ],
       "NIN": [ "IdleRegen", "MagicAtk" ],
+      "PUP": [ "IdleRegen" ],
       "RNG": [ "IdleRegen", "MagicAtk" ],
       "RUN": [ "IdleRegen", "Lunge" ],
       "THF": [ "MagicAtk", "IdleRegen" ]
@@ -1716,6 +1744,7 @@
     "name": "Shulmanu Collar",
     "priority": 0,
     "set_list": [ {
+      "PUP": [ "HybridSet" ],
       "SMN": [ "PhyBPDmg" ]
     } ]
   } ],
@@ -1828,6 +1857,7 @@
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
+      "PUP": [ "HybridSet" ],
       "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
@@ -1866,6 +1896,7 @@
     "set_list": [ {
       "BST": [ "Hybrid", "IdleRegen", "Primal Rend" ],
       "DRK": [ "IdleRegen" ],
+      "PUP": [ "IdleRegen" ],
       "THF": [ "IdleRegen" ]
     } ]
   }, {
@@ -1949,6 +1980,7 @@
     "name": "Vocane Ring +1",
     "priority": 0,
     "set_list": [ {
+      "BST": [ "IdleRegen" ],
       "GEO": [ "Healing", "HealingFastcast", "Geomancy", "CombatIdleDT" ],
       "RNG": [ "AM3DT" ],
       "RUN": [ "Tank_Magical", "Fastcast" ]
@@ -1958,6 +1990,7 @@
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
+      "PUP": [ "HybridSet" ],
       "SMN": [ "PrecastBP", "SmnSkill", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
@@ -2189,6 +2222,7 @@
       "DRK": [ "TH" ],
       "GEO": [ "TH" ],
       "NIN": [ "TH" ],
+      "PUP": [ "TH" ],
       "RNG": [ "TH" ],
       "RUN": [ "TH", "Flash" ],
       "SMN": [ "TH" ]
@@ -2198,6 +2232,7 @@
     "priority": 0,
     "set_list": [ {
       "GEO": [ "Healing", "IdleRefresh", "Geomancy", "CombatIdleDT" ],
+      "PUP": [ "IdleRegen" ],
       "SMN": [ "Idle", "IdleDT" ]
     } ]
   }, {
@@ -2242,6 +2277,7 @@
     "name": "Incarnation Sash",
     "priority": 0,
     "set_list": [ {
+      "PUP": [ "HybridSet" ],
       "SMN": [ "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
