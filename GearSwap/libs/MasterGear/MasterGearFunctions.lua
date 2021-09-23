@@ -1,4 +1,4 @@
--- Version 1.3.4
+-- Version 1.4.0
 
 res = require 'resources'
 slips = require 'slips'

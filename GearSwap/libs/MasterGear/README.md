@@ -1,4 +1,7 @@
 # MasterGear
+1.4.0
+- Added MasterGearLua library that has basic gearswap functionality
+
 1.3.4
 - Fix logic problem that prevented getting all the gear with slipget and made it necessary to run the command multiple times
 
@@ -27,20 +30,56 @@
 1.0
 - Initial commit
 
-# How to Use
+# How to Use MasterGearLua
+
+- Put the following code somewhere near the top of your gearswap lua:
+> include("MasterGear/MasterGearLua.lua")
+
+- Do not define get_sets(), precast(), midcast(), aftercast(), status_change(), self_command() in your lua.
+
+- That's it! That can be the only line in your lua and you can start using it immediately. Requires THHelper and HasteTracker libraries. This uses MasterGearFunctions so you can start by defining some sets.
+
+## MasterGearLua Sets
+
+"Mode_<num><name>" e.g "Mode_1HybridTP". Naming your sets this way will automatically populate the modes available, which you can change using "//gs c mode <num>" or cycle through with "//gs c mode". Only 9 modes available at the moment. Modes are equipped on engage, on aftercast, and even on idle if combat mode ("//gs c combat" to toggle) is on.
+
+"IdleRegen" and "Movement". These are equipped when Idle.
+
+"Fastcast". Equipped in precast whenever a magic spell is cast.
+
+"Adoulin". Equipped in Adoulin.
+
+"TPBonus". Any TPBonus gear like Moonshade earring. These will be equipped when a table named 'ws' exists. If it does, the weaponskill's english name is checked (e.g ws\["Raging Fist"]). It will then equip the set defined and equip TPBonus set if tp_bonus is true. 
+
+> ws = {}
+> ws\["Raging Fist"] = { set = sets\["Raging Fist"], tp_bonus = true }
+
+"WeatherObi". This is for elemental weaponskills. If the day matches the element, this set will be equipped.
+
+"Precast_<name>". E.g "Precast_Repair" will equip this set for "Repair" ability in Precast.
+
+"Midcast_<name>". E.g "Midcast_Diaga" will equip this set for "Diaga" spell in Midcast.
+
+"CP". This set will be equipped when CP mode is on, toggled by "//gs c cp"
+
+## MasterGearLua Custom functions
+
+- custom_get_set. If defined, will be called after get_sets() is done.
+- custom_precast(spell). If defined, will be called right at the start of precast(). If the function returns true, will stop processing anything else.
+- custom_midcast(spell). If defined, will be called right at the start of midcast(). If the function returns true, will stop processing anything else.
+- custom_command(args). If defined, will be called at the end of self_command(). Args parameter is a list of strings, so you can do "if args\[1] == 'blabla' then do_something()".
+
+# How to Use MasterGearFunctions
 
 - Put the following code somewhere near the top of your gearswap lua:
 > include("MasterGear/MasterGearFunctions.lua")
 
-- In your get_set function or equivalent:
-> get_set_for_job_from_json()
-
-# Features
+# MasterGearFunction Features
 
 - Auto priority based on +HP on the gear
 - Since all gear for all jobs is now centralised, can determine which gear in wardrobes is not used by any jobs
 
-# Commands
+# MasterGearFunction Commands
 
 ## //gs mastergear countgear (filter:optional) (jobs:csv)
 
