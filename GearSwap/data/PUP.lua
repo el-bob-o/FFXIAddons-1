@@ -1,120 +1,89 @@
-include('THHelper/THHelper.lua')
-include('HasteTracker/HasteTracker.lua')
-include("Mastergear/MasterGearFunctions.lua")
+include("Mastergear/MasterGearLua.lua")
 
-function get_sets()
-	CPMode = false
-	Mode = 1
-	cancel_haste = 1
-	
-	get_set_for_job_from_json()
-	
-	Modes = { 
-		{ name = "Hybrid", set = sets["HybridSet"] }
-	}
- 
-	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
-	
-	WS = {}
-	
-	print_mode()
-	print_th_mode()
-	send_command('@input /macro book 13;wait 1;input /macro set 1')
-end
- 
-function precast(spell)
-	
+ws = {}
+ws["Combo"] = { set = sets["Raging Fist"], tp_bonus = true }
+ws["Shoulder Tackle"] = { set = sets["Dragon Kick"], tp_bonus = true }
+ws["One Inch Punch"] = { set = sets["Dragon Kick"], tp_bonus = true }
+ws["Backhand Blow"] = { set = sets["Dragon Kick"], tp_bonus = false }
+ws["Raging Fist"] = { set = sets["Raging Fist"], tp_bonus = true }
+ws["Spinning Attack"] = { set = sets["Dragon Kick"], tp_bonus = false }
+ws["Howling Fist"] = { set = sets["Dragon Kick"], tp_bonus = true }
+ws["Dragon Kick"] = { set = sets["Dragon Kick"], tp_bonus = true }
+ws["Asuran Fist"] = { set = sets["Victory Smite"], tp_bonus = false }
+ws["Tornado Kick"] = { set = sets["Victory Smite"], tp_bonus = true }
+ws["Shijin Spiral"] = { set = sets["Raging Fist"], tp_bonus = false }
+ws["Victory Smite"] = { set = sets["Victory Smite"], tp_bonus = false }
+ws["Stringing Pummel"] = { set = sets["Victory Smite"], tp_bonus = false }
+
+target_maneuver_count = {
+	["light maneuver"] = 1,
+	["dark maneuver"] = 0,
+	["earth maneuver"] = 0,
+	["wind maneuver"] = 1,
+	["water maneuver"] = 0,
+	["ice maneuver"] = 0,
+	["fire maneuver"] = 1,
+	["thunder maneuver"] = 0,
+}
+maneuver_cast = {}
+
+function custom_get_sets()
+	print_current_maneuvers() 
 end
 
-function midcast(spell)
-
-end
- 
-function aftercast(spell)
-    if player.status=='Engaged' then
-        equip(Modes[Mode].set)
-    else
-        equip(sets.Idle)
-    end
-end
- 
-function status_change(new,old)
-	if new == 'Engaged' then
-		equip(Modes[Mode].set)
-		on_status_change_for_th(new, old)
-	elseif T{'Idle','Resting'}:contains(new) then
-		on_status_change_for_th(new, old)
-		equip(sets.Idle)
-    end
-end
- 
-windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
-		equip(set_combine(sets.Idle, sets["Adoulin"]))
-	else
-		equip(sets.Idle)
-	end
-end)
- 
-function self_command(command)
-	local args = T{}
-	if type(command) == 'string' then
-        args = T(command:split(' '))
-        if #args == 0 then
-            return
-        end
-    end
-	if args[1] == "th" then
-		parse_th_command(args)
-	elseif args[1] == "cp" then
-		if CPMode == false then
-			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
-			CPMode = true
-		elseif CPMode == true then
-			add_to_chat(122, "CP Mode off")
-			enable("back")
-			CPMode = false
-		end
-	elseif args[1] == "mode" then
-		if args[2] and type(tonumber(args[2])) == 'number' then
-			nextMode = tonumber(args[2])
-			if nextMode == nil then
-				add_to_chat(122, "Invalid mode number")
-			else
-				if Modes[nextMode] == nil then
-					add_to_chat(122, "Invalid node number")
-				else
-					Mode = nextMode
-					print_mode()
+function custom_command(args)
+	if args[1] == "maneuver" then
+		if args[2] and args[3] and args[4] then
+			local ele1 = string.lower(args[2]) .. " maneuver"
+			local ele2 = string.lower(args[3]) .. " maneuver"
+			local ele3 = string.lower(args[4]) .. " maneuver"
+			if target_maneuver_count[ele1] and target_maneuver_count[ele2] and target_maneuver_count[ele3] then
+				target_maneuver_count["light maneuver"] = 0
+				target_maneuver_count["dark maneuver"] = 0
+				target_maneuver_count["earth maneuver"] = 0
+				target_maneuver_count["wind maneuver"] = 0
+				target_maneuver_count["water maneuver"] = 0
+				target_maneuver_count["ice maneuver"] = 0
+				target_maneuver_count["fire maneuver"] = 0
+				target_maneuver_count["thunder maneuver"] = 0
+				target_maneuver_count[ele1] = target_maneuver_count[ele1] + 1
+				target_maneuver_count[ele2] = target_maneuver_count[ele2] + 1
+				target_maneuver_count[ele3] = target_maneuver_count[ele3] + 1
+				print_current_maneuvers()
+				maneuver_cast = {}
+			end
+		else
+			for k,v in pairs(target_maneuver_count) do
+				if v > 0 then
+					if buffactive[k] == nil or buffactive[k] < v then
+						send_command('input /ja "' .. k .. '" <me>')
+						table.insert(maneuver_cast, k)
+						return
+					end
 				end
 			end
-		else
-			Mode = Mode + 1
-			if Modes[Mode] == nil then
-				Mode = 1
+			if #maneuver_cast > 0 then
+				send_command('input /ja "' .. maneuver_cast[1] .. '" <me>')
+				table.insert(maneuver_cast, maneuver_cast[1])
+				table.remove(maneuver_cast, 1)
 			end
-			print_mode()
-		end
-	elseif args[1] == "thtagged" then
-		if player.status == "Engaged" then
-			equip(Modes[Mode].set)
 		end
 	end
 end
 
-function print_mode()
-	printString = "Current Mode: "
-	for i = 1, 10, 1 do
-		if i == Mode then
-			printString = printString .. "[" .. i .. ":" .. Modes[i].name .. "] "
-		elseif Modes[i] == nil then
-			break
-		else
-			printString = printString .. i .. ":" .. Modes[i].name .. " "
+function custom_precast(spell)
+	if string.lower(spell.english):contains("maneuver") then
+		equip(sets["Maneuver"])
+		return true
+	end
+end
+
+function print_current_maneuvers()
+	local text = ""
+	for k,v in pairs(target_maneuver_count) do
+		if v > 0 then
+			text = text .. k .. "*" .. v .. " "
 		end
-	end	
-	add_to_chat(122, printString)
+	end
+	add_to_chat(122, "Current Maneuvers: " .. text)
 end
