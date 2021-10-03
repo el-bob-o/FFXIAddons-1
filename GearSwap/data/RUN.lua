@@ -1,93 +1,86 @@
-include('THHelper/THHelper.lua')
-include("MasterGear/MasterGearFunctions.lua")
+include("MasterGear/MasterGearLua.lua")
 
-EmnityActions = {}
-EmnityActions["JA"] = { "Valiance", "Vallation", "Swordplay", "Pflug", "Gambit", "Rayke", "Liement",
+enmity_actions = {}
+enmity_actions["JA"] = { "Valiance", "Vallation", "Swordplay", "Pflug", "Gambit", "Rayke", "Liement",
 	"Battuta", "One for All", "Elemental Sforzo" }
-EmnityActions["RUN"] = { "Flash", "Foil" }
-EmnityActions["DRK"] = { "Poisonga", "Stun" }
-EmnityActions["BLU"] = { "Blank Gaze", "Jettatura", "Geist Wall" }
+enmity_actions["RUN"] = { "Flash", "Foil" }
+enmity_actions["DRK"] = { "Poisonga", "Stun" }
+enmity_actions["BLU"] = { "Blank Gaze", "Jettatura", "Geist Wall" }
 
-Resist = {}
-Resist["ice"] = "ignis"
-Resist["paralyze"] = "ignis"
-Resist["bind"] = "ignis"
-Resist["frost"] = "ignis"
-Resist["evadown"] = "ignis"
-Resist["agidown"] = "ignis"
-Resist["wind"] = "gelus"
-Resist["silence"] = "gelus"
-Resist["gravity"] = "gelus"
-Resist["choke"] = "gelus"
-Resist["defdown"] = "gelus"
-Resist["vitdown"] = "gelus"
-Resist["earth"] = "flabra"
-Resist["slow"] = "flabra"
-Resist["petrify"] = "flabra"
-Resist["rasp"] = "flabra"
-Resist["accdown"] = "flabra"
-Resist["dexdown"] = "flabra"
-Resist["thunder"] = "tellus"
-Resist["stun"] = "tellus"
-Resist["shock"] = "tellus"
-Resist["mnddown"] = "tellus"
-Resist["water"] = "sulpor"
-Resist["poison"] = "sulpor"
-Resist["strdown"] = "sulpor"
-Resist["atkdown"] = "sulpor"
-Resist["fire"] = "unda"
-Resist["addle"] = "unda"
-Resist["amnesia"] = "unda"
-Resist["virus"] = "unda"
-Resist["burn"] = "unda"
-Resist["mabdown"] = "unda"
-Resist["intdown"] = "unda"
-Resist["dark"] = "lux"
-Resist["blind"] = "lux"
-Resist["bio"] = "lux"
-Resist["sleep"] = "lux"
-Resist["dispel"] = "lux"
-Resist["drain"] = "lux"
-Resist["curse"] = "lux"
-Resist["doom"] = "lux"
-Resist["zombie"] = "lux"
-Resist["mevadown"] = "lux"
-Resist["hpdown"] = "lux"
-Resist["mpdown"] = "lux"
-Resist["chrdown"] = "lux"
-Resist["absorb"] = "lux"
-Resist["light"] = "tenebrae"
-Resist["dia"] = "tenebrae"
-Resist["repose"] = "tenebrae"
-Resist["finale"] = "tenebrae"
-Resist["charm"] = "tenebrae"
-Resist["lullaby"] = "tenebrae"
-Resist["sheepsong"] = "tenebrae"
-Resist["maccdown"] = "tenebrae"
+resist_table = {}
+resist_table["ice"] = "ignis"
+resist_table["paralyze"] = "ignis"
+resist_table["bind"] = "ignis"
+resist_table["frost"] = "ignis"
+resist_table["evadown"] = "ignis"
+resist_table["agidown"] = "ignis"
+resist_table["wind"] = "gelus"
+resist_table["silence"] = "gelus"
+resist_table["gravity"] = "gelus"
+resist_table["choke"] = "gelus"
+resist_table["defdown"] = "gelus"
+resist_table["vitdown"] = "gelus"
+resist_table["earth"] = "flabra"
+resist_table["slow"] = "flabra"
+resist_table["petrify"] = "flabra"
+resist_table["rasp"] = "flabra"
+resist_table["accdown"] = "flabra"
+resist_table["dexdown"] = "flabra"
+resist_table["thunder"] = "tellus"
+resist_table["stun"] = "tellus"
+resist_table["shock"] = "tellus"
+resist_table["mnddown"] = "tellus"
+resist_table["water"] = "sulpor"
+resist_table["poison"] = "sulpor"
+resist_table["strdown"] = "sulpor"
+resist_table["atkdown"] = "sulpor"
+resist_table["fire"] = "unda"
+resist_table["addle"] = "unda"
+resist_table["amnesia"] = "unda"
+resist_table["virus"] = "unda"
+resist_table["burn"] = "unda"
+resist_table["mabdown"] = "unda"
+resist_table["intdown"] = "unda"
+resist_table["dark"] = "lux"
+resist_table["blind"] = "lux"
+resist_table["bio"] = "lux"
+resist_table["sleep"] = "lux"
+resist_table["dispel"] = "lux"
+resist_table["drain"] = "lux"
+resist_table["curse"] = "lux"
+resist_table["doom"] = "lux"
+resist_table["zombie"] = "lux"
+resist_table["mevadown"] = "lux"
+resist_table["hpdown"] = "lux"
+resist_table["mpdown"] = "lux"
+resist_table["chrdown"] = "lux"
+resist_table["absorb"] = "lux"
+resist_table["light"] = "tenebrae"
+resist_table["dia"] = "tenebrae"
+resist_table["repose"] = "tenebrae"
+resist_table["finale"] = "tenebrae"
+resist_table["charm"] = "tenebrae"
+resist_table["lullaby"] = "tenebrae"
+resist_table["sheepsong"] = "tenebrae"
+resist_table["maccdown"] = "tenebrae"
 
-Runes = {}
-Runes["light"] = "lux"
-Runes["dark"] = "tenebrae"
-Runes["water"] = "unda"
-Runes["thunder"] = "sulpor"
-Runes["fire"] = "ignis"
-Runes["wind"] = "flabra"
-Runes["earth"] = "tellus"
-Runes["ice"] = "gelus"
+runes_elemental_map = {}
+runes_elemental_map["light"] = "lux"
+runes_elemental_map["dark"] = "tenebrae"
+runes_elemental_map["water"] = "unda"
+runes_elemental_map["thunder"] = "sulpor"
+runes_elemental_map["fire"] = "ignis"
+runes_elemental_map["wind"] = "flabra"
+runes_elemental_map["earth"] = "tellus"
+runes_elemental_map["ice"] = "gelus"
 
-function get_sets()
-	KiteMode = false
-	CPMode = false
-	Rune = "Lux"
-	SJAction = nil
-	Mode = 1
-	EmnityMode = false
-	EngravedBelt = false
-	Combat = false
-	Buffs = {}
-	MultiRune = false
-	SIR = false
-	TargetRuneCount = {
+function custom_get_sets()
+	kite_mode = false
+	rune = "Lux"
+	subjob_action = nil
+	enmity_mode = false
+	spell_interrupt_mode = false
+	target_rune_count = {
 		["tenebrae"] = 0,
 		["lux"] = 0,
 		["unda"] = 0,
@@ -97,75 +90,68 @@ function get_sets()
 		["gelus"] = 0,
 		["ignis"] = 0,
 	}
-	RuneCast = {}
-	
-	get_set_for_job_from_json("RUN", sets)
-	
-	Modes = { 
-		{ name = "Hybrid", set = sets["Hybrid"] },
-		{ name = "Tank_Physical", set = sets["Tank_Physical"] },
-		{ name = "Tank_Magical", set = sets["Tank_Magical"] },
-	}
+	rune_cast = { "lux", "lux", "lux" }
+	rune_cast_index = 1
 	
 	sets["Swipe"] = sets["Lunge"]
 	sets["Vallation"] = sets["Valiance"]
-	sets["Frostbite"] = sets["Lunge"]
-	sets["Freezebite"] = sets["Lunge"]
-	sets["Herculean Slash"] = sets["Lunge"]
-	sets["Shockwave"] = sets["STR_WS"]
-	sets["Resolution"] = set_combine(sets["STR_WS"], sets["Fotia"])
-	sets["Savage Blade"] = set_combine(sets["STR_WS"])
-	sets["Requeiscat"] = set_combine(sets["MND_WS"], sets["Fotia"])
-	sets["Dimidiation"] = set_combine(sets["DEX_WS"])
+	
+	ws = {}
+	ws["Frostbite"] = { set = sets["Lunge"], tp_bonus = true }
+	ws["Freezebite"] = { set = sets["Lunge"], tp_bonus = true }
+	ws["Herculean Slash"] = { set = sets["Lunge"], tp_bonus = false }
+	ws["Shockwave"] = { set = sets["Savage Blade"], tp_bonus = false }
+	ws["Resolution"] = { set = sets["Resolution"], tp_bonus = true }
+	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
+	ws["Requiescat"] = { set = sets["Requiescat"], tp_bonus = true }
+	ws["Dimidiation"] = { set = sets["Dimidiation"], tp_bonus = true }
+	ws["Red Lotus Blade"] = { set = sets["Lunge"], tp_bonus = true }
+	ws["Seraph Blade"] = { set = sets["Lunge"], tp_bonus = true }
+	ws["Sanguine Blade"] = { set = sets["Sanguine Blade"], tp_bonus = false }
 	
 	sets["EnhancingRegen"] = set_combine(sets["EnhancingAny"], sets["EnhancingRegen"])
 	sets["EnhancingPhalanx"] = set_combine(sets["EnhancingAny"], sets["EnhancingPhalanx"])
-	sets["Idle"] = set_combine(sets["Hybrid"], sets["Tank_Magical"], sets["Movement"], sets["IdleRegen"])
+	sets["Idle"] = set_combine(sets["IdleRegen"], sets["Movement"])
 	
 	subjob_check(player.sub_job)
-	print_mode()
 	print_current_rune()
-	print_th_mode()
 	send_command('@input /macro book 1;wait 1;input /macro set 1')
 end
  
-function precast(spell)
-    if sets[spell.english] then
-		if EmnityMode == true and check_emnity("JA", spell.english) == true then
-			equip(set_combine(sets["Emnity"], sets[spell.english]))
-		else
-			equip(sets[spell.english])
-		end
-    elseif spell.type=="WeaponSkill" then
-		local setToUse = {}
-		if sets[spell.english] then
-			setToUse = sets[spell.english]
-		else
-			setToUse = sets["WS_Any"]
-		end
+function custom_precast(spell)
+	if enmity_mode == true and check_emnity("JA", spell.english) == true then
+		equip(set_combine(sets["Emnity"], sets[spell.english]))
+		return true
+    elseif spell.type=="WeaponSkill" and ws[spell.english] then
+		local setToUse = ws[spell.english].set
 		local maxTP = 3000
 		if player.equipment.main == "Lionheart" then
-			maxTP = 2500
+			maxTP = maxTP - 500
 		end
 		if player.tp < maxTP then
 			setToUse = set_combine(setToUse, sets["TPBonus"])
 		end
-		if EmnityMode == true then
-			setToUse = set_combine(setToUse, sets["Emnity"])
+		if enmity_mode == true then
+			setToUse = set_combine(setToUse, sets["Enmity"])
 		end
 		equip(setToUse)
+		return true
 	elseif spell.action_type == 'Magic' then
 		if spell.skill == "Enhancing Magic" then
 			equip(sets.FastcastEnhancing)
 		else
 			equip(sets["Fastcast"])
 		end
+		return true
+	elseif sets[spell.english] then
+		equip(sets[spell.english])
+		return true
     end
 end
  
-function midcast(spell)
+function custom_midcast(spell)
 	if spell.action_type == 'Magic' then
-		local equipEmnity = EmnityMode
+		local equipEmnity = enmity_mode
 		if equipEmnity == true then
 			equipEmnity = check_emnity("RUN", spell.english)
 			if equipEmnity == false then
@@ -183,223 +169,136 @@ function midcast(spell)
 			end
 		elseif sets[spell.english] then
 			setToUse = sets[spell.english]
-		else
-			setToUse = Modes[Mode].set
 		end
 		if equipEmnity then
 			setToUse = (set_combine(setToUse, sets["Emnity"]))
 		end
-		if SIR then
+		if spell_interrupt_mode then
 			setToUse = (set_combine(setToUse, sets["SIR"]))
 		end
 		equip(setToUse)
+		return true
 	end
 end
  
-function aftercast(spell)
-    if player.status=='Engaged' or Combat then
-        equip(Modes[Mode].set)
-    else
-        equip(sets["Idle"])
-    end
-end
- 
-function status_change(new,old)
-    if T{'Idle','Resting'}:contains(new) then
-		on_status_change_for_th(new, old)
-		equip(sets["Idle"])
-    elseif new == 'Engaged' then
-		equip(Modes[Mode].set)
-		on_status_change_for_th(new, old)
-    end
-end
- 
-function buff_change(name,gain,buff_table)
-	Buffs[name] = gain
-end
- 
-windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
-		if Combat then
-			equip(Modes[Mode].set)
+function custom_command(args)
+	if args[1] == "sir" then
+		if spell_interrupt_mode == true then
+			add_to_chat(122, "spell_interrupt_mode off!")
+			spell_interrupt_mode = false
 		else
-			equip(set_combine(sets["Idle"], sets["Adoulin"]))
-		end
-	else
-		if Combat then
-			equip(Modes[Mode].set)
-		else
-			equip(sets["Idle"])
-		end
-	end
-end)
- 
-function self_command(command)
-	local args = T{}
-	if type(command) == 'string' then
-        args = T(command:split(' '))
-        if #args == 0 then
-            return
-        end
-    end
-	if args[1] == "combat" then
-		if Combat == true then
-			add_to_chat(122, "Combat off!")
-			Combat = false
-		else
-			add_to_chat(122, "Combat on!")
-			equip(Modes[Mode].set)
-			Combat = true
-		end
-	elseif args[1] == "sir" then
-		if SIR == true then
-			add_to_chat(122, "SIR off!")
-			SIR = false
-		else
-			add_to_chat(122, "SIR on!")
-			SIR = true
+			add_to_chat(122, "spell_interrupt_mode on!")
+			spell_interrupt_mode = true
 		end
 	elseif args[1] == 'kite' then
-		if KiteMode == false then
+		if kite_mode == false then
 			add_to_chat(122, "Kite Mode on")
 			enable("legs")
 			equip(sets["Movement"])
 			disable("legs")
-			KiteMode = true
-		elseif KiteMode == true then
+			kite_mode = true
+		elseif kite_mode == true then
 			add_to_chat(122, "Kite Mode off")
 			enable("legs")
-			KiteMode = false
+			kite_mode = false
 		end
 	elseif args[1] == 'emnity' then
-		if EmnityMode == false then
+		if enmity_mode == false then
 			add_to_chat(122, "Emnity Mode on")
-			EmnityMode = true
-		elseif EmnityMode == true then
+			enmity_mode = true
+		elseif enmity_mode == true then
 			add_to_chat(122, "Emnity Mode off")
-			EmnityMode = false
+			enmity_mode = false
 		end
-	elseif args[1] == "mode" then
-		if args[2] and type(tonumber(args[2])) == 'number' then
-			nextMode = tonumber(args[2])
-			if nextMode == nil then
-				add_to_chat(122, "Invalid mode number")
-			else
-				if Modes[nextMode] == nil then
-					add_to_chat(122, "Invalid node number")
-				else
-					Mode = nextMode
-				end
-			end
-		else
-			Mode = Mode + 1
-			if Modes[Mode] == nil then
-				Mode = 1
-			end
-		end
-		print_mode()
 	elseif args[1] == "rune" then
 		if args[2] and args[3] and args[4] then
 			local ele1 = string.lower(args[2])
 			local ele2 = string.lower(args[3])
 			local ele3 = string.lower(args[4])
-			if Runes[ele1] and Runes[ele2] and Runes[ele3] then
-				local rune1 = Runes[ele1]
-				local rune2 = Runes[ele2]
-				local rune3 = Runes[ele3]
-				if TargetRuneCount[rune1] and TargetRuneCount[rune2] and TargetRuneCount[rune3] then
-					MultiRune = true
-					TargetRuneCount["lux"] = 0
-					TargetRuneCount["tenebrae"] = 0
-					TargetRuneCount["unda"] = 0
-					TargetRuneCount["sulpor"] = 0
-					TargetRuneCount["tellus"] = 0
-					TargetRuneCount["flabra"] = 0
-					TargetRuneCount["gelus"] = 0
-					TargetRuneCount["ignis"] = 0
-					TargetRuneCount[rune1] = TargetRuneCount[rune1] + 1
-					TargetRuneCount[rune2] = TargetRuneCount[rune2] + 1
-					TargetRuneCount[rune3] = TargetRuneCount[rune3] + 1
+			if runes_elemental_map[ele1] and runes_elemental_map[ele2] and runes_elemental_map[ele3] then
+				local rune1 = runes_elemental_map[ele1]
+				local rune2 = runes_elemental_map[ele2]
+				local rune3 = runes_elemental_map[ele3]
+				if target_rune_count[rune1] and target_rune_count[rune2] and target_rune_count[rune3] then
+					target_rune_count["lux"] = 0
+					target_rune_count["tenebrae"] = 0
+					target_rune_count["unda"] = 0
+					target_rune_count["sulpor"] = 0
+					target_rune_count["tellus"] = 0
+					target_rune_count["flabra"] = 0
+					target_rune_count["gelus"] = 0
+					target_rune_count["ignis"] = 0
+					target_rune_count[rune1] = target_rune_count[rune1] + 1
+					target_rune_count[rune2] = target_rune_count[rune2] + 1
+					target_rune_count[rune3] = target_rune_count[rune3] + 1
+					rune_cast = { rune1, rune2, rune3 }
+					rune_cast_index = 1
 					print_current_rune()
 				end
-				RuneCast = {}
+				
 			end
 		elseif args[2] then
-			MultiRune = false
-			if Runes[string.lower(args[2])] then
-				Rune = Runes[string.lower(args[2])]
+			local rune_to_cast = runes_elemental_map[string.lower(args[2])]
+			if rune_to_cast then
+				rune_cast = { rune_to_cast, rune_to_cast, rune_to_cast }
+				rune_cast_index = 1
 				print_current_rune()
 			end
 		else
-			if MultiRune then
-				for k,v in pairs(TargetRuneCount) do
-					if v > 0 then
-						if buffactive[k] == nil or buffactive[k] < v then
-							send_command('input /ja "' .. k .. '" <me>')
-							table.insert(RuneCast, k)
-							return
-						end
-					end
+			for k,v in pairs(rune_cast) do			
+				if buffactive[v] == nil or buffactive[v] < target_rune_count[v] then
+					send_command('input /ja "' .. v .. '" <me>')
+					rune_cast_index = k + 1
+					if rune_cast_index > 3 then rune_cast_index = 1 end
+					return
 				end
-				if #RuneCast > 0 then
-					send_command('input /ja "' .. RuneCast[1] .. '" <me>')
-					table.insert(RuneCast, RuneCast[1])
-					table.remove(RuneCast, 1)
-				end
-			else
-				send_command('input /ja "' .. Rune .. '" <me>')
 			end
+			send_command('input /ja "' .. rune_cast[rune_cast_index] .. '" <me>')
+			rune_cast_index = rune_cast_index + 1
+			if rune_cast_index > 3 then rune_cast_index = 1 end
 		end
 	elseif args[1] == "sjAction" then
-		if SJAction == nil then
+		if subjob_action == nil then
 			add_to_chat(122, "No SubjobAction for " .. player.sub_job)
 		else
-			send_command('input ' .. SJAction)
+			send_command('input ' .. subjob_action)
 		end
 	elseif args[1] == 'setWS' and args[2] then
-		WS = string.sub(command, 7)
+		ws = string.sub(command, 7)
 		print_current_ws()
 	elseif args[1] == 'resist' and args[2] then
 		if args[2] and args[3] and args[4] then
 			local res1 = string.lower(args[2])
 			local res2 = string.lower(args[3])
 			local res3 = string.lower(args[4])
-			if Resist[res1] and Resist[res2] and Resist[res3] then
-				local rune1 = Resist[res1]
-				local rune2 = Resist[res2]
-				local rune3 = Resist[res3]
-				if TargetRuneCount[rune1] and TargetRuneCount[rune2] and TargetRuneCount[rune3] then
-					MultiRune = true
-					TargetRuneCount["lux"] = 0
-					TargetRuneCount["tenebrae"] = 0
-					TargetRuneCount["unda"] = 0
-					TargetRuneCount["sulpor"] = 0
-					TargetRuneCount["tellus"] = 0
-					TargetRuneCount["flabra"] = 0
-					TargetRuneCount["gelus"] = 0
-					TargetRuneCount["ignis"] = 0
-					TargetRuneCount[rune1] = TargetRuneCount[rune1] + 1
-					TargetRuneCount[rune2] = TargetRuneCount[rune2] + 1
-					TargetRuneCount[rune3] = TargetRuneCount[rune3] + 1
+			if resist_table[res1] and resist_table[res2] and resist_table[res3] then
+				local rune1 = resist_table[res1]
+				local rune2 = resist_table[res2]
+				local rune3 = resist_table[res3]
+				if target_rune_count[rune1] and target_rune_count[rune2] and target_rune_count[rune3] then
+					target_rune_count["lux"] = 0
+					target_rune_count["tenebrae"] = 0
+					target_rune_count["unda"] = 0
+					target_rune_count["sulpor"] = 0
+					target_rune_count["tellus"] = 0
+					target_rune_count["flabra"] = 0
+					target_rune_count["gelus"] = 0
+					target_rune_count["ignis"] = 0
+					target_rune_count[rune1] = target_rune_count[rune1] + 1
+					target_rune_count[rune2] = target_rune_count[rune2] + 1
+					target_rune_count[rune3] = target_rune_count[rune3] + 1
+					rune_cast = { rune1, rune2, rune3 }
+					rune_cast_index = 1
 					print_current_rune()
 				end
-				RuneCast = {}
 			end
 		else
 			local arg2 = string.lower(args[2])
-			if Resist[arg2] then 
-				Rune = Resist[arg2] 
-				MultiRune = false
+			if resist_table[arg2] then 
+				rune_cast = { resist_table[arg2], resist_table[arg2], resist_table[arg2] }
+				rune_cast_index = 1
 				print_current_rune()
 			end
-		end
-	elseif args[1] == "printBuffs" then
-		for k,v in pairs(buffactive) do
-			add_to_chat(122, k .. " " .. tostring(v))
-		end
-	elseif args[1] == "thtagged" then
-		if player.status == "Engaged" then
-			equip(Modes[Mode].set)
 		end
 	end
 end
@@ -408,59 +307,41 @@ function sub_job_change(new, old)
 	subjob_check(new)
 end
 
-function print_mode()
-	printString = "Current Mode: "	
-	for i = 1, #Modes do
-		if i == Mode then
-			printString = printString .. "[" .. i .. ":" .. Modes[i].name .. "] "
-		else
-			printString = printString .. i .. ":" .. Modes[i].name .. " "
-		end
-	end	
-	add_to_chat(122, printString)
-end
-
 function print_current_rune()
-	if MultiRune then
-		local runeString = ""
-		for k,v in pairs(TargetRuneCount) do
-			if v > 0 then
-				runeString = runeString .. k .. "*" .. v .. " "
-			end
-		end
-		add_to_chat(122, "Current Runes: " .. runeString)
-	else
-		add_to_chat(122, "Current Rune: " .. Rune)
+	local runeString = ""
+	for k,v in pairs(rune_cast) do
+		runeString = runeString .. v .. ", "
 	end
+	add_to_chat(122, "Current runes: " .. runeString)
 end
 
 function print_subjob_action()
-	if SJAction == nil then
+	if subjob_action == nil then
 	else
-		add_to_chat(122, "Current Subjob Action: " .. SJAction)
+		add_to_chat(122, "Current Subjob Action: " .. subjob_action)
 	end
 end
 
 function subjob_check(job)
 	if job == "NIN" then
-		SJAction = '/ma "Utsusemi: Ni" <me>;input /ma "Utsusemi: Ichi" <me>'
+		subjob_action = '/ma "Utsusemi: Ni" <me>;input /ma "Utsusemi: Ichi" <me>'
 	elseif job == "DNC" then
-		SJAction = nil
+		subjob_action = nil
 	elseif job == "SAM" then
-		SJAction = '/ja "Third Eye" <me>'
+		subjob_action = '/ja "Third Eye" <me>'
 	elseif job == "WAR" then
-		SJAction = '/ja "Provoke" <stnpc>'
+		subjob_action = '/ja "Provoke" <stnpc>'
 	elseif job == "DRK" then
-		SJAction = '/ma "Stun" <stnpc>'
+		subjob_action = '/ma "Stun" <stnpc>'
 	else
-		SJAction = nil
+		subjob_action = nil
 	end
 	print_subjob_action()
 end
 
 function check_emnity(type, spellName)
-	if EmnityActions[type] then
-		for k,v in ipairs(EmnityActions[type]) do
+	if enmity_actions[type] then
+		for k,v in ipairs(enmity_actions[type]) do
 			if spellName == v then 
 				return true 
 			end

@@ -25,10 +25,12 @@ target_maneuver_count = {
 	["fire maneuver"] = 1,
 	["thunder maneuver"] = 0,
 }
-maneuver_cast = {}
+maneuver_cast = {"light maneuver", "wind maneuver", "fire maneuver"}
+maneuver_cast_index = 1
 
 function custom_get_sets()
-	print_current_maneuvers() 
+	print_current_maneuvers()
+	send_command('@input /macro book 13;wait 1;input /macro set 1')
 end
 
 function custom_command(args)
@@ -49,24 +51,25 @@ function custom_command(args)
 				target_maneuver_count[ele1] = target_maneuver_count[ele1] + 1
 				target_maneuver_count[ele2] = target_maneuver_count[ele2] + 1
 				target_maneuver_count[ele3] = target_maneuver_count[ele3] + 1
+				maneuver_cast = {ele1, ele2, ele3}
+				maneuver_cast_index = 1
 				print_current_maneuvers()
-				maneuver_cast = {}
 			end
 		else
-			for k,v in pairs(target_maneuver_count) do
-				if v > 0 then
-					if buffactive[k] == nil or buffactive[k] < v then
-						send_command('input /ja "' .. k .. '" <me>')
-						table.insert(maneuver_cast, k)
-						return
-					end
+			for i = 1, 3 do
+				local temp_index = maneuver_cast_index + i - 1
+				if temp_index > 3 then temp_index = temp_index - 3 end
+				local maneuver = maneuver_cast[temp_index]
+				if buffactive[maneuver] == nil or buffactive[maneuver] < target_maneuver_count[maneuver] then
+					send_command('input /ja "' .. maneuver .. '" <me>')
+					maneuver_cast_index = temp_index + 1
+					if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
+					return
 				end
 			end
-			if #maneuver_cast > 0 then
-				send_command('input /ja "' .. maneuver_cast[1] .. '" <me>')
-				table.insert(maneuver_cast, maneuver_cast[1])
-				table.remove(maneuver_cast, 1)
-			end
+			send_command('input /ja "' .. maneuver_cast[maneuver_cast_index] .. '" <me>')
+			maneuver_cast_index = maneuver_cast_index + 1
+			if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
 		end
 	end
 end
@@ -80,10 +83,8 @@ end
 
 function print_current_maneuvers()
 	local text = ""
-	for k,v in pairs(target_maneuver_count) do
-		if v > 0 then
-			text = text .. k .. "*" .. v .. " "
-		end
+	for k,v in pairs(maneuver_cast) do
+		text = text .. v .. ", "
 	end
 	add_to_chat(122, "Current Maneuvers: " .. text)
 end

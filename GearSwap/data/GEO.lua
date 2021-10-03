@@ -1,50 +1,27 @@
-include("MasterGear/MasterGearFunctions.lua")
-include('THHelper/THHelper.lua')
+include("MasterGear/MasterGearLua.lua")
 
-function get_sets()
-	KiteMode = false
-	CPMode = false
-	Combat = false
-	Mode = 1
-	Nuke = "Dia"
-	Indi = "Indi-Fury"
-	Geo = "Geo-Frailty"
-	Entrust = "Indi-Haste"
-	FullCircleBot = false
-	BuffMode = 1
-	BuffModes = {
-		{ name = "Melee", Indi = "Indi-Fury", Geo = "Geo-Frailty" },
-		{ name = "Magic", Indi = "Indi-Acumen", Geo = "Geo-Malaise" },
-		{ name = "OmenSolo", Indi = "Indi-Haste", Geo = "Geo-Malaise", Entrust = "Indi-Refresh" }
-	}
-	
-	get_set_for_job_from_json("GEO", sets)
-		
-	Modes = { 
-		{ name = "CombatIdleDT", set = sets["CombatIdleDT"]},
-		{ name = "Melee", set = sets["Melee"]},
-	}
+function custom_get_sets()
+	nuke = "Dia"
+	indi = "Indi-Fury"
+	geo = "Geo-Frailty"
+	entrust = "Indi-Haste"
  
-	sets["Shining Strike"] = sets["Elemental"]
-	sets["Seraph Strike"] = sets["Elemental"]
-	sets["Flash Nova"] = sets["Elemental"]
-	sets["Cataclysm"] = sets["Elemental"]
-	sets["Hexa Strike"] = set_combine(sets["STR_Melee_WS"], sets["Fotia"])
-	sets["Black Halo"] = sets["MND_WS"]
-	sets["Exudation"] = sets["MND_WS"]
+	ws = {}
+	ws["Shining Strike"] = { set = sets["Elemental"], tp_bonus = true }
+	ws["Seraph Strike"] = { set = sets["Elemental"], tp_bonus = true }
+	ws["Flash Nova"] = { set = sets["Elemental"], tp_bonus = true }
+	ws["Cataclysm"] = { set = sets["Elemental"], tp_bonus = true }
+	ws["Hexa Strike"] = { set = sets["Hexa Strike"], tp_bonus = false }
+	ws["Black Halo"] = { set = sets["Black Halo"], tp_bonus = true }
+	ws["Exudation"] = { set = sets["Black Halo"], tp_bonus = false }
 	 
 	send_command('@input /macro book 3;wait 1;input /macro set 1')
-	print_mode()
-	print_th_mode()
 	print_current_nuke()
 	print_current_geos()
-	print_buff_mode()
 end
  
-function precast(spell)
-	if sets[spell.english] then
-        equip(sets[spell.english])
-	elseif spell.action_type == 'Magic' then
+function custom_precast(spell)
+if spell.action_type == 'Magic' then
 		if spell.skill == "Healing Magic" then
 			equip(sets["HealingFastcast"])
 		elseif spell.skill == "Elemental Magic" then
@@ -52,22 +29,11 @@ function precast(spell)
 		else
 			equip(sets["Fastcast"])
 		end
-	elseif spell.type=="WeaponSkill" then
-        if sets[spell.english] then
-			local setToUse = sets[spell.english]
-			if spell.element == world.weather_element or spell.element == world.day_element then 
-				setToUse = set_combine(setToUse, sets["WeatherObi"])
-			end
-			local maxTP = 3000
-			if player.tp < maxTP then
-				setToUse = set_combine(setToUse, sets["TPBonus"])
-			end
-			equip(setToUse)
-		end
+		return true
     end
 end
 
-function midcast(spell)
+function custom_midcast(spell)
 	if spell.action_type == 'Magic' then
 		if spell.skill == "Geomancy" then
 			equip(sets["Geomancy"])
@@ -88,215 +54,44 @@ function midcast(spell)
 		elseif spell.skill == "Enfeebling Magic" then
 			equip(sets["MACC"])
 		end
+		return true
 	end
 end
  
-function aftercast(spell)
-	if Combat or player.status == "Engaged" then
-		equip(Modes[Mode].set)
-	else
-		equip(sets["IdleRefresh"])
-	end
-end
-
-function status_change(new,old)
-    if T{'Idle','Resting'}:contains(new) then
-		equip(sets["IdleRefresh"])
-    elseif new == 'Engaged' then
-        equip(Modes[Mode].set)
-    end
-end
- 
-windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
-		if Combat == true then
-			equip(set_combine(Modes[Mode].set, sets["Adoulin"]))
-		else
-			equip(set_combine(sets["IdleRefresh"], sets["Adoulin"]))
-		end
-	else
-		if Combat == true then
-			equip(Modes[Mode].set)
-		else
-			equip(sets["IdleRefresh"])
-		end
-	end
-end)
- 
-function self_command(command)
-	local args = T{}
-	if type(command) == 'string' then
-        args = T(command:split(' '))
-        if #args == 0 then
-            return
-        end
-    end
-	if args[1] == 'cp' then
-		if CPMode == false then
-			add_to_chat(122, "CP Mode On!")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
-			CPMode = true
-		elseif CPMode == true then
-			add_to_chat(122, "CP Mode Off!")
-			enable("back")
-			CPMode = false
-		end
-	elseif args[1] == "mode" then
-		Mode = Mode + 1
-		if Modes[Mode] == nil then
-			Mode = 1
-		end
-		equip(Modes[Mode].set)
-		print_mode()
-	elseif args[1] == "buffMode" then
-		if args[2] then
-			local nextMode = tonumber(string.sub(command, 10))
-			if nextMode == nil then
-				add_to_chat(122, "Invalid BuffMode number")
-			else
-				if BuffModes[nextMode] == nil then
-					add_to_chat(122, "Invalid BuffMode number")
-				else
-					BuffMode = nextMode
-					set_buffs()
-					print_buff_mode()
-					print_current_geos()					
-				end
-			end
-		else
-			BuffMode = BuffMode + 1
-			if BuffModes[BuffMode] == nil then
-				BuffMode = 1
-			end
-			set_buffs()
-			print_buff_mode()
-			print_current_geos()
-		end
-	elseif args[1] == "melee" then
-		if Melee == true then
-			Melee = false
-			enable("main")
-			enable("sub")
-			enable("range")
-			add_to_chat(122, "Melee off!")
-		else
-			Melee = true
-			disable("main")
-			disable("sub")
-			disable("range")
-			add_to_chat(122, "Melee on!")
-		end
-	elseif args[1] == "combat" then
-		if Combat == true then
-			add_to_chat(122, "Combat off!")
-			if player.status ~= "Engaged" then
-				equip(sets["IdleRefresh"])
-			else 
-				equip(Modes[Mode].set)
-			end
-			Combat = false
-		else
-			add_to_chat(122, "Combat on!")
-			equip(Modes[Mode].set)
-			Combat = true
-		end
-	elseif args[1] == "nuke" then
-		send_command('input /ma "' .. Nuke .. '" <t>')
+function custom_command(args)
+	if args[1] == "nuke" then
+		send_command('input /ma "' .. nuke .. '" <t>')
 	elseif args[1] == "indi" then
-		send_command('input /ma "' .. Indi .. '" <me>')
+		send_command('input /ma "' .. indi .. '" <me>')
 	elseif args[1] == "geo" then
-		send_command('input /ma "' .. Geo .. '" <t>')
+		send_command('input /ma "' .. geo .. '" <t>')
 	elseif args[1] == "entrust" then
-		send_command('input /ma "' .. Entrust .. '" <t>')
-	elseif args[1] == "startFCBot" then
-		add_to_chat(122, "FCBot on!")
-		FullCircleBot = true
-	elseif args[1] == "stopFCBot" then
-		add_to_chat(122, "FCBot off!")
-		FullCircleBot = false
+		send_command('input /ma "' .. entrust .. '" <t>')
 	elseif args[1] == 'tellParty' then
 		party_current_geos()
 	elseif args[1] == 'setNuke' and args[2] then
-		Nuke = args[2]
+		nuke = args[2]
 		print_current_nuke()
 	elseif args[1] == 'setIndi' then
-		Indi = args[2]
+		indi = args[2]
 		print_current_geos()
 	elseif args[1] == 'setGeo' then
-		Geo = args[2]
+		geo = args[2]
 		print_current_geos()
 	elseif args[1] == 'setEntrust' then
-		Entrust = args[2]
+		entrust = args[2]
 		print_current_geos()
-	elseif args[1] == "thtagged" then
-		if player.status == "Engaged" then
-			equip(Modes[Mode].set)
-		end
 	end
-end
-
-function print_mode()
-	printString = "Current Mode: "
-	for i = 1, 10, 1 do
-		if i == Mode then
-			printString = printString .. "[" .. i .. ":" .. Modes[i].name .. "] "
-		elseif Modes[i] == nil then
-			break
-		else
-			printString = printString .. i .. ":" .. Modes[i].name .. " "
-		end
-	end	
-	add_to_chat(122, printString)
-end
-
-function set_buffs()
-	if BuffModes[BuffMode].Indi then
-		Indi = BuffModes[BuffMode].Indi
-	end
-	if BuffModes[BuffMode].Geo then 
-		Geo = BuffModes[BuffMode].Geo
-	end
-	if BuffModes[BuffMode].Entrust then 
-		Entrust = BuffModes[BuffMode].Entrust
-	end
-end
-
-function print_buff_mode()
-	printString = "Current Buff Mode: "
-	for i = 1, 10, 1 do
-		if i == BuffMode then
-			printString = printString .. "[" .. i .. ":" .. BuffModes[i].name .. "] "
-		elseif BuffModes[i] == nil then
-			break
-		else
-			printString = printString .. i .. ":" .. BuffModes[i].name .. " "
-		end
-	end	
-	add_to_chat(122, printString)
 end
 
 function print_current_nuke()
-	add_to_chat(122, "Current Nuke: " .. Nuke)
+	add_to_chat(122, "Current nuke: " .. nuke)
 end
 
 function print_current_geos()
-	add_to_chat(122, "Indi: " .. Indi .. ", Geo: " .. Geo .. ", Entrust: " .. Entrust)
+	add_to_chat(122, "indi: " .. indi .. ", geo: " .. geo .. ", entrust: " .. entrust)
 end
 
 function party_current_geos()
-	send_command('input /p ' .. "Indi: " .. Indi .. ", Geo: " .. Geo .. ", Entrust: " .. Entrust)
+	send_command('input /p ' .. "indi: " .. indi .. ", geo: " .. geo .. ", entrust: " .. entrust)
 end
-
-windower.register_event('time change', function(old, new)
-	if FullCircleBot == true then
-		local luopan = nil
-		if windower.ffxi.get_mob_by_target('pet') then
-			luopan = windower.ffxi.get_mob_by_target('pet')
-		end
-		if luopan and luopan.distance:sqrt() > 5 then
-			send_command('input /ja "Full Circle" <me>')
-		end
-	end
-end)

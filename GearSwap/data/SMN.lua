@@ -1,8 +1,7 @@
-include("Mastergear/MasterGearFunctions.lua")
-include('THHelper/THHelper.lua')
+include("Mastergear/MasterGearLua.lua")
 texts = require('texts')
 
-BPs = {
+bps = {
 	["Carbuncle"] = 
 		{
 			["Rage1"] = { name = "Poison Nails",		target = "stnpc", 		set = "PhyBPDmg", 	description = "Pierce + poison" },
@@ -33,7 +32,7 @@ BPs = {
 			["Rage2"] = { name = "Aero IV",				target = "stnpc", 		set = "MagicBPDmg", description = "Wind Nuke" },
 			["Ward1"] = { name = "Aerial Armor", 		target = "stpt", 		description = "Blink" },
 			["Ward2"] = { name = "Whispering Wind", 	target = "stpt", 		description = "Heal" },
-			["Ward3"] = { name = "Fleet Wind", 			target = "stpt", 		description = "Movement" },
+			["Ward3"] = { name = "Fleet Wind", 			target = "stpt", 		description = "movement" },
 			["Ward4"] = { name = "Hastega II", 			target = "stpt", 		description = "Haste2" },
 		},
 	["Titan"] = 
@@ -107,9 +106,9 @@ BPs = {
 		},
 }
 
-MeritBPs = T{ "Meteor Strike", "Heavenly Strike", "Wind Blade", "Geocrush", "Thunderstorm", "Grand Fall" }
+merit_bps = T{ "Meteor Strike", "Heavenly Strike", "Wind Blade", "Geocrush", "Thunderstorm", "Grand Fall" }
 
-BloodPactsInfo = [[${petName|none}
+blood_pacts_info = [[${petName|none}
 ${info|}
 ]]
 
@@ -146,31 +145,22 @@ function setup_text_window()
 	default_settings.text.stroke.green = 0
 	default_settings.text.stroke.blue = 0
 	
-	if not (BloodPactTextHub == nil) then
-        texts.destroy(BloodPactTextHub)
+	if not (blood_pacts_text_hub == nil) then
+        texts.destroy(blood_pacts_text_hub)
     end
-    BloodPactTextHub = texts.new(BloodPactsInfo, default_settings, default_settings)
+    blood_pacts_text_hub = texts.new(blood_pacts_info, default_settings, default_settings)
 
-    BloodPactTextHub:show()
+    blood_pacts_text_hub:show()
 end
 
-function get_sets()
-	CPMode = false
-	DT = false
-	Movement = false
-	Engaged = false
-	Combat = false
-	StartedBPWard = false
-	StartedBPRage = false
-	RageSetToUse = ""
-	BuffBot = false
-	WardRecastId = 0
-	Buffs = {}
-	TimerFromPrecast = 1.25
-	
-	get_set_for_job_from_json("SMN", sets)
-	
-	print_th_mode()
+function custom_get_sets()
+	dt = false
+	movement = false
+	engaged = false
+	started_bp_ward = false
+	started_bp_rage = false
+	rage_set_to_use = ""
+	timer_from_precast = 1.25
 	
 	setup_text_window()
 	if pet.isvalid then update_blood_pact_info(pet.name) end
@@ -179,8 +169,8 @@ function get_sets()
 end
 
 function get_set_to_use(spell_name)
-	if BPs[pet.name] then
-		for _, v in pairs(BPs[pet.name]) do 
+	if bps[pet.name] then
+		for _, v in pairs(bps[pet.name]) do 
 			if v.name == spell_name and v.setToUse then
 				return v.setToUse
 			end
@@ -189,20 +179,16 @@ function get_set_to_use(spell_name)
 	return "MagicBPDmg"
 end
 
-function precast(spell)
-	if spell.type == "JobAbility" then
-		if sets[spell.english] then
-			equip(sets[spell.english])
-		end
-	elseif spell.english == "Alexander" then
-		StartedBPWard = true
-		coroutine.schedule(check_pet_midcast, TimerFromPrecast)
+function custom_precast(spell)
+	if spell.english == "Alexander" then
+		started_bp_ward = true
+		coroutine.schedule(check_pet_midcast, timer_from_precast)
+		return true
 	elseif spell.english == "Odin" then
-		StartedBPRage = true
-		RageSetToUse = "PhyBPDmg",
-		coroutine.schedule(check_pet_midcast, TimerFromPrecast)
-	elseif spell.action_type == 'Magic' then
-		equip(sets["Fastcast"])
+		started_bp_rage = true
+		rage_set_to_use = "PhyBPDmg",
+		coroutine.schedule(check_pet_midcast, timer_from_precast)
+		return true
 	elseif spell.type=="BloodPactWard" then
 		if buffactive["Astral Conduit"] then
 			if spell.name == "Somnolence" then
@@ -213,55 +199,52 @@ function precast(spell)
 		else
 			equip(sets["PrecastBP"])
 			if spell.name == "Somnolence" then
-				RageSetToUse = get_set_to_use(spell.name)
-				StartedBPRage = true
+				rage_set_to_use = get_set_to_use(spell.name)
+				started_bp_rage = true
 			else
-				StartedBPWard = true
+				started_bp_ward = true
 			end
-			coroutine.schedule(check_pet_midcast, TimerFromPrecast)
+			coroutine.schedule(check_pet_midcast, timer_from_precast)
         end
+		return true
 	elseif spell.type=="BloodPactRage" then
         if buffactive["Astral Conduit"] then
 			local setToUse = sets[get_set_to_use(spell.name)]
-			if MeritBPs:contains(spell.name) then setToUse = set_combine(setToUse, sets["MeritBPBurst"]) end
+			if merit_bps:contains(spell.name) then setToUse = set_combine(setToUse, sets["MeritBPBurst"]) end
 			equip(setToUse)
 		else
 			equip(sets["PrecastBP"])
-			StartedBPRage = true
-			if MeritBPs:contains(spell.name) then 
-				RageSetToUse = "MeritBPBurst"
+			started_bp_rage = true
+			if merit_bps:contains(spell.name) then 
+				rage_set_to_use = "MeritBPBurst"
 			else 
-				RageSetToUse = get_set_to_use(spell.name)
+				rage_set_to_use = get_set_to_use(spell.name)
 			end
-			coroutine.schedule(check_pet_midcast, TimerFromPrecast)
+			coroutine.schedule(check_pet_midcast, timer_from_precast)
         end
+		return true
 	end
 end
  
-function midcast(spell)
-	if spell.action_type == 'Magic' then
-		if spell.skill == "Enfeebling Magic" then
-			equip(sets["MACC"]) 
-		elseif sets[spell.english] then
-			equip(sets[spell.english])
-		end
+function custom_midcast(spell)
+	if spell.action_type == 'Magic' and spell.skill == "Enfeebling Magic" then
+		equip(sets["MACC"]) 
+		return true
 	end
 end
  
-function aftercast(spell)
-	if StartedBPRage == false and StartedBPWard == false then -- don't equip idle set if still going to do a BP
+function custom_aftercast(spell)
+	if started_bp_rage == false and started_bp_ward == false then -- don't equip idle set if still going to do a BP
 		equip_idle_set()
-	end
-	if spell.type =="BloodPactWard" and BuffBot then
-		WardRecastId = spell.recast_id
+		return true
 	end
 end
 
 function check_pet_midcast()
-	if StartedBPRage then
-		local setToUse = sets[RageSetToUse]
+	if started_bp_rage then
+		local setToUse = sets[rage_set_to_use]
 		equip(setToUse)
-	elseif StartedBPWard then
+	elseif started_bp_ward then
 		equip(sets["SmnSkill"])	
 	end
 end
@@ -271,22 +254,22 @@ function pet_midcast(spell)
 end
 
 function pet_aftercast(spell)
-	StartedBPRage = false
-	StartedBPWard = false
+	started_bp_rage = false
+	started_bp_ward = false
 	equip_idle_set()
 end
 
 function equip_idle_set()
 	local setToUse = sets["Idle"]
-	if DT then setToUse = set_combine(setToUse, sets["IdleDT"]) end
-	if not Combat and (not Engaged or Movement) then setToUse = set_combine(setToUse, sets["Movement"]) end
+	if dt then setToUse = set_combine(setToUse, sets["IdleDT"]) end
+	if not Combat and (not engaged or movement) then setToUse = set_combine(setToUse, sets["movement"]) end
 	equip(setToUse)
 end
 
 function pet_change(pet,gain)
 	if gain then
-		if not BPs[pet.name] then
-			add_to_chat(122, "Pls set up BPs for " .. pet.name)
+		if not bps[pet.name] then
+			add_to_chat(122, "Pls set up bps for " .. pet.name)
 		end
 		update_blood_pact_info(pet.name)
 	else
@@ -295,118 +278,95 @@ function pet_change(pet,gain)
 end
 
 function update_blood_pact_info(petName)
-	BloodPactTextHub.petName = petName
-	if BPs[petName] then
+	blood_pacts_text_hub.petName = petName
+	if bps[petName] then
 		local infoString = ""
-		if BPs[petName]["Rage1"] then 
-			infoString = infoString .. "[CTRL+1] Rage1" .. ": " .. BPs[petName]["Rage1"].name .. "(" .. BPs[petName]["Rage1"].description .. ")\n"
+		if bps[petName]["Rage1"] then 
+			infoString = infoString .. "[CTRL+1] Rage1" .. ": " .. bps[petName]["Rage1"].name .. "(" .. bps[petName]["Rage1"].description .. ")\n"
 		end
-		if BPs[petName]["Rage2"] then 
-			infoString = infoString .. "[CTRL+2] Rage2" .. ": " .. BPs[petName]["Rage2"].name .. "(" .. BPs[petName]["Rage2"].description .. ")\n"
+		if bps[petName]["Rage2"] then 
+			infoString = infoString .. "[CTRL+2] Rage2" .. ": " .. bps[petName]["Rage2"].name .. "(" .. bps[petName]["Rage2"].description .. ")\n"
 		end
-		if BPs[petName]["Rage3"] then 
-			infoString = infoString .. "[CTRL+3] Rage3" .. ": " .. BPs[petName]["Rage3"].name .. "(" .. BPs[petName]["Rage3"].description .. ")\n"
+		if bps[petName]["Rage3"] then 
+			infoString = infoString .. "[CTRL+3] Rage3" .. ": " .. bps[petName]["Rage3"].name .. "(" .. bps[petName]["Rage3"].description .. ")\n"
 		end
-		if BPs[petName]["Rage4"] then 
-			infoString = infoString .. "[CTRL+4] Rage4" .. ": " .. BPs[petName]["Rage4"].name .. "(" .. BPs[petName]["Rage4"].description .. ")\n"
+		if bps[petName]["Rage4"] then 
+			infoString = infoString .. "[CTRL+4] Rage4" .. ": " .. bps[petName]["Rage4"].name .. "(" .. bps[petName]["Rage4"].description .. ")\n"
 		end
-		if BPs[petName]["Ward1"] then 
-			infoString = infoString .. "[CTRL+5] Ward1" .. ": " .. BPs[petName]["Ward1"].name .. "(" .. BPs[petName]["Ward1"].description .. ")\n"
+		if bps[petName]["Ward1"] then 
+			infoString = infoString .. "[CTRL+5] Ward1" .. ": " .. bps[petName]["Ward1"].name .. "(" .. bps[petName]["Ward1"].description .. ")\n"
 		end
-		if BPs[petName]["Ward2"] then 
-			infoString = infoString .. "[CTRL+6] Ward2" .. ": " .. BPs[petName]["Ward2"].name .. "(" .. BPs[petName]["Ward2"].description .. ")\n"
+		if bps[petName]["Ward2"] then 
+			infoString = infoString .. "[CTRL+6] Ward2" .. ": " .. bps[petName]["Ward2"].name .. "(" .. bps[petName]["Ward2"].description .. ")\n"
 		end
-		if BPs[petName]["Ward3"] then 
-			infoString = infoString .. "[CTRL+7] Ward3" .. ": " .. BPs[petName]["Ward3"].name .. "(" .. BPs[petName]["Ward3"].description .. ")\n"
+		if bps[petName]["Ward3"] then 
+			infoString = infoString .. "[CTRL+7] Ward3" .. ": " .. bps[petName]["Ward3"].name .. "(" .. bps[petName]["Ward3"].description .. ")\n"
 		end
-		if BPs[petName]["Ward4"] then 
-			infoString = infoString .. "[CTRL+8] Ward4" .. ": " .. BPs[petName]["Ward4"].name .. "(" .. BPs[petName]["Ward4"].description .. ")\n"
+		if bps[petName]["Ward4"] then 
+			infoString = infoString .. "[CTRL+8] Ward4" .. ": " .. bps[petName]["Ward4"].name .. "(" .. bps[petName]["Ward4"].description .. ")\n"
 		end
-		if BPs[petName]["Ward5"] then 
-			infoString = infoString .. "[CTRL+9] Ward5" .. ": " .. BPs[petName]["Ward5"].name .. "(" .. BPs[petName]["Ward5"].description .. ")\n"
+		if bps[petName]["Ward5"] then 
+			infoString = infoString .. "[CTRL+9] Ward5" .. ": " .. bps[petName]["Ward5"].name .. "(" .. bps[petName]["Ward5"].description .. ")\n"
 		end
-		if BPs[petName]["Ward6"] then 
-			infoString = infoString .. "[CTRL+0] Ward6" .. ": " .. BPs[petName]["Ward6"].name .. "(" .. BPs[petName]["Ward6"].description .. ")\n"
+		if bps[petName]["Ward6"] then 
+			infoString = infoString .. "[CTRL+0] Ward6" .. ": " .. bps[petName]["Ward6"].name .. "(" .. bps[petName]["Ward6"].description .. ")\n"
 		end
 		
-		BloodPactTextHub.info = infoString:sub(1, #infoString - 1)
+		blood_pacts_text_hub.info = infoString:sub(1, #infoString - 1)
 	else
-		BloodPactTextHub.info = ""
+		blood_pacts_text_hub.info = ""
 	end
 end
  
-windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
-		equip(set_combine(sets["Idle"], sets["Adoulin"]))
-	else
-		equip(set_combine(sets["Idle"], sets["Movement"]))
-	end
+function custom_zone_change()
 	if pet.isvalid then update_blood_pact_info(pet.name)
 	else update_blood_pact_info("none")
 	end
-end)
+end
 
 function file_unload(file_name)
-	if BloodPactTextHub ~= nil then texts.destroy(BloodPactTextHub) end
+	if blood_pacts_text_hub ~= nil then texts.destroy(blood_pacts_text_hub) end
 end
 
-function status_change(new,old)
+function custom_status_change(new,old)
 	if T{'Idle','Resting'}:contains(new) then
-		Engaged = false
-    elseif new == 'Engaged' then
-        Engaged = true
+		engaged = false
+    elseif new == 'engaged' then
+        engaged = true
     end
 	equip_idle_set()
+	return true
 end
  
-function self_command(command)
-	local args = T{}
-	if type(command) == 'string' then
-        args = T(command:split(' '))
-        if #args == 0 then
-            return
-        end
-    end
-	if args[1] == 'cp' then
-		if CPMode == false then
-			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
-			CPMode = true
-		elseif CPMode == true then
-			add_to_chat(122, "CP Mode off")
-			enable("back")
-			CPMode = false
-		end
-	elseif args[1] == 'bp' and args[2] then
+function custom_command(args)
+	if args[1] == 'bp' and args[2] then
 		if pet.isvalid then
-			if BPs[pet.name] then
-				if BPs[pet.name][args[2]] then
-					send_command('input /pet "' .. BPs[pet.name][args[2]].name .. '" <' .. BPs[pet.name][args[2]].target .. '>')
+			if bps[pet.name] then
+				if bps[pet.name][args[2]] then
+					send_command('input /pet "' .. bps[pet.name][args[2]].name .. '" <' .. bps[pet.name][args[2]].target .. '>')
 				else
 					add_to_chat(122, args[2] .. " doesn't exist in BP table")
 				end
 			else
-				add_to_chat(122, "Please set up BPs for " .. pet.name)
+				add_to_chat(122, "Please set up bps for " .. pet.name)
 			end
 		end
 	elseif args[1] == "dt" then
-		if DT == true then
-			add_to_chat(122, "DT off!")
-			DT = false
+		if dt == true then
+			add_to_chat(122, "dt off!")
+			dt = false
 		else
-			add_to_chat(122, "DT on!")		
-			DT = true
+			add_to_chat(122, "dt on!")		
+			dt = true
 			equip_idle_set()
 		end
 	elseif args[1] == "movement" then
-		if Movement == true then
-			add_to_chat(122, "Movement off!")
-			Movement = false
+		if movement == true then
+			add_to_chat(122, "movement off!")
+			movement = false
 		else
-			add_to_chat(122, "Movement on!")
-			Movement = true
+			add_to_chat(122, "movement on!")
+			movement = true
 			equip_idle_set()
 		end
 	elseif args[1] == "combat" then
@@ -419,83 +379,9 @@ function self_command(command)
 			Combat = true
 			equip_idle_set()
 		end
-	elseif args[1] == "buffbot" then
-		if BuffBot == true then
-			add_to_chat(122, "BuffBot off!")
-			BuffBot = false
-		else
-			add_to_chat(122, "BuffBot on!")
-			BuffBot = true
-		end
 	elseif args[1] == "thtagged" then
-		if player.status == "Engaged" then
+		if player.status == "engaged" then
 			equip_idle_set()
 		end
 	end
 end
-
--- should probably change to windower.ffxi.get_player().buffs and check buffIds
-
-function buff_change(name,gain,buff_table)
-	Buffs[name] = gain
-	--add_to_chat(122, name)
-end
-
-BuffsBotCheck = T
-{
-	{ BuffName = "TP Bonus", PetName = "Shiva", BloodPactName = "Crystal Blessing", Check = true },
-	{ BuffName = "STR Boost", PetName = "Fenrir", BloodPactName = "Ecliptic Growl", Check = true },
-	{ BuffName = "Evasion Boost", PetName = "Fenrir", BloodPactName = "Ecliptic Howl", Check = true },
-	{ BuffName = "Haste", 	PetName = "Garuda", BloodPactName = "Hastega II", Check = true },
-	{ BuffName = "Enaero", PetName = "Siren", BloodPactName = "Katabatic Blades", Check = false },
-	{ BuffName = "Warcry", PetName = "Ifrit", BloodPactName = "Crimson Howl", Check = true },
-}
-
-FavorBot = 
-{ 	
-	{ BuffName = "Ifrit's Favor", PetName ="Ifrit", BloodPactName = nil, Check = true },
-}
-
-function summon_pet_or_do_bloodpact(pet_name, bp_name)
-	if pet.isvalid then
-		if pet.name ~= pet_name then
-			send_command('input /ja Release <me>')
-		elseif bp_name then
-			send_command('input /pet "' .. bp_name .. '" <me>')
-		end
-	else
-		send_command('input /ma ' .. pet_name .. ' <me>')
-	end
-end
-
-function check_buff(buff_name, pet_name, bloodpact_name)
-	if not Buffs[buff_name] then
-		summon_pet_or_do_bloodpact(pet_name, bloodpact_name)
-		return false
-	end
-	return true
-end
-
-windower.register_event('time change', function(old, new)
-	if BuffBot == true and party.count == 6 then
-		if player.mpp < 25 and player.sub_job == "RDM" then 
-			send_command('input /ja "Convert" <me>')
-			return
-		end
-		if WardRecastId == 0 or windower.ffxi.get_ability_recasts()[WardRecastId] == 0 then
-			if pet.isvalid and not Buffs["Avatar's Favor"] then
-				send_command('input /ja "Avatar\'s Favor" <me>')
-			end
-			for k,v in pairs(BuffsBotCheck) do
-				if v.Check then
-					if not check_buff(v.BuffName, v.PetName, v.BloodPactName) then return end
-				end
-			end
-			for k,v in pairs(FavorBot) do
-				if v.Check then
-					if not check_buff(v.BuffName, v.PetName, v.BloodPactName) then return end
-				end
-			end
-		end
-	end
-end)

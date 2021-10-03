@@ -1,15 +1,18 @@
-include('THHelper/THHelper.lua')
-include('HasteTracker/HasteTracker.lua')
-include("Mastergear/MasterGearFunctions.lua")
+include("Mastergear/MasterGearLua.lua")
 
 ready = {
 	["Slug"] = {
-		["Ready1"] = { name = "Purulent Ooze", target = "me", set = "PetTP", cost = 2 },
-		["Ready2"] = { name = "Corrosive Ooze", target = "me", set = "PetTP", cost = 3 },
+		["Ready1"] = { name = "Purulent Ooze", set = "PetTP", cost = 2 },
+		["Ready2"] = { name = "Corrosive Ooze", set = "PetTP", cost = 3 },
 	},
 	["Raaz"] = {
-		["Ready1"] = { name = "Sweeping Gouge", target = "t", set = "PetTP", cost = 1 },
-		["Ready2"] = { name = "Zealous Snort", target = "me", set = "PetTP", cost = 3 },
+		["Ready1"] = { name = "Sweeping Gouge", set = "PetTP", cost = 1 },
+		["Ready2"] = { name = "Zealous Snort", set = "PetTP", cost = 3 },
+	},
+	["Tulfaire"] = {
+		["Ready1"] = { name = "Molting Plumage", set = "PetTP", cost = 1 },
+		["Ready2"] = { name = "Swooping Frenzy", set = "PetTP", cost = 2 },
+		["Ready3"] = { name = "Pentapeck", set = "PetTP", cost = 3 },
 	},
 }
 
@@ -17,6 +20,8 @@ pets = {
 	["GenerousArthur"] = "Slug",
 	["CaringKiyomaro"] = "Raaz",
 	["VivaciousVickie"] = "Raaz",
+	["AttentiveIbuki"] = "Tulfaire",
+	["SwoopingZhivago"] = "Tulfaire",
 }
 
 pet_info = [[${pet_name|none}
@@ -64,30 +69,16 @@ function setup_text_window()
     pet_text_hub:show()
 end
 
-function get_sets()
-	CPMode = false
-	Mode = 1
-	cancel_haste = 1
-	
-	get_set_for_job_from_json()
-	sub_job_change(player.sub_job)
-	
-	Modes = { 
-		{ name = "Hybrid", set = sets["HybridSet"] }
-	}
- 
-	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
+function custom_get_sets()
 	sets["Beastial Loyalty"] = sets["Call Beast"]
 	
-	WS = {}
-	WS["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
-	WS["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
-	WS["Calamity"] = { set = sets["Decimation"], tp_bonus = true }
-	WS["Primal Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
-	WS["Cloudsplitter Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
+	ws = {}
+	ws["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
+	ws["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
+	ws["Calamity"] = { set = sets["Decimation"], tp_bonus = true }
+	ws["Primal Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
+	ws["Cloudsplitter"] = { set = sets["Primal Rend"], tp_bonus = true }
 	
-	print_mode()
-	print_th_mode()
 	setup_text_window()
 	if pet.isvalid then update_pet_info(pet.name) end
 	send_command('@input /macro book 10;wait 1;input /macro set 1')
@@ -114,6 +105,9 @@ function update_pet_info(name)
 		if ready[pets[name]]["Ready2"] then 
 			infoString = infoString .. "[CTRL+2] Ready2" .. ": " .. ready[pets[name]]["Ready2"].name .. "(" .. ready[pets[name]]["Ready2"].cost .. ")\n"
 		end
+		if ready[pets[name]]["Ready3"] then 
+			infoString = infoString .. "[CTRL+3] Ready3" .. ": " .. ready[pets[name]]["Ready3"].name .. "(" .. ready[pets[name]]["Ready3"].cost .. ")\n"
+		end
 		
 		pet_text_hub.info = infoString:sub(1, #infoString - 1)
 	else
@@ -130,115 +124,21 @@ function sub_job_change(new, old)
 	end
 end
  
-function precast(spell)
+function custom_precast(spell)
 	if spell.type == "Monster" and not spell.interrupted then
         if not buffactive['Unleash'] then
             equip(sets["Ready"])
         end
-    elseif spell.action_type == 'Magic' then
-		equip(sets["Fastcast"])
-    elseif spell.type=="WeaponSkill" then
-        if WS[spell.english] then
-			local setToUse = WS[spell.english].set
-			if WS[spell.english].tp_bonus then
-				local maxTP = 3000
-				if player.tp < maxTP then
-					setToUse = set_combine(setToUse, sets["TPBonus"])
-				end
-			end
-			if spell.element == world.weather_element or spell.element == world.day_element then 
-				setToUse = set_combine(setToUse, sets["WeatherObi"])
-			end
-			equip(setToUse)
-		end
-	elseif sets[spell.english] then
-        equip(sets[spell.english])
-    end
-end
-
-function midcast(spell)
-end
- 
-function aftercast(spell)
-    if player.status=='Engaged' then
-        equip(Modes[Mode].set)
-    else
-        equip(sets.Idle)
-    end
-end
- 
-function status_change(new,old)
-	if new == 'Engaged' then
-		equip(Modes[Mode].set)
-		on_status_change_for_th(new, old)
-	elseif T{'Idle','Resting'}:contains(new) then
-		on_status_change_for_th(new, old)
-		equip(sets.Idle)
-    end
-end
- 
-windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
-		equip(set_combine(sets.Idle, sets["Adoulin"]))
-	else
-		equip(sets.Idle)
+		return true
 	end
-	if pet.isvalid then update_pet_info(pet.name)
-	else update_pet_info("none")
-	end
-end)
+end
  
-function self_command(command)
-	local args = T{}
-	if type(command) == 'string' then
-        args = T(command:split(' '))
-        if #args == 0 then
-            return
-        end
-    end
-	if args[1] == "th" then
-		parse_th_command(args)
-	elseif args[1] == "cp" then
-		if CPMode == false then
-			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
-			CPMode = true
-		elseif CPMode == true then
-			add_to_chat(122, "CP Mode off")
-			enable("back")
-			CPMode = false
-		end
-	elseif args[1] == "mode" then
-		if args[2] and type(tonumber(args[2])) == 'number' then
-			nextMode = tonumber(args[2])
-			if nextMode == nil then
-				add_to_chat(122, "Invalid mode number")
-			else
-				if Modes[nextMode] == nil then
-					add_to_chat(122, "Invalid node number")
-				else
-					Mode = nextMode
-					print_mode()
-				end
-			end
-		else
-			Mode = Mode + 1
-			if Modes[Mode] == nil then
-				Mode = 1
-			end
-			print_mode()
-		end
-	elseif args[1] == "thtagged" then
-		if player.status == "Engaged" then
-			equip(Modes[Mode].set)
-		end
-	elseif args[1] == "ready" and args[2] then
+function custom_command(args)
+	if args[1] == "ready" and args[2] then
 		if pet.isvalid then
 			if ready[pets[pet.name]] then
 				if ready[pets[pet.name]][args[2]] then
-					send_command('input /pet "' .. ready[pets[pet.name]][args[2]].name .. '" <' .. ready[pets[pet.name]][args[2]].target .. '>')
+					send_command('input /pet "' .. ready[pets[pet.name]][args[2]].name .. '" <me>')
 				else
 					add_to_chat(122, args[2] .. " doesn't exist in ready table")
 				end
@@ -251,18 +151,4 @@ end
 
 function file_unload(file_name)
 	if pet_text_hub ~= nil then texts.destroy(pet_text_hub) end
-end
-
-function print_mode()
-	printString = "Current Mode: "
-	for i = 1, 10, 1 do
-		if i == Mode then
-			printString = printString .. "[" .. i .. ":" .. Modes[i].name .. "] "
-		elseif Modes[i] == nil then
-			break
-		else
-			printString = printString .. i .. ":" .. Modes[i].name .. " "
-		end
-	end	
-	add_to_chat(122, printString)
 end

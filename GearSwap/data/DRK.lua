@@ -1,34 +1,23 @@
-include('THHelper/THHelper.lua')
-include('HasteTracker/HasteTracker.lua')
-include("MasterGear/MasterGearFunctions.lua")
+include("MasterGear/MasterGearLua.lua")
 
-function get_sets()
-	CPMode = false
-	Mode = 1
+function custom_get_sets()
+	sets.Idle = set_combine(sets["IdleRegen"], sets["Movement"])
 	
-	get_set_for_job_from_json()
-	
-	Modes = { 
-		{ name = "Hybrid", set = sets["Hybrid"] }
-	}
- 
-	sets.Idle = set_combine(sets["Hybrid"], sets["IdleRegen"], sets["Movement"])
-	
-	WS = {}
-	WS["Cross Reaper"] = { set = sets["Catastrophe"], tp_bonus = true }
-	WS["Spiral Hell"] = { set = sets["Catastrophe"], tp_bonus = true }
-	WS["Catastrophe"] = { set = sets["Catastrophe"], tp_bonus = false }
-	WS["Quietus"] = { set = sets["Catastrophe"], tp_bonus = false }
-	WS["Spinning Scythe"] = { set = sets["Catastrophe"], tp_bonus = false }
-	WS["Entropy"] = { set = sets["Entropy"], tp_bonus = true }
-	WS["Guillotine"]= { set = sets["Insurgency"], tp_bonus = false }
-	WS["Insurgency"] = { set = sets["Insurgency"], tp_bonus = true }
-	WS["Shadow of Death"] = { set = sets["DarkMagicAtk"], tp_bonus = true }
-	WS["Infernal Scythe"] = { set = sets["DarkMagicAtk"], tp_bonus = false }
-	WS["Steel Cyclone"] = { set = sets["Catastrophe"], tp_bonus = true }
-	WS["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
-	WS["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
-	WS["Upheaval"] = { set = sets["Insurgency"], tp_bonus = true }
+	ws = {}
+	ws["Cross Reaper"] = { set = sets["Catastrophe"], tp_bonus = true }
+	ws["Spiral Hell"] = { set = sets["Catastrophe"], tp_bonus = true }
+	ws["Catastrophe"] = { set = sets["Catastrophe"], tp_bonus = false }
+	ws["Quietus"] = { set = sets["Catastrophe"], tp_bonus = false }
+	ws["Spinning Scythe"] = { set = sets["Catastrophe"], tp_bonus = false }
+	ws["Entropy"] = { set = sets["Entropy"], tp_bonus = true }
+	ws["Guillotine"]= { set = sets["Insurgency"], tp_bonus = false }
+	ws["Insurgency"] = { set = sets["Insurgency"], tp_bonus = true }
+	ws["Shadow of Death"] = { set = sets["DarkMagicAtk"], tp_bonus = true }
+	ws["Infernal Scythe"] = { set = sets["DarkMagicAtk"], tp_bonus = false }
+	ws["Steel Cyclone"] = { set = sets["Catastrophe"], tp_bonus = true }
+	ws["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
+	ws["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
+	ws["Upheaval"] = { set = sets["Insurgency"], tp_bonus = true }
 	
 	absorbs = {}
 	absorbs[1] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }
@@ -40,18 +29,14 @@ function get_sets()
  	
 	cancel_haste = 1
 	
-	print_mode()
-	print_th_mode()
 	send_command('@input /macro book 11;wait 1;input /macro set 1')
 end
  
-function precast(spell)
-	if spell.action_type == 'Magic' then
-		equip(sets["Fastcast"])
-    elseif spell.type=="WeaponSkill" then
-        if WS[spell.english] then
-			local setToUse = WS[spell.english].set
-			if WS[spell.english].tp_bonus then
+function custom_precast(spell)
+    if spell.type=="WeaponSkill" and res.items[main.id].name == "Lycurgos" then
+        if ws[spell.english] then
+			local setToUse = ws[spell.english].set
+			if ws[spell.english].tp_bonus then
 				local maxTP = 3000
 				local equipment = windower.ffxi.get_items().equipment
 				local main = windower.ffxi.get_items(equipment.main_bag, equipment.main)
@@ -69,14 +54,13 @@ function precast(spell)
 			end
 			equip(setToUse)
 		end
-	elseif sets[spell.english] then
-        equip(sets[spell.english])
+		return true
     end
 end
 
-function midcast(spell)
-	local set_to_use = {}
+function custom_midcast(spell)
 	if spell.action_type == 'Magic' then
+		local set_to_use = {}
 		if spell.skill == "Elemental Magic" then
 			set_to_use = sets["MagicAtk"]
 			if spell.element == world.weather_element or spell.element == world.day_element then 
@@ -96,81 +80,13 @@ function midcast(spell)
 		elseif sets[spell.english] then
 			set_to_use = sets[spell.english]
 		end
+		equip(set_to_use)
+		return true
 	end
-	equip(set_to_use)
 end
- 
-function aftercast(spell)
-    if player.status=='Engaged' then
-        equip(Modes[Mode].set)
-    else
-        equip(sets.Idle)
-    end	
-end
-
--- function buff_change(name,buff,details)
-	-- windower.add_to_chat(122, name)
--- end
- 
-function status_change(new,old)
-	if new == 'Engaged' then
-		equip(Modes[Mode].set)
-		on_status_change_for_th(new, old)
-	elseif T{'Idle','Resting'}:contains(new) then
-		on_status_change_for_th(new, old)
-		equip(sets.Idle)
-    end
-end
- 
-windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
-		equip(set_combine(sets.Idle, sets["Adoulin"]))
-	else
-		equip(sets.Idle)
-	end
-end)
- 
-function self_command(command)
-	local args = T{}
-	if type(command) == 'string' then
-        args = T(command:split(' '))
-        if #args == 0 then
-            return
-        end
-    end
-	if args[1] == "cp" then
-		if CPMode == false then
-			add_to_chat(122, "CP Mode on")
-			enable("back")
-			equip(sets["CP"])
-			disable("back")
-			CPMode = true
-		elseif CPMode == true then
-			add_to_chat(122, "CP Mode off")
-			enable("back")
-			CPMode = false
-		end
-	elseif args[1] == "mode" then
-		if args[2] and type(tonumber(args[2])) == 'number' then
-			nextMode = tonumber(args[2])
-			if nextMode == nil then
-				add_to_chat(122, "Invalid mode number")
-			else
-				if Modes[nextMode] == nil then
-					add_to_chat(122, "Invalid node number")
-				else
-					Mode = nextMode
-					print_mode()
-				end
-			end
-		else
-			Mode = Mode + 1
-			if Modes[Mode] == nil then
-				Mode = 1
-			end
-			print_mode()
-		end
-	elseif args[1] == "absorb" then
+  
+function custom_command(args)
+	if args[1] == "absorb" then
 		local recasts = windower.ffxi.get_spell_recasts()
 		local lowest_time = -1
 		local lowest_index = -1
@@ -193,23 +109,5 @@ function self_command(command)
 			send_command('input /ma "' .. absorbs[lowest_index].spell .. '" <t>')
 			absorbs[lowest_index].time = os.time()
 		end
-	elseif args[1] == "thtagged" then
-		if player.status == "Engaged" then
-			equip(Modes[Mode].set)
-		end
 	end
-end
-
-function print_mode()
-	printString = "Current Mode: "
-	for i = 1, 10, 1 do
-		if i == Mode then
-			printString = printString .. "[" .. i .. ":" .. Modes[i].name .. "] "
-		elseif Modes[i] == nil then
-			break
-		else
-			printString = printString .. i .. ":" .. Modes[i].name .. " "
-		end
-	end	
-	add_to_chat(122, printString)
 end
