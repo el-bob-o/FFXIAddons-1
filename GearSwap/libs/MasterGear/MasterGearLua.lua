@@ -1,4 +1,4 @@
--- Version 1.4.0
+-- Version 1.4.1
 
 include("MasterGear/MasterGearFunctions.lua")
 include('THHelper/THHelper.lua')
@@ -8,6 +8,7 @@ function get_sets()
 	mode = 1
 	cp_mode = false
 	combat = false
+	throwing = false
 
 	get_set_for_job_from_json()
 
@@ -22,6 +23,9 @@ function get_sets()
 			end
 		end
 	end
+	if #modes == 0 then
+		modes[1] = { name = "NoModesDefined", set = nil }
+	end
 	
 	sets.Idle = set_combine(sets["IdleRegen"], sets["Movement"])
 	
@@ -31,16 +35,19 @@ function get_sets()
 	
 	print_mode()
 	print_th_mode()
-	
+	if sets["Throwing"] then print_throwing() end
 end
 
 function precast(spell)
 	if custom_precast and type(custom_precast) == 'function' and custom_precast(spell) then
 	elseif spell.action_type == 'Magic' then
-		equip(sets["Fastcast"])
+		if sets[modes[mode].name .. "Fastcast"] then equip(sets[modes[mode].name .. "Fastcast"])
+		else equip(sets["Fastcast"]) end
     elseif spell.type=="WeaponSkill" then
 		if ws and ws[spell.english] then
-			local setToUse = ws[spell.english].set
+			local setToUse = nil
+			if sets[modes[mode].name .. spell.english] then setToUse = sets[modes[mode].name .. spell.english]
+			else setToUse = ws[spell.english].set end
 			if ws[spell.english].tp_bonus then
 				local maxTP = 3000
 				if player.tp < maxTP then
@@ -52,20 +59,23 @@ function precast(spell)
 			end
 			equip(setToUse)
 		end
-	elseif sets["Precast_" .. spell.english] then
-        equip(sets[spell.english])
+	elseif spell.action_type == "Ranged Attack" then equip(sets["Snapshot"])
+	elseif sets["Precast_" .. modes[mode].name .. spell.english] then equip(sets["Precast_" .. modes[mode].name .. spell.english])
+	elseif sets["Precast_" .. spell.english] then equip(sets["Precast_" .. spell.english])
     end
 end
 
 function midcast(spell)
 	if custom_midcast and type(custom_midcast) == 'function' and custom_midcast(spell) then
-	elseif sets["Midcast_" .. spell.english] then
-        equip(sets[spell.english])
+	elseif spell.action_type == "Ranged Attack" then equip(sets["Midshot"])
+	elseif sets["Midcast_" .. modes[mode].name ..spell.english] then equip(sets["Midcast_" .. modes[mode].name ..spell.english])
+	elseif sets["Midcast_" .. spell.english] then equip(sets["Midcast_" .. spell.english])
 	end
 end
 
 function aftercast(spell)
-    if combat or player.status == "Engaged" then
+	if custom_aftercast and type(custom_aftercast) == 'function' and custom_aftercast(spell) then
+    elseif combat or player.status == "Engaged" then
 		equip(modes[mode].set)
     else
         equip(sets.Idle)
@@ -73,7 +83,8 @@ function aftercast(spell)
 end
 
 function status_change(new,old)
-	if new == 'Engaged' then
+	if custom_status_change and type(custom_status_change) == 'function' and custom_status_change(new,old) then
+	elseif new == 'Engaged' then
 		equip(modes[mode].set)
 		on_status_change_for_th(new, old)
 	elseif T{'Idle','Resting'}:contains(new) then
@@ -87,7 +98,8 @@ function status_change(new,old)
 end
 
 windower.register_event('zone change', function()
-	if world.area:contains("Adoulin") then
+	if custom_zone_change and type(custom_zone_change) == 'function' and custom_zone_change() then
+	elseif world.area:contains("Adoulin") then
 		equip(set_combine(sets.Idle, sets["Adoulin"]))
 	else
 		if combat == true then
@@ -96,6 +108,7 @@ windower.register_event('zone change', function()
 			equip(sets.Idle)
 		end
 	end
+
 end)
 
 function self_command(command)
@@ -156,6 +169,22 @@ function self_command(command)
 		if player.status == "Engaged" then
 			equip(modes[mode].set)
 		end
+	elseif args[1] == "throwing" then
+		if sets["Throwing"] then
+			if throwing == false then
+				throwing = true
+				equip(sets["Throwing"])
+				disable("ammo")
+				AmmoDisabled = true
+			else
+				throwing = false
+				enable("ammo")
+				AmmoDisabled = false
+			end
+			print_throwing()
+		else
+			add_to_chat(122, "No Throwing set defined")
+		end
 	elseif custom_command and type(custom_command) == 'function' then
 		custom_command(args)
 	end
@@ -173,4 +202,12 @@ function print_mode()
 		end
 	end	
 	add_to_chat(122, printString)
+end
+
+function print_throwing()
+	if throwing == true then 
+		add_to_chat(122, "Boomerang: On")
+	else
+		add_to_chat(122, "Boomerang: Off")
+	end
 end

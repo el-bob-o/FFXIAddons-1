@@ -1,4 +1,4 @@
--- Version 1.4.0
+-- Version 1.4.1
 
 res = require 'resources'
 slips = require 'slips'
@@ -327,7 +327,7 @@ function print_extra_gear_not_in_json(args)
 	local filter = nil 
 	if args[2] then filter = string.lower(args[2]):split(',') end
 	local gears = get_list_of_gear_in_json(filter)
-	local extra = get_list_of_extra_gear(gears)	
+	local extra = get_list_of_extra_gear(gears, false)	
 	for bagId, itemList in pairs(extra) do
 		for k, item in pairs(itemList) do
 			if res.items[item.id] then
@@ -354,7 +354,7 @@ function print_missing_gear_json(args)
 	add_to_chat(122, "Missing Gear")
 	local filter = args[2]:split(',')
 	local gears = get_list_of_gear_in_json(filter)
-	local inv_gears = get_list_of_gear_in_equipable_inventory()
+	local inv_gears = get_list_of_gear_in_equipable_inventory(false)
 	for k, gear in pairs(gears) do
 		local found = false
 		for bagId, itemList in pairs(inv_gears) do
@@ -480,15 +480,17 @@ function gear_string(gearlist, slot_name)
 	return ret_string
 end
 
-function get_list_of_gear_in_equipable_inventory()
+function get_list_of_gear_in_equipable_inventory(check_inventory)
 	local inventorySet = {}
 	for _, bagId in pairs(equipable_bags) do
-		local inv = windower.ffxi.get_items(bagId)
-		for _, item in pairs(inv) do
-			if type(item) == 'table' then
-				if item.id ~= nil and item.id ~= 0 and res.items[item.id] then
-					if inventorySet[bagId] == nil then inventorySet[bagId] = {} end
-					table.insert(inventorySet[bagId], item)
+		if bagId ~= 0 or (bagId == 0 and check_inventory) then
+			local inv = windower.ffxi.get_items(bagId)
+			for _, item in pairs(inv) do
+				if type(item) == 'table' then
+					if item.id ~= nil and item.id ~= 0 and res.items[item.id] then
+						if inventorySet[bagId] == nil then inventorySet[bagId] = {} end
+						table.insert(inventorySet[bagId], item)
+					end
 				end
 			end
 		end
@@ -496,8 +498,8 @@ function get_list_of_gear_in_equipable_inventory()
 	return inventorySet
 end
 
-function get_list_of_extra_gear(gears)
-	local invSet = get_list_of_gear_in_equipable_inventory()
+function get_list_of_extra_gear(gears, check_inventory)
+	local invSet = get_list_of_gear_in_equipable_inventory(check_inventory)
 	local extraGears = {}
 	for bagId, itemList in pairs(invSet) do
 		for k, item in pairs(itemList) do
@@ -536,7 +538,7 @@ end
 function store_gear_to_slips(filter, packer_path)
 	local str = 'return {\n'
 	local gear_to_exclude = get_list_of_gear_in_json(filter, true)
-	local extra_gear = get_list_of_extra_gear(gear_to_exclude)
+	local extra_gear = get_list_of_extra_gear(gear_to_exclude, true)
 	for bag_id, item_list in pairs(extra_gear) do
 		for _, item in pairs(item_list) do
 			local slip_id = slips.get_slip_id_by_item_id(item.id)

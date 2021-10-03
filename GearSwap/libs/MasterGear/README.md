@@ -1,4 +1,13 @@
 # MasterGear
+1.4.1
+MasterGearLua
+- Added Throwing set and command to MasterGearLua
+- Added Mode prefix to sets
+- Added custom_aftercast, custom_zone_change and custom_status_change functions
+
+MasterGearFunctions
+- Ignore inventory when printing extra gear
+
 1.4.0
 - Added MasterGearLua library that has basic gearswap functionality
 
@@ -62,12 +71,17 @@
 
 "CP". This set will be equipped when CP mode is on, toggled by "//gs c cp"
 
+You can also do "Precast_<mode_name><name>" or "Midcast_<mode_name><name>". E.g If you have a mode called "Mode_2HighAcc" then you can do "Precast_HighAccRaging Fists" and it will equip "Precast_HighAccRaging Fists" only when you are using "Mode_2HighAcc".
+
 ## MasterGearLua Custom functions
 
 - custom_get_set. If defined, will be called after get_sets() is done.
 - custom_precast(spell). If defined, will be called right at the start of precast(). If the function returns true, will stop processing anything else.
 - custom_midcast(spell). If defined, will be called right at the start of midcast(). If the function returns true, will stop processing anything else.
 - custom_command(args). If defined, will be called at the end of self_command(). Args parameter is a list of strings, so you can do "if args\[1] == 'blabla' then do_something()".
+- custom_aftercast(spell). If defined, will be called right at the start of aftercast(). If the function returns true, will stop processing anything else.
+- custom_status_change(new, old). If defined, will be called at the start of status_change(). If the function returns true, will stop processing anything else.
+- custom_zone_change(). If defined, will be called at the start of zone_change(). If the function returns true, will stop processing anything else.
 
 # How to Use MasterGearFunctions
 
