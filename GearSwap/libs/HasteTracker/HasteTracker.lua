@@ -1,4 +1,4 @@
--- Version 1.0.1
+-- Version 1.0.2
 
 haste_level = 0
 cancel_haste = 0
@@ -81,8 +81,15 @@ local function cancel_buff(id)
 	windower.packets.inject_outgoing(0xF1,string.char(0xF1,0x04,0,0,id%256,math.floor(id/256),0,0)) -- Inject the cancel packet
 end
 
+local function have_spells_started()
+	for k,v in pairs(spells_started) do
+		return true
+	end
+	return false
+end
+
 local function check_spell_started()
-	if spells_started and #spells_started > 0 then
+	if spells_started then
 		local time_now = os.time()
 		for k, v in pairs(spells_started) do
 			if time_now > v.time_started +  time_to_fail then
@@ -90,7 +97,7 @@ local function check_spell_started()
 				spells_started[k] = nil -- too long already, probably failed
 			end
 		end
-		return #spells_started > 0
+		return have_spells_started()
 	end
 	return false
 end

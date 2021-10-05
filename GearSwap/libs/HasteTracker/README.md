@@ -1,4 +1,7 @@
 # HasteTracker
+1.0.2
+- Fixed the check to see if any spells were still being cast. Can't use # operator for non-contiguous tables! 
+
 1.0.1
 - Will only cancel if everyone finished casting to minimize chances of cancelling a haste buff that user actually wants
 - Keep track of Ygnas' Phototropic Wrath also
