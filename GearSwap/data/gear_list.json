@@ -276,7 +276,7 @@
     "name": "Ankou's Mantle",
     "priority": 0,
     "set_list": [ {
-      "DRK": [ "Insurgency", "Entropy", "Last Resort", "Mode_1Hybrid", "IdleRegen" ]
+      "DRK": [ "Insurgency", "Entropy", "Mode_1Hybrid", "IdleRegen", "Precast_Last Resort" ]
     } ]
   }, {
     "augments": [ "MND+20", "Accuracy+20 Attack+20", "MND+10", "Weapon skill damage +10%", "Damage taken-5%" ],
@@ -1053,7 +1053,7 @@
     "name": "Ig. Sollerets +2",
     "priority": 57,
     "set_list": [ {
-      "DRK": [ "Arcane Circle", "MagicAcc" ]
+      "DRK": [ "MagicAcc", "Precast_Arcane Circle" ]
     } ]
   }, {
     "name": "Hermes' Sandals",
@@ -1277,7 +1277,7 @@
     "name": "Ig. Gauntlets +2",
     "priority": 66,
     "set_list": [ {
-      "DRK": [ "Weapon Bash" ]
+      "DRK": [ "Precast_Weapon Bash" ]
     } ]
   }, {
     "name": "Sakpata's Gauntlets",
@@ -1464,7 +1464,7 @@
     "name": "Ig. Burgonet +2",
     "priority": 61,
     "set_list": [ {
-      "DRK": [ "DarkSkill", "Souleater", "AbsorbDuration" ]
+      "DRK": [ "DarkSkill", "AbsorbDuration", "Precast_Souleater" ]
     } ]
   }, {
     "name": "Hjarrandi Helm",
@@ -1622,7 +1622,7 @@
     "name": "Heath. Flanchard +1",
     "priority": 52,
     "set_list": [ {
-      "DRK": [ "Nether Void" ]
+      "DRK": [ "Precast_Nether Void" ]
     } ]
   }, {
     "name": "Sakpata's Cuisses",

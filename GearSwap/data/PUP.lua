@@ -81,6 +81,10 @@ function custom_precast(spell)
 	end
 end
 
+function pet_change(pet,gain)
+	maneuver_cast_index = 1
+end
+
 function print_current_maneuvers()
 	local text = ""
 	for k,v in pairs(maneuver_cast) do

@@ -33,7 +33,7 @@ function custom_get_sets()
 end
  
 function custom_precast(spell)
-    if spell.type=="WeaponSkill" and res.items[main.id].name == "Lycurgos" then
+    if spell.type=="WeaponSkill" and player.equipment.main == "Lycurgos" then
         if ws[spell.english] then
 			local setToUse = ws[spell.english].set
 			if ws[spell.english].tp_bonus then
