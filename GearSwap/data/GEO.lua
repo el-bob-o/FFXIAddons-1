@@ -21,7 +21,7 @@ function custom_get_sets()
 end
  
 function custom_precast(spell)
-if spell.action_type == 'Magic' then
+	if spell.action_type == 'Magic' then
 		if spell.skill == "Healing Magic" then
 			equip(sets["HealingFastcast"])
 		elseif spell.skill == "Elemental Magic" then

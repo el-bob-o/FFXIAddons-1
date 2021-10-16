@@ -229,7 +229,7 @@
     "name": "Nantosuelta's Cape",
     "priority": 0,
     "set_list": [ {
-      "GEO": [ "Melee", "Mode_1Melee", "Mode_2MeleeDW" ]
+      "GEO": [ "Melee", "Mode_1Melee", "Mode_2MeleeDW", "IdleRegen" ]
     } ]
   }, {
     "augments": [ "Cap. Point+49%", "HP+25", "Mag. Acc.+4", "DEF+3", "none" ],
@@ -327,7 +327,7 @@
     "name": "Visucius's Mantle",
     "priority": 0,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP", "Mode_2MasterTP", "Maneuver" ]
+      "PUP": [ "Mode_1PetTP", "Mode_2MasterTP", "Maneuver", "Mode_4PetDT" ]
     } ]
   } ],
   "body": [ {
@@ -403,7 +403,7 @@
     "priority": 54,
     "set_list": [ {
       "BLU": [ "IdleRegen" ],
-      "GEO": [ "HealingFastcast", "IdleRefresh", "Fastcast", "ElementalFastcast" ],
+      "GEO": [ "HealingFastcast", "IdleRefresh", "Fastcast", "ElementalFastcast", "IdleRegen" ],
       "SMN": [ "Fastcast", "Idle", "Mode_1IdleDT" ]
     } ]
   }, {
@@ -484,12 +484,6 @@
       "RNG": [ "Precast_Eagle Eye Shot" ]
     } ]
   }, {
-    "name": "Ignominy Cuirass +2",
-    "priority": 154,
-    "set_list": [ {
-      "DRK": [ "Catastrophe" ]
-    } ]
-  }, {
     "name": "Sacro Breastplate",
     "priority": 182,
     "set_list": [ {
@@ -513,7 +507,7 @@
     "name": "Taeon Tabard",
     "priority": 59,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   }, {
     "augments": [ "none", "none", "Enhances \"Overdrive\" effect", "none" ],
@@ -521,6 +515,12 @@
     "priority": 80,
     "set_list": [ {
       "PUP": [ "Precast_Overdrive" ]
+    } ]
+  }, {
+    "name": "Ignominy Cuirass +3",
+    "priority": 164,
+    "set_list": [ {
+      "DRK": [ "Catastrophe" ]
     } ]
   } ],
   "ear1": [ {
@@ -622,7 +622,7 @@
       "BST": [ "IdleRegen" ],
       "DNC": [ "IdleRegen" ],
       "DRK": [ "HP" ],
-      "GEO": [ "Geomancy" ],
+      "GEO": [ "Geomancy", "IdleRegen" ],
       "PUP": [ "Dragon Kick" ],
       "RNG": [ "Mode_1RangedIdleDT", "IdleRegen" ],
       "THF": [ "Mode_2CaitSith" ]
@@ -711,7 +711,7 @@
     "name": "Rimeice Earring",
     "priority": 0,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   } ],
   "ear2": [ {
@@ -720,7 +720,7 @@
     "set_list": [ {
       "DNC": [ "IdleRegen" ],
       "DRK": [ "HP" ],
-      "GEO": [ "Healing", "HealingFastcast", "Fastcast", "ElementalFastcast", "Geomancy" ],
+      "GEO": [ "Healing", "HealingFastcast", "Fastcast", "ElementalFastcast", "Geomancy", "IdleRegen" ],
       "NIN": [ "Fastcast" ],
       "RUN": [ "FastcastEnhancing", "EnhancingAny" ],
       "THF": [ "Fastcast" ]
@@ -879,7 +879,7 @@
     "name": "Domes. Earring",
     "priority": 0,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   } ],
   "feet": [ {
@@ -939,7 +939,7 @@
     "name": "Geo. Sandals +3",
     "priority": 29,
     "set_list": [ {
-      "GEO": [ "IdleRefresh", "MACC" ]
+      "GEO": [ "IdleRefresh", "MACC", "Movement", "IdleRegen" ]
     } ]
   }, {
     "name": "Regal Pumps +1",
@@ -1071,7 +1071,7 @@
     "name": "Tali'ah Crackows +2",
     "priority": 15,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   }, {
     "name": "Foire Babouches +2",
@@ -1196,7 +1196,7 @@
       "BST": [ "Primal Rend" ],
       "DNC": [ "MagicAtk" ],
       "DRK": [ "Catastrophe", "DarkMagicAtk", "MagicAcc", "HP", "IdleRegen" ],
-      "GEO": [ "HealingFastcast", "IdleRefresh", "Elemental" ],
+      "GEO": [ "HealingFastcast", "IdleRefresh", "Elemental", "IdleRegen" ],
       "NIN": [ "MagicAtk", "Savage Blade" ],
       "PUP": [ "Raging Fists", "Dragon Kick", "Victory Smite", "Mode_3PetMagAcc" ],
       "RNG": [ "MagicAtk" ],
@@ -1290,7 +1290,7 @@
     "name": "Taeon Gloves",
     "priority": 25,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   }, {
     "name": "Foire Dastanas +2",
@@ -1338,7 +1338,7 @@
       "BST": [ "Primal Rend" ],
       "DNC": [ "MagicAtk" ],
       "DRK": [ "Catastrophe", "HP", "IdleRegen" ],
-      "GEO": [ "IdleRefresh", "Elemental", "MACC", "Melee", "Hexa Strike", "Mode_1Melee", "Black Halo", "Mode_2MeleeDW" ],
+      "GEO": [ "IdleRefresh", "Elemental", "MACC", "Melee", "Hexa Strike", "Mode_1Melee", "Black Halo", "Mode_2MeleeDW", "IdleRegen" ],
       "NIN": [ "MagicAtk" ],
       "PUP": [ "Raging Fists", "Dragon Kick", "Victory Smite", "Mode_3PetMagAcc" ],
       "RUN": [ "Lunge", "Mode_2TankPhy", "Mode_3TankMag", "Resolution", "Savage Blade", "Requiescat", "Dimidiation", "IdleRegen" ],
@@ -1477,7 +1477,7 @@
     "name": "Taeon Chapeau",
     "priority": 36,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   }, {
     "name": "Aya. Zucchetto +2",
@@ -1534,7 +1534,7 @@
     "name": "Assid. Pants +1",
     "priority": 43,
     "set_list": [ {
-      "GEO": [ "IdleRefresh" ],
+      "GEO": [ "IdleRefresh", "IdleRegen" ],
       "SMN": [ "Fastcast", "Idle", "Mode_1IdleDT" ]
     } ]
   }, {
@@ -1642,7 +1642,7 @@
     "name": "Taeon Tights",
     "priority": 47,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ]
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ]
     } ]
   } ],
   "main": [ {
@@ -1761,7 +1761,7 @@
       "BST": [ "IdleRegen", "Primal Rend" ],
       "DNC": [ "MagicAtk", "IdleRegen" ],
       "DRK": [ "DarkMagicAtk", "HP", "IdleRegen" ],
-      "GEO": [ "IdleRefresh", "Elemental", "MACC" ],
+      "GEO": [ "IdleRefresh", "Elemental", "MACC", "IdleRegen" ],
       "NIN": [ "MagicAtk", "IdleRegen" ],
       "PUP": [ "IdleRegen", "Mode_3PetMagAcc" ],
       "RNG": [ "MagicAtk", "IdleRegen" ],
@@ -1892,7 +1892,7 @@
     "name": "Shulmanu Collar",
     "priority": 0,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP", "Mode_2MasterTP" ],
+      "PUP": [ "Mode_1PetTP", "Mode_2MasterTP", "Mode_4PetDT" ],
       "SMN": [ "PhyBPDmg" ]
     } ]
   }, {
@@ -1930,6 +1930,12 @@
     "priority": 0,
     "set_list": [ {
       "RNG": [ "Bow" ]
+    } ]
+  }, {
+    "name": "Bestas Bane",
+    "priority": 0,
+    "set_list": [ {
+      "BLU": [ "Throwing" ]
     } ]
   } ],
   "ring1": [ {
@@ -2021,7 +2027,7 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "Mode_2DT" ],
-      "GEO": [ "IdleRefresh" ],
+      "GEO": [ "IdleRefresh", "IdleRegen" ],
       "RNG": [ "MidshotDT", "Mode_1RangedIdleDT" ],
       "SMN": [ "Mode_1IdleDT" ]
     } ]
@@ -2116,7 +2122,7 @@
     "name": "C. Palug Ring",
     "priority": 40,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP", "Mode_3PetMagAcc" ]
+      "PUP": [ "Mode_1PetTP", "Mode_3PetMagAcc", "Mode_4PetDT" ]
     } ]
   }, {
     "name": "Gere Ring",
@@ -2173,7 +2179,7 @@
     "name": "Varar Ring +1",
     "priority": 0,
     "set_list": [ {
-      "PUP": [ "Mode_1PetTP" ],
+      "PUP": [ "Mode_1PetTP", "Mode_4PetDT" ],
       "SMN": [ "PrecastBP", "SmnSkill", "MagicBPDmg", "PhyBPDmg" ]
     } ]
   }, {
@@ -2181,7 +2187,7 @@
     "priority": 0,
     "set_list": [ {
       "BLU": [ "Mode_1Hybrid" ],
-      "GEO": [ "IdleRefresh" ],
+      "GEO": [ "IdleRefresh", "IdleRegen" ],
       "RNG": [ "Mode_1RangedIdleDT", "IdleRegen" ]
     } ]
   }, {
@@ -2433,7 +2439,7 @@
     "priority": 0,
     "set_list": [ {
       "GEO": [ "Healing", "IdleRefresh", "Geomancy", "Mode_3CombatIdleDT" ],
-      "PUP": [ "IdleRegen" ],
+      "PUP": [ "IdleRegen", "Mode_4PetDT" ],
       "SMN": [ "Idle", "Mode_1IdleDT" ]
     } ]
   }, {
@@ -2466,7 +2472,7 @@
     "name": "Sailfi Belt +1",
     "priority": 0,
     "set_list": [ {
-      "BLU": [ "Savage Blade", "Black Halo" ],
+      "BLU": [ "Savage Blade", "Black Halo", "Mode_1Hybrid", "Mode_2DT" ],
       "BST": [ "Mode_1HybridDW", "Mode_2Hybrid" ],
       "DNC": [ "Mode_1Hybrid" ],
       "DRK": [ "Catastrophe", "Mode_1Hybrid" ],
@@ -2504,7 +2510,7 @@
     "name": "Cetl Belt",
     "priority": 0,
     "set_list": [ {
-      "GEO": [ "Melee", "Mode_1Melee", "Mode_2MeleeDW" ]
+      "GEO": [ "Melee", "Mode_1Melee", "Mode_2MeleeDW", "IdleRegen" ]
     } ]
   }, {
     "name": "Dev. Bul. Pouch",
@@ -2517,13 +2523,6 @@
     "priority": 0,
     "set_list": [ {
       "RNG": [ "RAtkBulletPouch" ]
-    } ]
-  }, {
-    "augments": [ "Path: A" ],
-    "name": "Kentarch Belt +1",
-    "priority": 0,
-    "set_list": [ {
-      "BLU": [ "Mode_1Hybrid", "Mode_2DT" ]
     } ]
   }, {
     "name": "Audumbla Sash",

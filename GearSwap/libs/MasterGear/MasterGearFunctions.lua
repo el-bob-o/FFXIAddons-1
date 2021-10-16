@@ -26,7 +26,9 @@ local default_gear_list = {
 
 jobs = { "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN" }
 
-equipable_bags = { 0, 8, 10, 11, 12 } -- Mog Wardrobes
+equipable_bags = { 0, 8, 10, 11, 
+--12 Bug in Windower where if you have wardrobe 3 but not 4, 4 returns as enabled
+}
 					
 storage_bags = { 0, 1, 2, 5, 6, 7, 9 }  -- Maybe for future use when doing something like porterpacker
 
@@ -756,6 +758,15 @@ function parse_command(...)
 				return true
 			end
 			move_all_slip_gear()
+		elseif args[1] == 'test' then
+			local bag_number = 12
+			if args[2] and type(tonumber(args[2]) == 'number') then
+				bag_number = tonumber(args[2])
+			end
+			local bag_info = windower.ffxi.get_bag_info(bag_number)
+			for k,v in pairs(bag_info) do
+			  windower.add_to_chat(122, k .. " " .. tostring(v))
+			end
 		else
 			print_help()
 		end
