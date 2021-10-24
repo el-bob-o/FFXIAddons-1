@@ -27,6 +27,7 @@ target_maneuver_count = {
 }
 maneuver_cast = {"light maneuver", "wind maneuver", "fire maneuver"}
 maneuver_cast_index = 1
+deploy_on_engage = false
 
 function custom_get_sets()
 	print_current_maneuvers()
@@ -71,6 +72,10 @@ function custom_command(args)
 			maneuver_cast_index = maneuver_cast_index + 1
 			if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
 		end
+	elseif args[1] == "engagedeploy" then
+		if deploy_on_engage then deploy_on_engage = false 
+		else deploy_on_engage = true end
+		windower.add_to_chat(122, "Deploy On Engage: " .. tostring(deploy_on_engage))
 	end
 end
 
@@ -78,6 +83,12 @@ function custom_precast(spell)
 	if string.lower(spell.english):contains("maneuver") then
 		equip(sets["Maneuver"])
 		return true
+	end
+end
+
+function custom_status_change(new,old)
+	if new == 'Engaged' and deploy_on_engage and pet.isvalid then
+		send_command('wait 1;input /ja Deploy <t>')
 	end
 end
 

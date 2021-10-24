@@ -18,6 +18,7 @@ function custom_get_sets()
 	ws["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
 	ws["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
 	ws["Upheaval"] = { set = sets["Insurgency"], tp_bonus = true }
+	ws["Resolution"]= { set = sets["Insurgency"], tp_bonus = true }
 	
 	absorbs = {}
 	absorbs[1] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }

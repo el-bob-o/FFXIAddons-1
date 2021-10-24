@@ -2,17 +2,17 @@ include("Mastergear/MasterGearLua.lua")
 
 ready = {
 	["Slug"] = {
-		["Ready1"] = { name = "Purulent Ooze", set = "PetTP", cost = 2 },
-		["Ready2"] = { name = "Corrosive Ooze", set = "PetTP", cost = 3 },
+		["Ready1"] = { name = "Purulent Ooze", set = "PetMagicalTP", cost = 2 },
+		["Ready2"] = { name = "Corrosive Ooze", set = "PetMagicalTP", cost = 3 },
 	},
 	["Raaz"] = {
-		["Ready1"] = { name = "Sweeping Gouge", set = "PetTP", cost = 1 },
+		["Ready1"] = { name = "Sweeping Gouge", set = "PetPhysicalTP", cost = 1 },
 		["Ready2"] = { name = "Zealous Snort", set = "PetTP", cost = 3 },
 	},
 	["Tulfaire"] = {
-		["Ready1"] = { name = "Molting Plumage", set = "PetTP", cost = 1 },
-		["Ready2"] = { name = "Swooping Frenzy", set = "PetTP", cost = 2 },
-		["Ready3"] = { name = "Pentapeck", set = "PetTP", cost = 3 },
+		["Ready1"] = { name = "Molting Plumage", set = "PetPhysicalTP", cost = 1 },
+		["Ready2"] = { name = "Swooping Frenzy", set = "PetPhysicalTP", cost = 2 },
+		["Ready3"] = { name = "Pentapeck", set = "PetPhysicalTP", cost = 3 },
 	},
 }
 
@@ -70,8 +70,6 @@ function setup_text_window()
 end
 
 function custom_get_sets()
-	sets["Beastial Loyalty"] = sets["Call Beast"]
-	
 	ws = {}
 	ws["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
 	ws["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
@@ -131,6 +129,20 @@ function custom_precast(spell)
         end
 		return true
 	end
+end
+
+function pet_midcast(spell)
+	if pet.isvalid and ready[pets[pet.name]] then
+		for k,v in pairs(ready[pets[pet.name]]) do
+			if v.name == spell.name then
+				equip(sets[v.set])
+			end
+		end
+	end
+end
+
+function pet_aftercast(spell)
+	aftercast(spell)
 end
  
 function custom_command(args)
