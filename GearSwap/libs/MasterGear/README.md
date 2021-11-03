@@ -1,4 +1,11 @@
 # MasterGear
+1.4.2
+MasterGeaLua
+- Added Killer effect function
+
+MasterGearFunctions
+- Update augments and HP when updating gear by name
+
 1.4.1
 MasterGearLua
 - Added Throwing set and command to MasterGearLua

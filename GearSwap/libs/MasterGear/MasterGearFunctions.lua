@@ -1,4 +1,4 @@
--- Version 1.4.1
+-- Version 1.4.2
 
 res = require 'resources'
 slips = require 'slips'
@@ -446,6 +446,13 @@ function update_gear_name_in_slot(slot, name1, name2)
 	for k,v in pairs(slot) do
 		if v.name == name1 then
 			v.name = name2
+			for k2,v2 in pairs(res.items) do
+				if v2.name == name2 then
+					local descriptions = res.item_descriptions[k2]
+					local helptext = descriptions and descriptions.english or ''
+					v.priority = get_hp(helptext)
+				end
+			end
 			return true
 		end
 	end
@@ -758,15 +765,6 @@ function parse_command(...)
 				return true
 			end
 			move_all_slip_gear()
-		elseif args[1] == 'test' then
-			local bag_number = 12
-			if args[2] and type(tonumber(args[2]) == 'number') then
-				bag_number = tonumber(args[2])
-			end
-			local bag_info = windower.ffxi.get_bag_info(bag_number)
-			for k,v in pairs(bag_info) do
-			  windower.add_to_chat(122, k .. " " .. tostring(v))
-			end
 		else
 			print_help()
 		end

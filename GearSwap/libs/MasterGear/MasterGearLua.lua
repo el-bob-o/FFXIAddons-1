@@ -1,4 +1,4 @@
--- Version 1.4.1
+-- Version 1.4.2
 
 include("MasterGear/MasterGearFunctions.lua")
 include('THHelper/THHelper.lua')
@@ -9,6 +9,7 @@ function get_sets()
 	cp_mode = false
 	combat = false
 	throwing = false
+	killer_effect = false
 
 	get_set_for_job_from_json()
 
@@ -56,6 +57,9 @@ function precast(spell)
 			end
 			if spell.element == world.weather_element or spell.element == world.day_element then 
 				setToUse = set_combine(setToUse, sets["WeatherObi"])
+			end
+			if killer_effect then
+				setToUse = set_combine(setToUse, sets["KillerEffect"])
 			end
 			equip(setToUse)
 		end
@@ -185,6 +189,13 @@ function self_command(command)
 		else
 			add_to_chat(122, "No Throwing set defined")
 		end
+	elseif args[1] == "killer" then
+		if killer_effect == false then
+			killer_effect = true
+		else
+			killer_effect = false
+		end
+		add_to_chat(122, "Killer Effect: " .. tostring(killer_effect))
 	elseif custom_command and type(custom_command) == 'function' then
 		custom_command(args)
 	end
