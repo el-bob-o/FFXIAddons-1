@@ -1,4 +1,8 @@
 # MasterGear
+1.4.3
+MasterGearFunctions
+- Print out slip number that needs to be in inventory when not in mog garden
+
 1.4.2
 MasterGeaLua
 - Added Killer effect function

@@ -1,4 +1,4 @@
--- Version 1.4.2
+-- Version 1.4.3
 
 include("MasterGear/MasterGearFunctions.lua")
 include('THHelper/THHelper.lua')

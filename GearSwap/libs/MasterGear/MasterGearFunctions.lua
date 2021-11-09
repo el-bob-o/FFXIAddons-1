@@ -1,4 +1,4 @@
--- Version 1.4.2
+-- Version 1.4.3
 
 res = require 'resources'
 slips = require 'slips'
@@ -591,7 +591,7 @@ function get_gear_from_slips(filter, packer_path)
 							if slip_item then
 								if storage_id ~= 0 then 
 									if world.zone_id ~= 280 then
-										windower.add_to_chat(122, "Slips need to be in inventory or you need to be in Mog Garden")
+										windower.add_to_chat(122, "Slip " .. slips.get_slip_number_by_id(slip_id) .. " need to be in inventory or you need to be in Mog Garden")
 										return true
 									end
 									windower.ffxi.get_item(storage_id, slip_item.slot)
