@@ -1,5 +1,6 @@
 #Auto WS and MB
 
+- 0.0.2: Added skillchain timing and don't try and continue double dark/light skillchains
 - 0.0.1: Auto ws and try to skillchain
 
 # How it works

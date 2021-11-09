@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.1'
+_addon.version  = '0.0.2'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -34,6 +34,10 @@ local categories = S{
 }
 local skillchain_ids = S{288,289,290,291,292,293,294,295,296,297,298,299,300,301,385,386,387,388,389,390,391,392,393,394,395,396,397,767,768,769,770}
 local message_ids = S{110,185,187,317,802}
+local sc_window_delay = 3
+local sc_window_end = 8
+local target_sc_step = {}
+local double_light_darkness = false
 
 local function insert_unique(elements_table, elements_to_insert)
 	for _,element_to_insert in pairs(elements_to_insert) do
@@ -93,8 +97,8 @@ function get_next_skillchain_elements()
 	return elements_to_return
 end
 
-local function get_open_ws()
-	if last_skillchain.name ~= nil then 
+local function get_next_ws()
+	if last_skillchain.name ~= nil and not double_light_darkness then 
 		local elements_to_continue = get_next_skillchain_elements()
 		if elements_to_continue then
 			for i = 2, #parsed_wses do
@@ -134,11 +138,11 @@ local function parse_action(act)
 			if mob and target.id == mob.id then
 				if category == 'melee' and actor_id == player.id then
 					if player.vitals.tp >= tp_to_ws then
-						local next_ws = get_open_ws()
-						local time_since_last_skillchain = os.time() - last_skillchain.time
+						local next_ws = get_next_ws()
+						local time_since_last_skillchain = os.clock() - last_skillchain.time
 						if next_ws ~= nil then
-							if time_since_last_skillchain < 4 then
-							elseif time_since_last_skillchain >= 4 and time_since_last_skillchain <= 8 then
+							if time_since_last_skillchain < sc_window_delay then
+							elseif time_since_last_skillchain >= sc_window_delay and time_since_last_skillchain <= sc_window_end then
 								windower.send_command('input /ws "' .. next_ws .. '" <t>')
 							else
 								windower.send_command('input /ws "' .. settings["open_ws"] .. '" <t>')
@@ -148,11 +152,25 @@ local function parse_action(act)
 						end
 					end
 				elseif add_effect and conclusion and skillchain_ids:contains(add_effect.message_id) then
+					if target_sc_step >= 1 
+					and ((last_skillchain.name ~= nil and #last_skillchain.name >= 1) and (last_skillchain.name[1] == "light" or last_skillchain.name[1] == "darkness")) 
+					and (add_effect.animation == "light" or add_effect.animation == "darkness") then
+						double_light_darkness = true
+					else
+						double_light_darkness = false
+					end
 					last_skillchain.name = { add_effect.animation }
-					last_skillchain.time = os.time()
+					last_skillchain.time = os.clock()
+					sc_window_delay = ability.delay or 3
+					target_sc_step = target_sc_step + 1
+					sc_window_end = 6 + sc_window_delay - target_sc_step
 				elseif ability and message_ids:contains(message_id) then
+					double_light_darkness = false
 					last_skillchain.name = ability.skillchain
-					last_skillchain.time = os.time()
+					last_skillchain.time = os.clock()
+					sc_window_delay = ability.delay or 3
+					sc_window_end = 6 + sc_window_delay
+					target_sc_step = 0
 				end
 			end
 		end
