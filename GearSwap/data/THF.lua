@@ -61,7 +61,12 @@ function custom_command(args)
 	if args[1] == "ws" then
 		send_command('input /ws "' .. current_ws .. '" <t>')
 	elseif args[1] == "setWS" and args[2] then
-		current_ws = string.sub(command, 7)
+		local commandstring = ""
+		for i = 2, #args do
+			commandstring = commandstring .. args[i] .. " "
+		end
+		commandstring = string.sub(commandstring, 1, #commandstring - 1)
+		current_ws = commandstring
 		print_current_ws()
 	end
 end
@@ -98,5 +103,7 @@ function subjob_macro_page(job)
 		send_command('@wait 1;input /macro set 3')
 	elseif job == "WAR" then
 		send_command('@wait 1;input /macro set 4')
+	elseif job == "DRG" then
+		send_command('@wait 1;input /macro set 5')
 	end
 end

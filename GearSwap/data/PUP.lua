@@ -26,8 +26,19 @@ target_maneuver_count = {
 	["thunder maneuver"] = 0,
 }
 maneuver_cast = {"light maneuver", "wind maneuver", "fire maneuver"}
+maneuver_recast_ids = {
+	["light maneuver"] = 147,
+	["dark maneuver"] = 148,
+	["earth maneuver"] = 144,
+	["wind maneuver"] = 143,
+	["water maneuver"] = 146,
+	["ice maneuver"] = 142,
+	["fire maneuver"] = 141,
+	["thunder maneuver"] = 145,
+}
 maneuver_cast_index = 1
 deploy_on_engage = false
+auto_maneuvers = false
 
 function custom_get_sets()
 	print_current_maneuvers()
@@ -57,25 +68,39 @@ function custom_command(args)
 				print_current_maneuvers()
 			end
 		else
-			for i = 1, 3 do
-				local temp_index = maneuver_cast_index + i - 1
-				if temp_index > 3 then temp_index = temp_index - 3 end
-				local maneuver = maneuver_cast[temp_index]
-				if buffactive[maneuver] == nil or buffactive[maneuver] < target_maneuver_count[maneuver] then
-					send_command('input /ja "' .. maneuver .. '" <me>')
-					maneuver_cast_index = temp_index + 1
-					if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
-					return
-				end
-			end
-			send_command('input /ja "' .. maneuver_cast[maneuver_cast_index] .. '" <me>')
-			maneuver_cast_index = maneuver_cast_index + 1
-			if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
+			do_maneuver()
 		end
 	elseif args[1] == "engagedeploy" then
 		if deploy_on_engage then deploy_on_engage = false 
 		else deploy_on_engage = true end
 		windower.add_to_chat(122, "Deploy On Engage: " .. tostring(deploy_on_engage))
+	elseif args[1] == "automaneuver" then
+		if auto_maneuvers then auto_maneuvers = false 
+		else auto_maneuvers = true end
+		windower.add_to_chat(122, "Auto Maneuvers: " .. tostring(auto_maneuvers))
+	end
+end
+
+function do_maneuver()
+	local recasts = windower.ffxi.get_ability_recasts()
+	for i = 1, 3 do
+		local temp_index = maneuver_cast_index + i - 1
+		if temp_index > 3 then temp_index = temp_index - 3 end
+		local maneuver = maneuver_cast[temp_index]
+		if buffactive[maneuver] == nil or buffactive[maneuver] < target_maneuver_count[maneuver] then
+			if not recasts[210] or recasts[210] == 0 then
+				send_command('input /ja "' .. maneuver .. '" <me>')
+				maneuver_cast_index = temp_index + 1
+				if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
+				return
+			end
+		end
+	end
+	local maneuver = maneuver_cast[maneuver_cast_index]
+	if not recasts[210] or recasts[210] == 0 then 
+		send_command('input /ja "' .. maneuver_cast[maneuver_cast_index] .. '" <me>')
+		maneuver_cast_index = maneuver_cast_index + 1
+		if maneuver_cast_index > 3 then maneuver_cast_index = 1 end
 	end
 end
 
@@ -103,3 +128,30 @@ function print_current_maneuvers()
 	end
 	add_to_chat(122, "Current Maneuvers: " .. text)
 end
+
+function auto_maneuver(new, old)
+	if auto_maneuvers and player.in_combat then
+		local recasts = windower.ffxi.get_ability_recasts()
+		if pet.isvalid then
+			if pet.status ~= "Engaged" then
+				send_command('input /ja Deploy <t>')
+			elseif not recasts[210] or recasts[210] == 0 then
+				for i = 1, 3 do
+					local maneuver = maneuver_cast[i]
+					if buffactive[maneuver] == nil or buffactive[maneuver] < target_maneuver_count[maneuver] then				
+						send_command('input /ja "' .. maneuver .. '" <me>')
+						return
+					end
+				end
+			end
+		else
+			if not recasts[205] or recasts[205] == 0 then
+				send_command('input /ja Activate <me>')
+			elseif not recasts[115] or recasts[115] == 0 then
+				send_command('input /ja "Deus Ex Automata" <me>')
+			end
+		end
+	end
+end
+
+windower.register_event('time change', auto_maneuver)
