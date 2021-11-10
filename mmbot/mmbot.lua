@@ -1,6 +1,6 @@
 _addon.name = 'Mandragora Mania Bot'
 _addon.author = 'Dabidobido'
-_addon.version = '1.1.0'
+_addon.version = '1.1.1'
 _addon.commands = {'mmbot'}
 
 packets = require('packets')
@@ -11,9 +11,15 @@ debugging = false
 
 npc_ids = 
 {
-	[230] = { npc_id = 17719722, menu_id = 3624, game_menu_id = 3626 }, -- South Sandoria
-	[235] = { npc_id = 17740023, menu_id = 686, game_menu_id = 688 }, -- Bastok Markets
-	[238] = { npc_id = 17752429, menu_id = 1166, game_menu_id = 1168 }, -- Windurst Waters
+	[230] = { npc_id = 17719793, menu_id = 3627, game_menu_id = 3629 }, -- South Sandoria
+	[234] = { npc_id = 17735951, menu_id = 675, game_menu_id = 677 }, -- Bastok Mines
+	[239] = { npc_id = 17756388, menu_id = 566, game_menu_id = 568 }, -- Windurst Walls
+	[243] = { npc_id = 17772789, menu_id = 10291, game_menu_id = 10293 }, -- Ru'Lude Gardens
+	[247] = { npc_id = 17789028, menu_id = 178, game_menu_id = 180 }, -- Rabao
+	[249] = { npc_id = 17797276, menu_id = 401, game_menu_id = 403 }, -- Mhaura
+	[257] = { npc_id = 17830196, menu_id = 5234, game_menu_id = 5236 }, -- Eastern Adoulin
+	[280] = { npc_id = 17924237, menu_id = 2077, game_menu_id = 2079 }, -- Mog Garden
+	[70] = { npc_id = 17064153, menu_id = 505, game_menu_id = 507 }, -- Chocobo Circuit
 }
 
 delay_between_keypress = 0.5
@@ -44,7 +50,7 @@ game_board = {
 	area7 = 3,
 	area8 = 3,
 }
-times_to_do = 0
+jingly_cap = 300
 ack_delay = 1
 waiting_for_ack = nil
 time_to_wait_for_ack = 5
@@ -53,6 +59,7 @@ current_zone_id = 0
 navigation_finished = false
 time_between_0x5b = 1
 last_0x5b_time = 0
+started = false
 
 items_to_buy = 0
 current_buy_count = 0
@@ -67,14 +74,11 @@ windower.register_event('addon command', function(...)
 			debugging = true
 			notice("Debug output on")
 		end
-	elseif args[1] == "start" and args[2] then
-		local number = tonumber(args[2])
-		if number then 
-			times_to_do = number 
-			notice("Doing " .. times_to_do .. " time/s.")
-		end
+	elseif args[1] == "start" then
+		started = true
+		notice("Getting " .. jingly_cap .. " jingly.")
 	elseif args[1] == "stop" then
-		times_to_do = 0
+		started = false
 		game_state = 2
 		reset_state()
 		notice("Stopping.")
@@ -96,18 +100,6 @@ windower.register_event('addon command', function(...)
 				notice("Wait For Ack:" .. time_to_wait_for_ack)
 			end
 		end
-	elseif args[1] == "buyitem" and args[2] then
-		local number = tonumber(args[2])
-		if number then
-			current_buy_count = 1
-			items_to_buy = number
-			notice("Buying " .. items_to_buy .. " items")
-			local start_delay = 0
-			for i = 1, items_to_buy, 1 do
-				table.insert(coroutines, buy_item.schedule(buy_item, start_delay, start_delay))
-				start_delay = start_delay + delay_between_keypress * 3
-			end
-		end
 	elseif args[1] == "help" then
 		notice("//mmbot start <number>: Starts Automating for <number> of games")
 		notice("//mmbot stop: Stops automation")
@@ -115,18 +107,6 @@ windower.register_event('addon command', function(...)
 		notice("//mmbot debug: Toggles debug output")
 	end
 end)
-
-function buy_item(delay)
-	local start_delay = delay + 1
-	table.insert(coroutines, navigate_to_menu_option.schedule(set_key_enter_down, start_delay))
-	table.insert(coroutines, coroutine.schedule(set_key_enter_up, start_delay + delay_between_key_down_and_up))
-	start_delay = start_delay + delay_between_keypress
-	table.insert(coroutines, coroutine.schedule(set_key_left_down, start_delay))
-	table.insert(coroutines, coroutine.schedule(set_key_left_up, start_delay + delay_between_key_down_and_up))
-	start_delay = start_delay + delay_between_keypress
-	table.insert(coroutines, navigate_to_menu_option.schedule(set_key_enter_down, start_delay))
-	table.insert(coroutines, coroutine.schedule(set_key_enter_up, start_delay + delay_between_key_down_and_up))
-end
 
 windower.register_event('incoming chunk', function(id, data)
 	if id == 0x34 then
@@ -141,9 +121,8 @@ windower.register_event('incoming chunk', function(id, data)
 							if debugging then notice("Game State Start") end
 							game_state = 1
 							reset_state()
-						elseif p['Menu ID'] == npc_ids[current_zone_id].menu_id and times_to_do >= 1 and game_state == 2 then
+						elseif p['Menu ID'] == npc_ids[current_zone_id].menu_id and started and game_state == 2 then
 							reset_key_coroutine_and_state()
-							notice("Doing " .. times_to_do .. " time/s.")
 							navigate_to_menu_option(1, 3, true)
 						end
 					end
@@ -158,7 +137,10 @@ windower.register_event('incoming chunk', function(id, data)
 			if p then
 				if p["Player"] == npc_ids[current_zone_id].npc_id then -- game ended
 					game_state = 2
-					times_to_do = times_to_do - 1
+					if p["Param 2"] >= jingly_cap then 
+						started = false
+						notice("Got the jingly")
+					end
 					navigation_finished = false
 					if debugging then notice("Game Ended") end
 				end
@@ -190,7 +172,7 @@ windower.register_event('outgoing chunk', function(id, original, modified, injec
 		local p = packets.parse("outgoing", original)
 		if p then
 			if npc_ids[current_zone_id] then
-				if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id and times_to_do >= 1 then
+				if p['Menu ID'] == npc_ids[current_zone_id].game_menu_id and started then
 					if p['Option Index'] == ack then
 						if debugging then notice("Ack") end
 						waiting_for_ack = nil

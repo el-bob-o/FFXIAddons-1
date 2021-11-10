@@ -45,6 +45,11 @@ Toggles between printing debug messages to console or not. Default is off.
 Make sure your cursor is on the item you want to buy, then enter the command with the number you want to buy. This sends an enter input, then left arrow key input, and finally another enter input to select the item and then select yes.
 
 # Version History
+1.1.1:
+- Update npc ids for the permanent mandy mania patch
+- Changed start functionality to play until you get 300 jingly
+- Removed the buyitem function
+
 1.1.0:
 - add buyitem function
 - fix game logic so that it doesn't try to block opponent multiple turn when area 2 has 2 and area 4 has 3.
