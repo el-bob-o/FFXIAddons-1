@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.3'
+_addon.version  = '0.0.4'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -135,9 +135,9 @@ end
 
 local function get_next_ws(player_tp, time_since_last_skillchain)
 	if last_skillchain.name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
-		if time_since_last_skillchain >= sc_window_delay then 
-			local elements_to_continue = get_next_skillchain_elements()
-			if elements_to_continue then
+		local elements_to_continue = get_next_skillchain_elements()
+		if elements_to_continue then
+			if time_since_last_skillchain >= sc_window_delay then 
 				for i = 2, #parsed_wses do
 					if player_tp >= parsed_wses[i].tp then
 						for _, v2 in pairs(parsed_wses[i].elements) do
@@ -149,9 +149,9 @@ local function get_next_ws(player_tp, time_since_last_skillchain)
 						end
 					end
 				end
-			else 
-				return parsed_wses[1].name
 			end
+		elseif player_tp >= parsed_wses[1].tp then
+			return parsed_wses[1].name
 		end
 	elseif not dont_open and player_tp >= parsed_wses[1].tp then
 		return parsed_wses[1].name

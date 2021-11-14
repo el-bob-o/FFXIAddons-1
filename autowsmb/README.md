@@ -1,5 +1,8 @@
 #Auto WS and MB
 
+0.0.4:
+- Fix logic issue with not wsing even though not being able to continue skillchain
+
 0.0.3: 
 - Changed settings file structure to be able to save settings by job. ***Please delete the previous settings file.***
 - Added mb functionality.
