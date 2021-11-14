@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.4'
+_addon.version  = '0.0.5'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -150,7 +150,7 @@ local function get_next_ws(player_tp, time_since_last_skillchain)
 					end
 				end
 			end
-		elseif player_tp >= parsed_wses[1].tp then
+		elseif not dont_open and player_tp >= parsed_wses[1].tp then
 			return parsed_wses[1].name
 		end
 	elseif not dont_open and player_tp >= parsed_wses[1].tp then
