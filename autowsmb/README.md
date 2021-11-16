@@ -1,5 +1,8 @@
 #Auto WS and MB
 
+0.0.6:
+- Fix logic issue with not opening with ws immediately if cannot continue skillchain
+
 0.0.5:
 - Fix logic issue with opening with ws when not being able to continue skillchain even though don't open was set
 
