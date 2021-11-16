@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.6'
+_addon.version  = '0.0.7'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -137,23 +137,29 @@ local function get_next_ws(player_tp, time_since_last_skillchain)
 	if last_skillchain.name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
 		local elements_to_continue = get_next_skillchain_elements()
 		if #elements_to_continue >= 1 then
+			local ws_to_return = nil
 			if time_since_last_skillchain >= sc_window_delay then 
 				for i = 2, #parsed_wses do
 					if player_tp >= parsed_wses[i].tp then
 						for _, v2 in pairs(parsed_wses[i].elements) do
 							for _, v3 in pairs(elements_to_continue) do
 								if string.lower(v3) == string.lower(v2) then
-									return parsed_wses[i].name
+									ws_to_return = parsed_wses[i].name
 								end
 							end
 						end
 					end
 				end
 			end
-		elseif not dont_open and player_tp >= parsed_wses[1].tp then
+			if ws_to_return ~= nil then 
+				return ws_to_return
+			elseif not dont_open and player_tp >= parsed_wses[1].tp then -- couldn't find the next ws to continue skillchain so open ws immediately
+				return parsed_wses[1].name
+			end
+		elseif not dont_open and player_tp >= parsed_wses[1].tp then -- no possible continuation so open ws immediately
 			return parsed_wses[1].name
 		end
-	elseif not dont_open and player_tp >= parsed_wses[1].tp then
+	elseif not dont_open and player_tp >= parsed_wses[1].tp then -- first mob, already double dark/light or sc window closed
 		return parsed_wses[1].name
 	end
 	return nil
