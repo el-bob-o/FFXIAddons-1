@@ -49,6 +49,7 @@ local settings = config.load(default_settings)
 local started = false
 local dont_open = false
 local should_mb = false
+local spam_mode = false
 local current_main_job = "war"
 
 -- .element, .name, .tp
@@ -134,7 +135,7 @@ function get_next_skillchain_elements()
 end
 
 local function get_next_ws(player_tp, time_since_last_skillchain)
-	if last_skillchain.name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
+	if not spam_mode and last_skillchain.name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
 		local elements_to_continue = get_next_skillchain_elements()
 		if #elements_to_continue >= 1 then
 			local ws_to_return = nil
@@ -164,7 +165,7 @@ local function get_next_ws(player_tp, time_since_last_skillchain)
 		elseif not dont_open and player_tp >= parsed_wses[1].tp then -- no possible continuation so open ws immediately
 			return parsed_wses[1].name
 		end
-	elseif not dont_open and player_tp >= parsed_wses[1].tp then -- first mob, already double dark/light or sc window closed
+	elseif player_tp >= parsed_wses[1].tp and (spam_mode or not dont_open) then -- first mob, already double dark/light or sc window closed
 		return parsed_wses[1].name
 	end
 	return nil
@@ -328,7 +329,7 @@ local function parse_spell_settings()
 			end
 		end
 	end
-	if #parsed_spells > 1 then return true end
+	if #parsed_spells >= 1 then return true end
 	return false
 end
 
@@ -398,8 +399,12 @@ local function handle_command(...)
 			notice("Error parsing " .. args[2])
 		end
 	elseif args[1] == "startmb" then
-		should_mb = true
-		notice("MB: " .. tostring(should_mb))
+		if parse_spell_settings() then 
+			should_mb = true
+			notice("MB: " .. tostring(should_mb))
+		else
+			warning("Error parsing spells")
+		end
 	elseif args[1] == "stopmb" then
 		should_mb = false
 		notice("MB: " .. tostring(should_mb))
@@ -430,6 +435,12 @@ local function handle_command(...)
 			settings[current_main_job]["spell_priority"] = old_spell_priority
 			notice("Error parsing " .. commandstring)
 		end
+	elseif args[1] == "spam" then
+		spam_mode = true
+		notice("Spamming: " .. tostring(spam_mode))
+	elseif args[1] == "dontspam" then
+		spam_mode = false
+		notice("Spamming: " .. tostring(spam_mode))
     else
 		notice("//awsmb start: Starts auto ws.")
 		notice("//awsmb stop: Stops auto ws.")
@@ -442,6 +453,8 @@ local function handle_command(...)
 		notice("//awsmb stopmb: Stops auto magic bursting.")
 		notice("//awsmb setmbdelay (number): Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.")
 		notice("//awsmb setspellpriority (spell_name as csv): Sets priority for spells to burst with. Will go in order of input and check elements.")
+		notice("//awsmb spam: Starts spamming opener ws.")
+		notice("//awsmb spam: Stops spamming opener ws.")
     end
 end
 

@@ -1,4 +1,8 @@
 #Auto WS and MB
+0.0.9:
+- Add a WS Spam mode where it doesn't care about SC
+- Fix bug with needing at least 2 spells to parse
+
 0.0.8:
 - Fix issue with using ws immediately and not waiting for skillchain window 
 
