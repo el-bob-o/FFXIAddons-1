@@ -286,7 +286,7 @@ function update_rng_info()
 end
 
 function buff_change(name, gain, buff_details)
-	if name == "flurry" and not gain then
+	if string.lower(name) == "flurry" and not gain then
 		flurry = 0
 	end
 	check_buffs()

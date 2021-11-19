@@ -154,7 +154,6 @@ function setup_text_window()
 end
 
 function custom_get_sets()
-	dt = false
 	movement = false
 	engaged = false
 	started_bp_ward = false
@@ -260,9 +259,8 @@ function pet_aftercast(spell)
 end
 
 function equip_idle_set()
-	local setToUse = sets["Idle"]
-	if dt then setToUse = set_combine(setToUse, sets["IdleDT"]) end
-	if not Combat and (not engaged or movement) then setToUse = set_combine(setToUse, sets["movement"]) end
+	local setToUse = modes[mode].set
+	if not combat and (not engaged or movement) then setToUse = set_combine(setToUse, sets["movement"]) end
 	equip(setToUse)
 end
 
@@ -351,15 +349,6 @@ function custom_command(args)
 				add_to_chat(122, "Please set up bps for " .. pet.name)
 			end
 		end
-	elseif args[1] == "dt" then
-		if dt == true then
-			add_to_chat(122, "dt off!")
-			dt = false
-		else
-			add_to_chat(122, "dt on!")		
-			dt = true
-			equip_idle_set()
-		end
 	elseif args[1] == "movement" then
 		if movement == true then
 			add_to_chat(122, "movement off!")
@@ -367,16 +356,6 @@ function custom_command(args)
 		else
 			add_to_chat(122, "movement on!")
 			movement = true
-			equip_idle_set()
-		end
-	elseif args[1] == "combat" then
-		if Combat == true then
-			add_to_chat(122, "Combat off!")
-			Combat = false
-			equip_idle_set()
-		else
-			add_to_chat(122, "Combat on!")
-			Combat = true
 			equip_idle_set()
 		end
 	elseif args[1] == "thtagged" then

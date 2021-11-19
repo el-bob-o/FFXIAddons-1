@@ -1,20 +1,5 @@
 include("Mastergear/MasterGearLua.lua")
 
-ws = {}
-ws["Combo"] = { set = sets["Raging Fist"], tp_bonus = true }
-ws["Shoulder Tackle"] = { set = sets["Dragon Kick"], tp_bonus = true }
-ws["One Inch Punch"] = { set = sets["Dragon Kick"], tp_bonus = true }
-ws["Backhand Blow"] = { set = sets["Dragon Kick"], tp_bonus = false }
-ws["Raging Fist"] = { set = sets["Raging Fist"], tp_bonus = true }
-ws["Spinning Attack"] = { set = sets["Dragon Kick"], tp_bonus = false }
-ws["Howling Fist"] = { set = sets["Dragon Kick"], tp_bonus = true }
-ws["Dragon Kick"] = { set = sets["Dragon Kick"], tp_bonus = true }
-ws["Asuran Fist"] = { set = sets["Victory Smite"], tp_bonus = false }
-ws["Tornado Kick"] = { set = sets["Victory Smite"], tp_bonus = true }
-ws["Shijin Spiral"] = { set = sets["Raging Fist"], tp_bonus = false }
-ws["Victory Smite"] = { set = sets["Victory Smite"], tp_bonus = false }
-ws["Stringing Pummel"] = { set = sets["Victory Smite"], tp_bonus = false }
-
 target_maneuver_count = {
 	["light maneuver"] = 1,
 	["dark maneuver"] = 0,
@@ -41,6 +26,21 @@ deploy_on_engage = false
 auto_maneuvers = false
 
 function custom_get_sets()
+	ws = {}
+	ws["Combo"] = { set = sets["Raging Fist"], tp_bonus = true }
+	ws["Shoulder Tackle"] = { set = sets["Dragon Kick"], tp_bonus = true }
+	ws["One Inch Punch"] = { set = sets["Dragon Kick"], tp_bonus = true }
+	ws["Backhand Blow"] = { set = sets["Dragon Kick"], tp_bonus = false }
+	ws["Raging Fist"] = { set = sets["Raging Fist"], tp_bonus = true }
+	ws["Spinning Attack"] = { set = sets["Dragon Kick"], tp_bonus = false }
+	ws["Howling Fist"] = { set = sets["Dragon Kick"], tp_bonus = true }
+	ws["Dragon Kick"] = { set = sets["Dragon Kick"], tp_bonus = true }
+	ws["Asuran Fist"] = { set = sets["Victory Smite"], tp_bonus = false }
+	ws["Tornado Kick"] = { set = sets["Victory Smite"], tp_bonus = true }
+	ws["Shijin Spiral"] = { set = sets["Raging Fist"], tp_bonus = false }
+	ws["Victory Smite"] = { set = sets["Victory Smite"], tp_bonus = false }
+	ws["Stringing Pummel"] = { set = sets["Victory Smite"], tp_bonus = false }
+
 	print_current_maneuvers()
 	send_command('@input /macro book 13;wait 1;input /macro set 1')
 end

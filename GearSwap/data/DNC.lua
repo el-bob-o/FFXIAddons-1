@@ -3,17 +3,17 @@ include("MasterGear/MasterGearLua.lua")
 function custom_get_sets()
 	current_ws = "Rudra's Storm"
 	
-	WS = {}
-	WS["Rudra's Storm"] = { set = sets["Rudra's Storm"], tp_bonus = true }
-	WS["Mandalic Stab"] = { set = sets["Rudra's Storm"], tp_bonus = true }
-	WS["Shark Bite"] = { set = sets["Rudra's Storm"], tp_bonus = true }
-	WS["Dancing Edge"] = { set = sets["Evisceration"], tp_bonus = false }
-	WS["Exenterator"] = { set = sets["Evisceration"], tp_bonus = false }
-	WS["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
-	WS["Pyrrhic Kleos"] = { set = sets["Pyrrhic Kleos"], tp_bonus = false }
-	WS["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
-	WS["Cyclone"] = { set = sets["MagicAtk"], tp_bonus = true }
-	WS["Gust Slash"] = { set = sets["MagicAtk"], tp_bonus = true }
+	ws = {}
+	ws["Rudra's Storm"] = { set = sets["Rudra's Storm"], tp_bonus = true }
+	ws["Mandalic Stab"] = { set = sets["Rudra's Storm"], tp_bonus = true }
+	ws["Shark Bite"] = { set = sets["Rudra's Storm"], tp_bonus = true }
+	ws["Dancing Edge"] = { set = sets["Evisceration"], tp_bonus = false }
+	ws["Exenterator"] = { set = sets["Evisceration"], tp_bonus = false }
+	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
+	ws["Pyrrhic Kleos"] = { set = sets["Pyrrhic Kleos"], tp_bonus = false }
+	ws["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
+	ws["Cyclone"] = { set = sets["MagicAtk"], tp_bonus = true }
+	ws["Gust Slash"] = { set = sets["MagicAtk"], tp_bonus = true }
 	
 	cancel_haste = 1
 	
@@ -74,7 +74,12 @@ function custom_command(args)
 	if args[1] == "ws" then
 		send_command('input /ws "' .. current_ws .. '" <t>')
 	elseif args[1] == "setWS" and args[2] then
-		current_ws = string.sub(command, 7)
+		local commandstring = ""
+		for i = 2, #args do
+			commandstring = commandstring .. args[i] .. " "
+		end
+		commandstring = string.sub(commandstring, 1, #commandstring - 1)
+		current_ws = commandstring
 		print_current_ws()
 	end
 end
