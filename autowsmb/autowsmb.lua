@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.8'
+_addon.version  = '0.0.10'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -50,7 +50,9 @@ local started = false
 local dont_open = false
 local should_mb = false
 local spam_mode = false
+local am3 = false
 local current_main_job = "war"
+local debug_print = false
 
 -- .element, .name, .tp
 local parsed_wses = {}
@@ -134,7 +136,23 @@ function get_next_skillchain_elements()
 	return elements_to_return
 end
 
-local function get_next_ws(player_tp, time_since_last_skillchain)
+local function get_next_ws(player_tp, time_since_last_skillchain, buffs)
+	if am3 then
+		local got_am3 = false
+		for _, v in pairs(buffs) do
+			if v == 272 then 
+				got_am3 = true
+				break
+			end
+		end
+		if not got_am3 then
+			if player_tp < 3000 then return nil
+			else
+				if debug_print then notice("Doing " .. parsed_wses[1].name .. " for AM3") end
+				return parsed_wses[1].name
+			end
+		end
+	end
 	if not spam_mode and last_skillchain.name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
 		local elements_to_continue = get_next_skillchain_elements()
 		if #elements_to_continue >= 1 then
@@ -155,17 +173,21 @@ local function get_next_ws(player_tp, time_since_last_skillchain)
 			end
 			if ws_to_return ~= nil then
 				if time_since_last_skillchain >= sc_window_delay then
+					if debug_print then notice("Doing SC with " .. ws_to_return) end
 					return ws_to_return
 				else
 					return nil
 				end
 			elseif not dont_open and player_tp >= parsed_wses[1].tp then -- couldn't find the next ws to continue skillchain so open ws immediately
+				if debug_print then notice("No WS to continue. Opening with " .. ws_to_return) end
 				return parsed_wses[1].name
 			end
 		elseif not dont_open and player_tp >= parsed_wses[1].tp then -- no possible continuation so open ws immediately
+			if debug_print then notice("No elements to continue. Opening with " .. ws_to_return) end
 			return parsed_wses[1].name
 		end
 	elseif player_tp >= parsed_wses[1].tp and (spam_mode or not dont_open) then -- first mob, already double dark/light or sc window closed
+		if debug_print then notice("Spam: " .. tostring(spam_mode) .. ", Don't Open: " .. tostring(spam_mode) .. ", Double Light/Dark: " .. tostring(double_light_darkness) .. ", Time: " .. tostring(time_since_last_skillchain)) end
 		return parsed_wses[1].name
 	end
 	return nil
@@ -237,14 +259,14 @@ local function parse_action(act)
 				if category == 'melee' and actor_id == player.id then
 					if player.vitals.tp >= 1000 then
 						local time_since_last_skillchain = os.clock() - last_skillchain.time
-						local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain)
+						local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs)
 						if next_ws ~= nil then 
 							windower.send_command('input /ws "' .. next_ws .. '" <t>')
 						end
 					end
 				elseif add_effect and conclusion and skillchain_ids:contains(add_effect.message_id) then
-					if target_sc_step >= 1 
-					and ((last_skillchain.name ~= nil and #last_skillchain.name >= 1) and (last_skillchain.name[1] == "light" or last_skillchain.name[1] == "darkness")) 
+					target_sc_step = target_sc_step + 1
+					if (last_skillchain.name ~= nil and #last_skillchain.name >= 1) and (string.lower(last_skillchain.name[1]) == "light" or string.lower(last_skillchain.name[1]) == "darkness") 
 					and (add_effect.animation == "light" 
 					or add_effect.animation == "darkness" 
 					or add_effect.animation == "radiance"
@@ -256,7 +278,6 @@ local function parse_action(act)
 					last_skillchain.name = { add_effect.animation }
 					last_skillchain.time = os.clock()
 					sc_window_delay = ability.delay or 3
-					target_sc_step = target_sc_step + 1
 					sc_window_end = 6 + sc_window_delay - target_sc_step
 					if should_mb then
 						local spell_1, spell_2 = get_mb_spells(add_effect.animation)
@@ -435,12 +456,18 @@ local function handle_command(...)
 			settings[current_main_job]["spell_priority"] = old_spell_priority
 			notice("Error parsing " .. commandstring)
 		end
-	elseif args[1] == "spam" then
-		spam_mode = true
+	elseif args[1] == "spam" and args[2] then
+		if args[2] == "on" then spam_mode = true
+		elseif args[2] == "off" then spam_mode = false end
 		notice("Spamming: " .. tostring(spam_mode))
-	elseif args[1] == "dontspam" then
-		spam_mode = false
-		notice("Spamming: " .. tostring(spam_mode))
+	elseif args[1] == "am3" and args[2] then
+		if args[2] == "on" then am3 = true
+		elseif args[2] == "off" then am3 = false end
+		notice("AM3: " .. tostring(am3))
+	elseif args[1] == "debug" and args[2] then
+		if args[2] == "on" then debug_print = true
+		elseif args[2] == "off" then debug_print = false end
+		notice("Debug: " .. tostring(debug_print))
     else
 		notice("//awsmb start: Starts auto ws.")
 		notice("//awsmb stop: Stops auto ws.")
@@ -453,15 +480,17 @@ local function handle_command(...)
 		notice("//awsmb stopmb: Stops auto magic bursting.")
 		notice("//awsmb setmbdelay (number): Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.")
 		notice("//awsmb setspellpriority (spell_name as csv): Sets priority for spells to burst with. Will go in order of input and check elements.")
-		notice("//awsmb spam: Starts spamming opener ws.")
-		notice("//awsmb spam: Stops spamming opener ws.")
+		notice("//awsmb spam (on/off): Starts/Stops spamming opener ws.")
+		notice("//awsmb am3 (on/off): Holds/Don't hold until 3000TP to trigger AM3. Will use open ws for AM3.")
     end
 end
 
 local function handle_zone_change(new, old)
-	started = false
-	should_mb = false
-	notice("Zoned. Stopped autows and automb")
+	if started or should_mb then 
+		started = false
+		should_mb = false
+		notice("Zoned. Stopped autows and automb")
+	end
 end
 
 local function check_job_and_parse_settings()

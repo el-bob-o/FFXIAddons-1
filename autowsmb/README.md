@@ -1,4 +1,10 @@
 #Auto WS and MB
+0.0.10:
+- Fix bug with not recognizing double light/dark if it was only 2 step SC
+- Added AM3 maintenance function
+- Added spam mode for zerg situations like Mireu
+- Only stop autowsmb on first zoning, not every zoning
+
 0.0.9:
 - Add a WS Spam mode where it doesn't care about SC
 - Fix bug with needing at least 2 spells to parse
@@ -77,6 +83,14 @@ Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then 
 
 Sets priority for spells to burst with. Will go in order of input and check elements.
 
+## //awsmb spam (on/off) 
+
+Starts/Stops spamming opener ws
+
+## //awsmb am3 (on/off)
+
+Holds/Don't hold until 3000TP to trigger AM3. Will use open ws for AM3.")
+
 ## SC Example
 
 1. //awsmb setopenws Primal Rend,1750
@@ -96,3 +110,7 @@ When there is a liquefaction skillchain, will try to burst Fire VI and Fire V af
 2. //awsmb setmbdelay 10
 
 When there is a darkness skillchain, will only burst Water VI since delay is more than 8
+
+# TO DO:
+
+1. Aeonic support
