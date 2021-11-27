@@ -1,4 +1,10 @@
 #Auto WS and MB
+0.0.11:
+- Fixed issue some skillchains being mistaken for double light/dark
+- Fixed issue with skillchains not being target specific
+- Fixed issue with magic bursting not working if it was enabled when skillchains were not started
+- Fixed some debug issues
+
 0.0.10:
 - Fix bug with not recognizing double light/dark if it was only 2 step SC
 - Added AM3 maintenance function

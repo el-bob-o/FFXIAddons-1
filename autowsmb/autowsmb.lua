@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.10'
+_addon.version  = '0.0.11'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -60,7 +60,8 @@ local parsed_wses = {}
 -- .name, .element, .recast_id, .mp
 local parsed_spells = {}
 
-local last_skillchain = { name = nil, time = 0 }
+-- [target_index] = { name, time }
+local last_skillchain = {}
 local categories = S{
 	'melee',
     'weaponskill_finish',
@@ -86,57 +87,59 @@ local function insert_unique(elements_table, elements_to_insert)
 	return elements_table
 end
 
-function get_next_skillchain_elements()
+function get_next_skillchain_elements(target_index)
 	local elements_to_return = T{}
-	for _,v in pairs(last_skillchain.name) do
-		local element = string.lower(v)
-		local sc_level_to_use = settings[current_main_job]["sc_level"]
-		if element == 'transfixion' then
-			if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"scission"} )
-			else elements_to_return = insert_unique(elements_to_return, {"compression", "scission", "reverberation" }) end
-		elseif element == 'compression' then
-			if sc_level_to_use > 1 then
-			else elements_to_return = insert_unique(elements_to_return, {"transfixion", "detonation" }) end
-		elseif element == 'liquefaction' then
-			if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"impaction"})
-			else elements_to_return = insert_unique(elements_to_return, {"scission", "impaction" }) end
-		elseif element == 'scission' then
-			if sc_level_to_use > 1 then
-			else elements_to_return = insert_unique(elements_to_return, {"liquefaction", "reverberation", "detonation"}) end
-		elseif element == "reverberation" then
-			if sc_level_to_use > 1 then
-			else elements_to_return = insert_unique(elements_to_return, {"induration", "impaction"}) end
-		elseif element == "detonation" then
-			if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"compression"})
-			else elements_to_return = insert_unique(elements_to_return, {"compression", "scission"}) end
-		elseif element == "induration" then
-			if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"reverberation"})
-			else elements_to_return = insert_unique(elements_to_return, {"compression", "reverberation", "impaction"}) end
-		elseif element == "impaction" then
-			if sc_level_to_use > 1 then
-			else elements_to_return = insert_unique(elements_to_return, {"liquefaction", "detonation"}) end
-		elseif element == "gravitation" then
-			if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return, {"distortion"})
-			else elements_to_return = insert_unique(elements_to_return, {"fragmentation", "distortion"}) end
-		elseif element == "distortion" then
-			if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return,{"gravitation"})
-			else elements_to_return = insert_unique(elements_to_return,{"gravitation", "fusion"}) end
-		elseif element == "fusion" then
-			if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return, {"fragmentation"})
-			else elements_to_return = insert_unique(elements_to_return, {"fragmentation", "gravitation"}) end
-		elseif element == "fragmentation" then
-			if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return, {"fusion"} )
-			else elements_to_return = insert_unique(elements_to_return, {"fusion", "distortion"}) end
-		elseif element == "light" then
-			elements_to_return = insert_unique(elements_to_return, {"light"} )
-		elseif element == "darkness" then
-			elements_to_return = insert_unique(elements_to_return, {"darkness"} )
+	if last_skillchain[target_index] then
+		for _,v in pairs(last_skillchain[target_index].name) do
+			local element = string.lower(v)
+			local sc_level_to_use = settings[current_main_job]["sc_level"]
+			if element == 'transfixion' then
+				if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"scission"} )
+				else elements_to_return = insert_unique(elements_to_return, {"compression", "scission", "reverberation" }) end
+			elseif element == 'compression' then
+				if sc_level_to_use > 1 then
+				else elements_to_return = insert_unique(elements_to_return, {"transfixion", "detonation" }) end
+			elseif element == 'liquefaction' then
+				if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"impaction"})
+				else elements_to_return = insert_unique(elements_to_return, {"scission", "impaction" }) end
+			elseif element == 'scission' then
+				if sc_level_to_use > 1 then
+				else elements_to_return = insert_unique(elements_to_return, {"liquefaction", "reverberation", "detonation"}) end
+			elseif element == "reverberation" then
+				if sc_level_to_use > 1 then
+				else elements_to_return = insert_unique(elements_to_return, {"induration", "impaction"}) end
+			elseif element == "detonation" then
+				if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"compression"})
+				else elements_to_return = insert_unique(elements_to_return, {"compression", "scission"}) end
+			elseif element == "induration" then
+				if sc_level_to_use > 1 then elements_to_return = insert_unique(elements_to_return, {"reverberation"})
+				else elements_to_return = insert_unique(elements_to_return, {"compression", "reverberation", "impaction"}) end
+			elseif element == "impaction" then
+				if sc_level_to_use > 1 then
+				else elements_to_return = insert_unique(elements_to_return, {"liquefaction", "detonation"}) end
+			elseif element == "gravitation" then
+				if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return, {"distortion"})
+				else elements_to_return = insert_unique(elements_to_return, {"fragmentation", "distortion"}) end
+			elseif element == "distortion" then
+				if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return,{"gravitation"})
+				else elements_to_return = insert_unique(elements_to_return,{"gravitation", "fusion"}) end
+			elseif element == "fusion" then
+				if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return, {"fragmentation"})
+				else elements_to_return = insert_unique(elements_to_return, {"fragmentation", "gravitation"}) end
+			elseif element == "fragmentation" then
+				if sc_level_to_use > 2 then elements_to_return = insert_unique(elements_to_return, {"fusion"} )
+				else elements_to_return = insert_unique(elements_to_return, {"fusion", "distortion"}) end
+			elseif element == "light" then
+				elements_to_return = insert_unique(elements_to_return, {"light"} )
+			elseif element == "darkness" then
+				elements_to_return = insert_unique(elements_to_return, {"darkness"} )
+			end
 		end
 	end
 	return elements_to_return
 end
 
-local function get_next_ws(player_tp, time_since_last_skillchain, buffs)
+local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_index)
 	if am3 then
 		local got_am3 = false
 		for _, v in pairs(buffs) do
@@ -153,8 +156,8 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs)
 			end
 		end
 	end
-	if not spam_mode and last_skillchain.name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
-		local elements_to_continue = get_next_skillchain_elements()
+	if not spam_mode and last_skillchain[target_index] and last_skillchain[target_index].name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
+		local elements_to_continue = get_next_skillchain_elements(target_index)
 		if #elements_to_continue >= 1 then
 			local ws_to_return = nil
 			for i = 2, #parsed_wses do
@@ -179,11 +182,11 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs)
 					return nil
 				end
 			elseif not dont_open and player_tp >= parsed_wses[1].tp then -- couldn't find the next ws to continue skillchain so open ws immediately
-				if debug_print then notice("No WS to continue. Opening with " .. ws_to_return) end
+				if debug_print then notice("No WS to continue. Opening with " .. parsed_wses[1].name) end
 				return parsed_wses[1].name
 			end
 		elseif not dont_open and player_tp >= parsed_wses[1].tp then -- no possible continuation so open ws immediately
-			if debug_print then notice("No elements to continue. Opening with " .. ws_to_return) end
+			if debug_print then notice("No elements to continue. Opening with " .. parsed_wses[1].name) end
 			return parsed_wses[1].name
 		end
 	elseif player_tp >= parsed_wses[1].tp and (spam_mode or not dont_open) then -- first mob, already double dark/light or sc window closed
@@ -236,7 +239,7 @@ local function get_mb_spells(animation)
 end
 
 local function parse_action(act)
-	if started then
+	if started or should_mb then
 		local actionpacket = ActionPacket.new(act)
 		local category = actionpacket:get_category_string()
 		
@@ -258,25 +261,25 @@ local function parse_action(act)
 			if mob and target.id == mob.id then
 				if category == 'melee' and actor_id == player.id then
 					if player.vitals.tp >= 1000 then
-						local time_since_last_skillchain = os.clock() - last_skillchain.time
-						local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs)
+						local time_since_last_skillchain = os.clock()
+						if last_skillchain[target_index] then time_since_last_skillchain = time_since_last_skillchain - last_skillchain[target_index].time end
+						local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs, target_index)
 						if next_ws ~= nil then 
 							windower.send_command('input /ws "' .. next_ws .. '" <t>')
 						end
 					end
 				elseif add_effect and conclusion and skillchain_ids:contains(add_effect.message_id) then
 					target_sc_step = target_sc_step + 1
-					if (last_skillchain.name ~= nil and #last_skillchain.name >= 1) and (string.lower(last_skillchain.name[1]) == "light" or string.lower(last_skillchain.name[1]) == "darkness") 
-					and (add_effect.animation == "light" 
-					or add_effect.animation == "darkness" 
-					or add_effect.animation == "radiance"
-					or add_effect.animation == "umbra") then
+					if add_effect.animation == "radiance" or add_effect.animation == "umbra" then double_light_darkness = true
+					elseif (last_skillchain[target_index] and last_skillchain[target_index].name ~= nil and #last_skillchain[target_index].name >= 1) and
+					((string.lower(last_skillchain[target_index].name[1]) == "light" and add_effect.animation == "light" and ability.skillchain[1] == "Light") or (string.lower(last_skillchain[target_index].name[1]) == "darkness" and add_effect.animation == "darkness" and ability.skillchain[1] == "Darkness")) then
 						double_light_darkness = true
 					else
 						double_light_darkness = false
 					end
-					last_skillchain.name = { add_effect.animation }
-					last_skillchain.time = os.clock()
+					if last_skillchain[target_index] == nil then last_skillchain[target_index] = {} end
+					last_skillchain[target_index].name = { add_effect.animation }
+					last_skillchain[target_index].time = os.clock()
 					sc_window_delay = ability.delay or 3
 					sc_window_end = 6 + sc_window_delay - target_sc_step
 					if should_mb then
@@ -295,8 +298,9 @@ local function parse_action(act)
 					end
 				elseif ability and message_ids:contains(message_id) then
 					double_light_darkness = false
-					last_skillchain.name = ability.skillchain
-					last_skillchain.time = os.clock()
+					if last_skillchain[target_index] == nil then last_skillchain[target_index] = {} end
+					last_skillchain[target_index].name = ability.skillchain
+					last_skillchain[target_index].time = os.clock()
 					sc_window_delay = ability.delay or 3
 					sc_window_end = 6 + sc_window_delay
 					target_sc_step = 0
@@ -489,6 +493,7 @@ local function handle_zone_change(new, old)
 	if started or should_mb then 
 		started = false
 		should_mb = false
+		last_skillchain = {}
 		notice("Zoned. Stopped autows and automb")
 	end
 end
