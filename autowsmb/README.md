@@ -1,4 +1,10 @@
 #Auto WS and MB
+0.0.12:
+- Changed spell priority to include hp% threshold.
+- Changed magic burst behaviour to check if the second cast would burst instead of trying to cast it anyway
+- Added seperate AM3 ws
+- Added some self target ws and non skillchain ws
+
 0.0.11:
 - Fixed issue some skillchains being mistaken for double light/dark
 - Fixed issue with skillchains not being target specific
@@ -85,9 +91,9 @@ Stops auto magic bursting.
 
 Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.
 
-## //awsmb setspellpriority (spell_name as csv)
+## //awsmb setspellpriority (spell_name,hpp,spell_name,hpp,...)
 
-Sets priority for spells to burst with. Will go in order of input and check elements.
+Sets priority for spells to burst with. Will go in order of input and check elements. Hpp is amount of Hpp (HP percent) mob must have in order for spell to be used. Set to 0 for always use.
 
 ## //awsmb spam (on/off) 
 

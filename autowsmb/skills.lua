@@ -228,6 +228,9 @@ skills.weapon_skills = {
     [228] = {en='Final Paradise',skillchain={'Light'}},
     [238] = {en='Uriel Blade',skillchain={'Light','Fragmentation'}},
     [239] = {en='Glory Slash',skillchain={'Light','Fusion'}},
+	[164] = {en='Moonlight',skillchain=nil,target="<me>"},
+	[47] = {en='Sanguine Blade',skillchain=nil},
+	[190] = {en='Myrkr',skillchain=nil,target="<me>"}
     }
 
 skills.spells = {

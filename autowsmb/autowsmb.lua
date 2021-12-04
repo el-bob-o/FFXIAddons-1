@@ -2,11 +2,12 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.11'
+_addon.version  = '0.0.12'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
 require('actions')
+require('functions')
 config = require('config')
 skills = require('skills')
 res = require('resources')
@@ -17,6 +18,7 @@ local default_setting = {
 	["ws_priority"] = "",
 	["spell_priority"] = "",
 	["mb_delay"] = 4,
+	["am3_ws"] = "",
 }
 
 local default_settings = {
@@ -57,7 +59,9 @@ local debug_print = false
 -- .element, .name, .tp
 local parsed_wses = {}
 
--- .name, .element, .recast_id, .mp
+local parsed_am3_ws = ""
+
+-- .name, .element, .recast_id, .mp, .hpp
 local parsed_spells = {}
 
 -- [target_index] = { name, time }
@@ -149,10 +153,10 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 			end
 		end
 		if not got_am3 then
-			if player_tp < 3000 then return nil
+			if player_tp < 3000 then return nil, nil
 			else
-				if debug_print then notice("Doing " .. parsed_wses[1].name .. " for AM3") end
-				return parsed_wses[1].name
+				if debug_print then notice("Doing " .. parsed_am3_ws .. " for AM3") end
+				return parsed_am3_ws, nil
 			end
 		end
 	end
@@ -160,16 +164,22 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 		local elements_to_continue = get_next_skillchain_elements(target_index)
 		if #elements_to_continue >= 1 then
 			local ws_to_return = nil
+			local target_to_return = nil
 			for i = 2, #parsed_wses do
 				if player_tp >= parsed_wses[i].tp then
-					for _, v2 in pairs(parsed_wses[i].elements) do
-						for _, v3 in pairs(elements_to_continue) do
-							if string.lower(v3) == string.lower(v2) then
-								ws_to_return = parsed_wses[i].name
-								break
+					if parsed_wses[i].elements ~= nil then
+						for _, v2 in pairs(parsed_wses[i].elements) do
+							for _, v3 in pairs(elements_to_continue) do
+								if string.lower(v3) == string.lower(v2) then
+									ws_to_return = parsed_wses[i].name
+									break
+								end
 							end
+							if ws_to_return ~= nil then break end
 						end
-						if ws_to_return ~= nil then break end
+					else
+						ws_to_return = parsed_wses[i].name
+						target_to_return = parsed_wses[i].target
 					end
 				end
 				if ws_to_return ~= nil then break end
@@ -177,23 +187,23 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 			if ws_to_return ~= nil then
 				if time_since_last_skillchain >= sc_window_delay then
 					if debug_print then notice("Doing SC with " .. ws_to_return) end
-					return ws_to_return
+					return ws_to_return, target_to_return
 				else
-					return nil
+					return nil, nil
 				end
 			elseif not dont_open and player_tp >= parsed_wses[1].tp then -- couldn't find the next ws to continue skillchain so open ws immediately
 				if debug_print then notice("No WS to continue. Opening with " .. parsed_wses[1].name) end
-				return parsed_wses[1].name
+				return parsed_wses[1].name, parsed_wses[1].target
 			end
 		elseif not dont_open and player_tp >= parsed_wses[1].tp then -- no possible continuation so open ws immediately
 			if debug_print then notice("No elements to continue. Opening with " .. parsed_wses[1].name) end
-			return parsed_wses[1].name
+			return parsed_wses[1].name, parsed_wses[1].target
 		end
 	elseif player_tp >= parsed_wses[1].tp and (spam_mode or not dont_open) then -- first mob, already double dark/light or sc window closed
 		if debug_print then notice("Spam: " .. tostring(spam_mode) .. ", Don't Open: " .. tostring(spam_mode) .. ", Double Light/Dark: " .. tostring(double_light_darkness) .. ", Time: " .. tostring(time_since_last_skillchain)) end
-		return parsed_wses[1].name
+		return parsed_wses[1].name, parsed_wses[1].target
 	end
-	return nil
+	return nil, nil
 end
 
 local function get_burst_elements(animation)
@@ -216,26 +226,36 @@ local function get_burst_elements(animation)
 	return nil
 end
 
-local function get_mb_spells(animation)
+local function get_mb_spells(animation, target_hp)
 	local mp_available = windower.ffxi.get_player().vitals.mp
 	local recasts = windower.ffxi.get_spell_recasts()
-	local spell_1 = nil
-	local spell_2 = nil
 	local burst_elements = get_burst_elements(animation)
 	if burst_elements ~= nil then
 		for _,v in pairs(parsed_spells) do
 			if burst_elements:contains(v.element)
 			and mp_available > v.mp 
-			and (recasts[v.recast_id] == nil or recasts[v.recast_id] == 0) then
-				if spell_1 == nil then spell_1 = v.name
-				elseif spell_2 == nil then spell_2 = v.name
-				end
-				mp_available = mp_available - v.mp
-				if spell_1 ~= nil and spell_2 ~= nil then break end
+			and recasts[v.recast] == 0 
+			and target_hp >= v.hpp then
+				return v.name
 			end
 		end
 	end
-	return spell_1, spell_2
+	return nil
+end
+
+local function check_mb()
+	local player = windower.ffxi.get_player()
+	local target_index = player.target_index
+	if last_skillchain[target_index] and last_skillchain[target_index].name ~= nil and #last_skillchain[target_index].name >= 1 
+	and os.clock() - last_skillchain[target_index].time < sc_window_end and target_sc_step >= 1
+	then
+		local mob = windower.ffxi.get_mob_by_index(target_index)
+		local spell = get_mb_spells(string.lower(last_skillchain[target_index].name[1]), mob.hpp)
+		if spell ~= nil then
+			local commandstring ='input /ma "' .. spell .. '" <t>'
+			windower.send_command(commandstring)
+		end
+	end
 end
 
 local function parse_action(act)
@@ -263,9 +283,13 @@ local function parse_action(act)
 					if player.vitals.tp >= 1000 then
 						local time_since_last_skillchain = os.clock()
 						if last_skillchain[target_index] then time_since_last_skillchain = time_since_last_skillchain - last_skillchain[target_index].time end
-						local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs, target_index)
+						local next_ws, target = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs, target_index)
 						if next_ws ~= nil then 
-							windower.send_command('input /ws "' .. next_ws .. '" <t>')
+							if target ~= nil then 
+								windower.send_command('input /ws "' .. next_ws .. '" ' .. target)
+							else
+								windower.send_command('input /ws "' .. next_ws .. '" <t>')
+							end
 						end
 					end
 				elseif add_effect and conclusion and skillchain_ids:contains(add_effect.message_id) then
@@ -283,27 +307,24 @@ local function parse_action(act)
 					sc_window_delay = ability.delay or 3
 					sc_window_end = 6 + sc_window_delay - target_sc_step
 					if should_mb then
-						local spell_1, spell_2 = get_mb_spells(add_effect.animation)
-						if spell_1 ~= nil then
-							local commandstring = ""
-							if actor_id == player.id then
-								commandstring = "wait 3;"
+						if actor_id == player.id then coroutine.schedule(check_mb, 3)
+						else
+							check_mb()
+							if settings[current_main_job]["mb_delay"] <= 8 then
+								coroutine.schedule(check_mb, settings[current_main_job]["mb_delay"])
 							end
-							commandstring = commandstring .. 'input /ma "' .. spell_1 .. '" <t>'
-							if actor_id ~= player.id and spell_2 ~= nil and settings[current_main_job]["mb_delay"] <= 8 then
-								commandstring = commandstring .. ';wait ' .. settings[current_main_job]["mb_delay"] .. ';input /ma "' .. spell_2 .. '" <t>'
-							end
-							windower.send_command(commandstring)
 						end
 					end
 				elseif ability and message_ids:contains(message_id) then
 					double_light_darkness = false
 					if last_skillchain[target_index] == nil then last_skillchain[target_index] = {} end
-					last_skillchain[target_index].name = ability.skillchain
-					last_skillchain[target_index].time = os.clock()
-					sc_window_delay = ability.delay or 3
-					sc_window_end = 6 + sc_window_delay
-					target_sc_step = 0
+					if ability.skillchain ~= nil then 
+						last_skillchain[target_index].name = ability.skillchain
+						last_skillchain[target_index].time = os.clock()
+						sc_window_delay = ability.delay or 3
+						sc_window_end = 6 + sc_window_delay
+						target_sc_step = 0
+					end
 				end
 			end
 		end
@@ -318,7 +339,7 @@ local function parse_ws_settings()
 	if open_tp == nil or open_tp < 1000 or open_tp > 3000 then open_tp = 1000 end
 	for _,v in pairs(skills.weapon_skills) do
 		if string.lower(v.en) == open_ws_table[1] then
-			parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp }
+			parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp, target = v.target }
 			break
 		end
 	end
@@ -332,7 +353,7 @@ local function parse_ws_settings()
 				else
 					for _, v2 in pairs(skills.weapon_skills) do
 						if string.lower(v2.en) == ws_p_table[i] then
-							table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp } )
+							table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target } )
 							break
 						end
 					end
@@ -344,13 +365,30 @@ local function parse_ws_settings()
 	return false
 end
 
+local function parse_am3_ws_settings()
+	parsed_am3_ws = ""
+	for _,v in pairs(skills.weapon_skills) do
+		if string.lower(v.en) == string.lower(settings[current_main_job]["am3_ws"]) then
+			parsed_am3_ws = settings[current_main_job]["am3_ws"]
+			return true
+		end
+	end
+	return false
+end
+
 local function parse_spell_settings()
 	parsed_spells = {}
 	local spell_table = settings[current_main_job]["spell_priority"]:split(',')
-	for _,v in pairs(spell_table) do
-		for _,v2 in pairs(res.spells) do
-			if v == string.lower(v2.en) then
-				table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost })
+	if #spell_table % 2 == 0 then
+		for i = 1, #spell_table, 2 do
+			local spell_hp = tonumber(spell_table[i + 1])
+			if spell_hp == nil or spell_hp > 100 or spell_hp < 0 then spell_hp = 0
+			else
+				for _,v2 in pairs(res.spells) do
+					if string.lower(spell_table[i]) == string.lower(v2.en) then
+						table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost, hpp = spell_hp })
+					end
+				end
 			end
 		end
 	end
@@ -453,7 +491,7 @@ local function handle_command(...)
 		settings[current_main_job]["spell_priority"] = commandstring
 		if parse_spell_settings() then
 			for i = 1, #parsed_spells do
-				notice("Spell Priority " .. tostring(i) .. ": " .. parsed_spells[i].name)
+				notice("Spell Priority " .. tostring(i) .. ": " .. parsed_spells[i].name .. " (" .. parsed_spells[i].hpp .. "% HP)")
 			end
 			config.save(settings)
 		else
@@ -465,7 +503,16 @@ local function handle_command(...)
 		elseif args[2] == "off" then spam_mode = false end
 		notice("Spamming: " .. tostring(spam_mode))
 	elseif args[1] == "am3" and args[2] then
-		if args[2] == "on" then am3 = true
+		if args[2] == "on" then 
+			local old_am3_ws = settings[current_main_job]["am3_ws"]
+			if args[3] then settings[current_main_job]["am3_ws"] = args[3] end
+			if parse_am3_ws_settings() then 
+				am3 = true
+			else
+				notice("Error parsing am3 ws " .. settings[current_main_job]["am3_ws"])
+				settings[current_main_job]["am3_ws"] = old_am3_ws
+				am3 = false
+			end
 		elseif args[2] == "off" then am3 = false end
 		notice("AM3: " .. tostring(am3))
 	elseif args[1] == "debug" and args[2] then
@@ -483,7 +530,7 @@ local function handle_command(...)
 		notice("//awsmb startmb: Starts auto magic bursting.")
 		notice("//awsmb stopmb: Stops auto magic bursting.")
 		notice("//awsmb setmbdelay (number): Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.")
-		notice("//awsmb setspellpriority (spell_name as csv): Sets priority for spells to burst with. Will go in order of input and check elements.")
+		notice("//awsmb setspellpriority (spell_name,hpp,spell_name,hpp,...): Sets priority for spells to burst with. Will go in order of input and check elements. Hpp is amount of Hpp (HP percent) mob must have in order for spell to be used. Set to 0 for always use.")
 		notice("//awsmb spam (on/off): Starts/Stops spamming opener ws.")
 		notice("//awsmb am3 (on/off): Holds/Don't hold until 3000TP to trigger AM3. Will use open ws for AM3.")
     end
