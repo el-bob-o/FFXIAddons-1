@@ -7,11 +7,13 @@ function custom_get_sets()
 	entrust = "Indi-Haste"
  
 	ws = {}
-	ws["Shining Strike"] = { set = sets["Elemental"], tp_bonus = true }
-	ws["Seraph Strike"] = { set = sets["Elemental"], tp_bonus = true }
-	ws["Flash Nova"] = { set = sets["Elemental"], tp_bonus = true }
-	ws["Cataclysm"] = { set = sets["Elemental"], tp_bonus = true }
+	ws["Shining Strike"] = { set = sets["Flash Nova"], tp_bonus = true }
+	ws["Seraph Strike"] = { set = sets["Flash Nova"], tp_bonus = true }
+	ws["Flash Nova"] = { set = sets["Flash Nova"], tp_bonus = false }
+	ws["Cataclysm"] = { set = sets["Flash Nova"], tp_bonus = true }
+	ws["Realmrazer"] = { set = sets["Hexa Strike"], tp_bonus = false }
 	ws["Hexa Strike"] = { set = sets["Hexa Strike"], tp_bonus = false }
+	ws["Judgement"] = { set = sets["Black Halo"], tp_bonus = true }
 	ws["Black Halo"] = { set = sets["Black Halo"], tp_bonus = true }
 	ws["Exudation"] = { set = sets["Black Halo"], tp_bonus = false }
 	 
@@ -22,13 +24,7 @@ end
  
 function custom_precast(spell)
 	if spell.action_type == 'Magic' then
-		if spell.skill == "Healing Magic" then
-			equip(sets["HealingFastcast"])
-		elseif spell.skill == "Elemental Magic" then
-			equip(sets["ElementalFastcast"])
-		else
-			equip(sets["Fastcast"])
-		end
+		equip(sets["Fastcast"])
 		return true
     end
 end

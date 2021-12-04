@@ -12,6 +12,7 @@ function custom_get_sets()
 	ws["Realmrazer"] = { set = sets["Requiescat"], tp_bonus = false }
 	ws["Seraph Blade"] = { set = sets["MagicAtk"], tp_bonus = true }
 	ws["Red Lotus Blade"] = { set = sets["MagicAtk"], tp_bonus = true }
+	ws["Flat Blade"] = { set = sets["Savage Blade"], tp_bonus = false }
 	ws["Sanguine Blade"] = { set = sets["Sanguine Blade"], tp_bonus = false }
 	
 	sets["Sudden Lunge"] = sets["MagicAcc"]

@@ -8,6 +8,7 @@ function custom_get_sets()
 	ws["Circle Blade"] = { set = sets["Savage Blade"], tp_bonus = false }
 	ws["Sanguine Blade"] = { set = sets["MagicAtk"], tp_bonus = false }
 	ws["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
+	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
 	
 	send_command('@input /macro book 5;wait 1;input /macro set 1')
 end
