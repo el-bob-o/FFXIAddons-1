@@ -1,4 +1,6 @@
 # THHelper
+1.0.1:
+- Unlock slots when changing from fulltime TH to other modes.
 
 1.0
 - Initial commit

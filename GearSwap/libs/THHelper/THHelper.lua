@@ -1,4 +1,4 @@
--- Version 1.0
+-- Version 1.0.1
 
 MobsTagged = {}
 TimeToDead = 300 -- 5mins then remove from table
@@ -37,6 +37,7 @@ function parse_th_command(...)
 			end
 			print_th_mode()
 		end
+		if not THModes[THMode].fulltime then unlock_th() end 
 		return true
 	end
 	return false
