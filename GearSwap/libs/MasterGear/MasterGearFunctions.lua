@@ -1,4 +1,4 @@
--- Version 1.4.3
+-- Version 1.4.4
 
 res = require 'resources'
 slips = require 'slips'
@@ -27,10 +27,10 @@ local default_gear_list = {
 jobs = { "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN" }
 
 equipable_bags = { 0, 8, 10, 11, 
---12 Bug in Windower where if you have wardrobe 3 but not 4, 4 returns as enabled
+12 -- Bug in Windower where if you have wardrobe 3 but not 4, 4 returns as enabled. Comment out this line if you do not have 4.
 }
 					
-storage_bags = { 0, 1, 2, 5, 6, 7, 9 }  -- Maybe for future use when doing something like porterpacker
+storage_bags = { 0, 1, 2, 5, 6, 7, 9 } 
 
 gear_list_file_path = windower.addon_path .. "data/gear_list.json"
 

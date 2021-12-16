@@ -1,4 +1,8 @@
 # MasterGear
+1.4.4
+MasterGearFunctions
+- Enabled wardrobe 4 by default
+
 1.4.3
 MasterGearFunctions
 - Print out slip number that needs to be in inventory when not in mog garden

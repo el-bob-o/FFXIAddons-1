@@ -5,7 +5,6 @@ require('chat')
 
 ranger_info = [[${ammo_name}:${ammo_count}
 flurry: ${flurry|0}
-Hover Shot: ${distance}
 True Strike: ${distance_correction}
 Last Attack: ${dmg}
 ]]
@@ -54,44 +53,26 @@ end
 
 function custom_get_sets()
 	flurry = 0
-	double_shot = false
-	hover_shot = false
-	last_shot_position_x = 0
-	last_shot_position_y = 0
-	last_shot_position_valid = false
-	current_position_0x015_x = 0
-	current_position_0x015_y = 0
-	shot_position_0x015_x = 0 
-	shot_position_0x015_y = 0
+	triple_shot = false
 	AM3Mode = false
 	DT = false
-	ShootNextPosUpdate = false
-	RecordPosNextRangedAttack = false
-	HoverShotTarget = nil
-	cancel_haste = 2
+	cancel_haste = 1
 	
 	setup_text_window()
 		
 	ws = {}
-	ws["Hot Shot"] = { set = sets["Trueflight"], tp_bonus = true }
-	ws["Trueflight"] = { set = sets["Trueflight"], tp_bonus = true }
-	ws["Wildfire"] = { set = sets["Trueflight"], tp_bonus = false }
-	ws["Heavy Shot"] = { set = sets["Heavy Shot"], tp_bonus = false }
+	ws["Hot Shot"] = { set = sets["Wildfire"], tp_bonus = true }
+	ws["Leaden Salute"] = { set = sets["Leaden Salute"], tp_bonus = true }
+	ws["Wildfire"] = { set = sets["Wildfire"], tp_bonus = false }
 	ws["Last Stand"] = { set = sets["Last Stand"], tp_bonus = true }
-	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
-	ws["Aeolian Edge"] = { set = sets["Aeolian Edge"], tp_bonus = true }
+	ws["Aeolian Edge"] = { set = sets["Wildfire"], tp_bonus = true }
+	ws["Shining Blade"] = { set = sets["Wildfire"], tp_bonus = true }
 	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
-	ws["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
-	ws["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
-	ws["Flaming Arrow"] = { set = sets["Flaming Arrow"], tp_bonus = true }
-	ws["Empyreal Arrow"] = { set = sets["Apex Arrow"], tp_bonus = true }
-	ws["Apex Arrow"] = { set = sets["Apex Arrow"], tp_bonus = false }
-	ws["Jishnu's Radiance"] = { set = sets["Jishnu's Radiance"], tp_bonus = false }
 	
 	check_buffs()
 	update_rng_info()	
 	
-	send_command('@input /macro book 7;wait 1;input /macro set 1')
+	send_command('@input /macro book 6;wait 1;input /macro set 1')
 end
  
 function custom_precast(spell)
@@ -105,8 +86,7 @@ function custom_precast(spell)
 				local maxTP = 3000
 				local equipment = windower.ffxi.get_items().equipment
 				local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
-				if (res.items[range.id].name == "Fomalhaut" and spell.skill == "Marksmanship")
-				or (res.items[range.id].name == "Fail-Not" and spell.skill == "Archery") then
+				if (res.items[range.id].name == "Fomalhaut" and spell.skill == "Marksmanship") then
 					maxTP = maxTP - 500
 				end
 				if player.sub_job == "WAR" then
@@ -122,6 +102,9 @@ function custom_precast(spell)
 			equip(setToUse)
 		end
 		return true
+	elseif spell.type == "CorsairRoll" then
+		equip(sets["Precast_Phantom Roll"])
+		return true
     end
 end
 
@@ -129,12 +112,11 @@ function custom_midcast(spell)
 	if spell.action_type == "Ranged Attack" then	
 		local setToUse = sets["Midshot"]
 		if DT then setToUse = sets["MidshotDT"] end
-		if double_shot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
+		if triple_shot then setToUse = set_combine(setToUse, sets["Triple Shot"]) end
 		if buffactive["aftermath: lv.3"] then
 			local equipment = windower.ffxi.get_items().equipment
-			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)	
-			if res.items[range.id].name == "Armageddon" 
-			or res.items[range.id].name == "Gandiva" then
+			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
+			if res.items[range.id].name == "Armageddon" then
 				if DT then 
 					setToUse = set_combine(setToUse, sets["AM3DT"])
 				else 
@@ -142,7 +124,6 @@ function custom_midcast(spell)
 				end
 			end
 		end
-		if buffactive["barrage"] then setToUse = set_combine(setToUse, sets["Barrage"]) end
 		equip(setToUse)
 		return true
 	end
@@ -150,25 +131,6 @@ end
  
 function custom_aftercast(spell)
 	update_rng_info()
-end
- 
-function get_distance_sq(playerpos)
-	if last_shot_position_valid and playerpos then
-		local x = math.abs(last_shot_position_x - playerpos.x)
-		local y = math.abs(last_shot_position_y - playerpos.y)
-		x = (x*x)
-		y = (y*y)
-		return x + y
-	end
-	return 0
-end
-
-function check_current_and_player_position(playerpos)
-	local x = math.abs(last_shot_position_x - playerpos.x)
-	local y = math.abs(last_shot_position_y - playerpos.y)
-	x = (x*x)
-	y = (y*y)
-	return x + y < 0.01
 end
  
 function custom_command(args)
@@ -180,37 +142,6 @@ function custom_command(args)
 			add_to_chat(122, "DT false")
 			DT = false
 		end
-	elseif args[1] == "ra" then
-		local playerpos = windower.ffxi.get_mob_by_target('me')
-		if hover_shot then
-			if last_shot_position_valid then
-				local distance = get_distance_sq(playerpos)
-				if distance > 1 or HoverShotTarget == nil or HoverShotTarget ~= player.target.id then
-					shoot_now_or_wait_for_pos_update(playerpos)
-				else
-					windower.add_to_chat(123,"Not far enough for hover shot!")
-				end
-			else
-				shoot_now_or_wait_for_pos_update(playerpos)
-			end
-		else
-			shoot_now_or_wait_for_pos_update(playerpos)
-		end
-	end
-end
-
-function shoot_now_or_wait_for_pos_update(playerpos)
-	local can_shoot = check_current_and_player_position(playerpos)
-	if can_shoot then
-		windower.send_command('input /ra <t>')
-		shot_position_0x015_x = playerpos.x
-		shot_position_0x015_y = playerpos.y
-		if hover_shot then
-			RecordPosNextRangedAttack = true
-		end
-	else
-		ShootNextPosUpdate = true
-		RecordPosNextRangedAttack = false
 	end
 end
 
@@ -220,17 +151,6 @@ function get_preshot_set()
 	elseif flurry == 1 then set_to_use = sets["Flurry1"]
 	else set_to_use = sets["Flurry2"]
 	end
-	local equipment = windower.ffxi.get_items().equipment
-	local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)		
-	if res.items[range.id].skill == 25 then -- archery
-		set_to_use = set_combine(set_to_use, sets["Arrow"])
-	elseif res.items[range.id].skill == 26 then -- marksmanship
-		if res.items[range.id].name == "Gastraphetes" then
-			set_to_use = set_combine(set_to_use, sets["Bolt"])
-		else
-			set_to_use = set_combine(set_to_use, sets["RangedAttackBullet"])
-		end
-	end
 	return set_to_use
 end
 
@@ -238,8 +158,7 @@ buff_ids =
 T{
 	581, -- flurry II
 	265, -- flurry I
-	628, -- Hover Shot
-	433, -- Double Shot
+	467, -- Truple Shot
 }
 
 function check_buffs()
@@ -256,15 +175,15 @@ function check_buffs()
 				end
 			end
 			if not double_found then
-				if _buff_id == 433 then 
-					double_shot = true
+				if _buff_id == 467 then 
+					triple_shot = true
 					double_found = true
 				end
 			end
 		end
 	end
 	if not hover_found then hover_shot = false end
-	if not double_found then double_shot = false end
+	if not double_found then triple_shot = false end
 	if not AM_found then AM3Mode = false end
 end
 
@@ -351,16 +270,11 @@ function rng_action_helper(act)
 				end
 			end
 		end
-	elseif act.category == 12 then
-		if act.param == 28787 then -- ranged attack interrupted
-			RecordPosNextRangedAttack = false
-		end
 	elseif act.category == 2 then -- ranged attack
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
 				local dmg = 0
 				local shots = 0
-				if hover_shot then HoverShotTarget = v.id end
 				for k2, v2 in pairs(v.actions) do
 					dmg = dmg + v2.param
 					shots = shots + 1
@@ -378,17 +292,10 @@ function rng_action_helper(act)
 					ranger_info_hub.dmg = dmg .. "[" .. shots .. "]"
 				end
 			end
-			if RecordPosNextRangedAttack then
-				RecordPosNextRangedAttack = false
-				last_shot_position_valid = true
-				last_shot_position_x = shot_position_0x015_x
-				last_shot_position_y = shot_position_0x015_y
-			end
 		end
 	elseif act.category == 3 then -- ws
 		if act.actor_id == player.id then
 			for k,v in pairs(act.targets) do
-				if hover_shot then HoverShotTarget = v.id end
 				for k2, v2 in pairs(v.actions) do
 					if v2.message == 188 then
 						ranger_info_hub.dmg = 0
@@ -397,62 +304,8 @@ function rng_action_helper(act)
 					end
 				end
 			end
-			if hover_shot then
-				local ws = res.weapon_skills[act.param]
-				if ws and (ws.skill == 26 or ws.skill == 25)then
-					local playerpos = windower.ffxi.get_mob_by_target('me')
-					if playerpos then 
-						last_shot_position_valid = true
-						last_shot_position_x = playerpos.x
-						last_shot_position_y = playerpos.y
-					end
-				end
-			end
 		end
-	end
-end
-
-function update_hover_shot_info()
-	if hover_shot then
-		local playerpos = windower.ffxi.get_mob_by_target('me')
-		local distance = math.sqrt(get_distance_sq(playerpos))
-		local distance_string = string.format("%.2f", distance)
-		if distance >= 1 or HoverShotTarget == nil then distance_string = string.text_color(distance_string, 0, 255, 0)
-		else distance_string = string.text_color(distance_string, 255, 0, 0) end
-		ranger_info_hub.distance = distance_string
-	else
-		ranger_info_hub.distance = nil
-	end
-end
-
-function clear_last_shot_position()
-	HoverShotTarget = nil
-	last_shot_position_valid = false
-end
-
-function parse_outgoing(id, original, modified, injected, blocked)
-	if id == 0x015 and not injected and not blocked then
-		local p = packets.parse('outgoing', original)
-		current_position_0x015_x = p['X']
-		current_position_0x015_y = p['Y']
-		if ShootNextPosUpdate then
-			ShootNextPosUpdate = false
-			windower.send_command('input /ra <t>')
-			RecordPosNextRangedAttack = true
-			shot_position_0x015_x = current_position_0x015_x
-			shot_position_0x015_y = current_position_0x015_y
-		end
-	end
-end
-
-function parse_action_message(actor_id, target_id, actor_index, target_index, message_id, param_1, param_2, param_3)
-	if (message_id == 6 or message_id == 20) and HoverShotTarget ~= nil and target_id == HoverShotTarget then
-		clear_last_shot_position()
 	end
 end
 
 windower.register_event('action', rng_action_helper)
-windower.register_event('prerender', update_hover_shot_info)
-windower.register_event('zone change', clear_last_shot_position)
-windower.register_event('outgoing chunk', parse_outgoing)
-windower.register_event('action message', parse_action_message)

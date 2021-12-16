@@ -1,4 +1,7 @@
 # THHelper
+1.0.2:
+- reset the slot disable state on job change
+
 1.0.1:
 - Unlock slots when changing from fulltime TH to other modes.
 

@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.12'
+_addon.version  = '0.0.13'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -55,6 +55,8 @@ local spam_mode = false
 local am3 = false
 local current_main_job = "war"
 local debug_print = false
+local double_up_time = 0
+local double_up_buffer = 20
 
 -- .element, .name, .tp
 local parsed_wses = {}
@@ -144,6 +146,8 @@ function get_next_skillchain_elements(target_index)
 end
 
 local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_index)
+	local time_now = os.clock()
+	if time_now - double_up_time < double_up_buffer then return nil,nil end
 	if am3 then
 		local got_am3 = false
 		for _, v in pairs(buffs) do
@@ -532,7 +536,7 @@ local function handle_command(...)
 		notice("//awsmb setmbdelay (number): Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.")
 		notice("//awsmb setspellpriority (spell_name,hpp,spell_name,hpp,...): Sets priority for spells to burst with. Will go in order of input and check elements. Hpp is amount of Hpp (HP percent) mob must have in order for spell to be used. Set to 0 for always use.")
 		notice("//awsmb spam (on/off): Starts/Stops spamming opener ws.")
-		notice("//awsmb am3 (on/off): Holds/Don't hold until 3000TP to trigger AM3. Will use open ws for AM3.")
+		notice("//awsmb am3 (on/off, ws_name if on): Holds/Don't hold until 3000TP to trigger AM3.")
     end
 end
 
@@ -551,9 +555,16 @@ local function check_job_and_parse_settings()
 	parse_spell_settings()
 end
 
+local function gain_buff(buff_id)
+	if buff_id == 308 then
+		double_up_time = os.clock()
+	end
+end
+
 windower.register_event('zone change', handle_zone_change)
 windower.register_event('addon command', handle_command)
 windower.register_event('load', check_job_and_parse_settings)
 windower.register_event('login', check_job_and_parse_settings)
 windower.register_event('job change', check_job_and_parse_settings)
+windower.register_event('gain buff', gain_buff)
 ActionPacket.open_listener(parse_action)

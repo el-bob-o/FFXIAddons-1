@@ -1,6 +1,6 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.8.12'
+_addon.version  = '0.8.13'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
@@ -267,17 +267,17 @@ local function start_fight()
 			})
 		packets.inject(p)
 		local party = windower.ffxi.get_party()
-		if skillchain_opener:contains(party.p0.name) then 
+		if party.p0 and skillchain_opener:contains(party.p0.name) then 
 			sc_opener = party.p0.mob.id
-		elseif skillchain_opener:contains(party.p1.name) then
+		elseif party.p1 and skillchain_opener:contains(party.p1.name) then
 			sc_opener = party.p1.mob.id
-		elseif skillchain_opener:contains(party.p2.name) then
+		elseif party.p2 and skillchain_opener:contains(party.p2.name) then
 			sc_opener = party.p2.mob.id
-		elseif skillchain_opener:contains(party.p3.name) then
+		elseif party.p3 and skillchain_opener:contains(party.p3.name) then
 			sc_opener = party.p3.mob.id
-		elseif skillchain_opener:contains(party.p4.name) then
+		elseif party.p4 and skillchain_opener:contains(party.p4.name) then
 			sc_opener = party.p4.mob.id
-		elseif skillchain_opener:contains(party.p5.name) then
+		elseif party.p5 and skillchain_opener:contains(party.p5.name) then
 			sc_opener = party.p5.mob.id
 		else
 			sc_opener = nil

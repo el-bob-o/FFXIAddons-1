@@ -172,9 +172,16 @@ function on_incoming_chunk_for_th(id, data, modified, injected, blocked)
     end
 end
 
+function reset()
+	AmmoDisabled = false
+	THEquipped = false
+	enable("main", "sub", "range", "ammo", "head", "neck", "ear1", "ear2", "body", "hands", "ring1", "ring2", "back", "waist", "legs", "feet")
+end
+
 windower.register_event('action', parse_action)
 windower.register_event('target change', on_target_change_for_th)
 windower.raw_register_event('incoming chunk', on_incoming_chunk_for_th)
 windower.register_event('zone change', clear_tags)
 windower.register_event('time change', clean_up_tags)
+windower.register_event('job change', reset)
 register_unhandled_command(parse_th_command)

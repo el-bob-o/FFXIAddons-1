@@ -1,4 +1,7 @@
 #Auto WS and MB
+0.0.13:
+- Add functionality not to do anything for 20 secs after getting double up buff so that other addons like roller can do their thing
+
 0.0.12:
 - Changed spell priority to include hp% threshold.
 - Changed magic burst behaviour to check if the second cast would burst instead of trying to cast it anyway
@@ -99,9 +102,9 @@ Sets priority for spells to burst with. Will go in order of input and check elem
 
 Starts/Stops spamming opener ws
 
-## //awsmb am3 (on/off)
+## //awsmb am3 (on/off, ws_name if on)
 
-Holds/Don't hold until 3000TP to trigger AM3. Will use open ws for AM3.")
+Holds/Don't hold until 3000TP to trigger AM3.")
 
 ## SC Example
 
@@ -115,7 +118,7 @@ But if Noillurie is in the party, if she does Tachi: Kaiten, this will wait for 
 
 ## MB Example
 
-1. //awsmb setspellpriority fire vi,thunder vi,water vi,fire v,blizzard iii
+1. //awsmb setspellpriority fire vi,50,thunder vi,50,water vi,50,fire v,40,blizzard iii,30
 
 When there is a liquefaction skillchain, will try to burst Fire VI and Fire V after 4 seconds.
 
