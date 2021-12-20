@@ -68,6 +68,7 @@ function custom_get_sets()
 	ws["Aeolian Edge"] = { set = sets["Wildfire"], tp_bonus = true }
 	ws["Shining Blade"] = { set = sets["Wildfire"], tp_bonus = true }
 	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
+	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
 	
 	check_buffs()
 	update_rng_info()	
