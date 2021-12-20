@@ -65,7 +65,7 @@ MasterGearFunctions
 
 ## MasterGearLua Sets
 
-"Mode_<num><name>" e.g "Mode_1HybridTP". Naming your sets this way will automatically populate the modes available, which you can change using "//gs c mode <num>" or cycle through with "//gs c mode". Only 9 modes available at the moment. Modes are equipped on engage, on aftercast, and even on idle if combat mode ("//gs c combat" to toggle) is on.
+"Mode_(num)(name)" e.g "Mode_1HybridTP". Naming your sets this way will automatically populate the modes available, which you can change using "//gs c mode (num)" or cycle through with "//gs c mode". Only 9 modes available at the moment. Modes are equipped on engage, on aftercast, and even on idle if combat mode ("//gs c combat" to toggle) is on.
 
 "IdleRegen" and "Movement". These are equipped when Idle.
 
@@ -73,7 +73,7 @@ MasterGearFunctions
 
 "Adoulin". Equipped in Adoulin.
 
-"TPBonus". Any TPBonus gear like Moonshade earring. These will be equipped when a table named 'ws' exists. If it does, the weaponskill's english name is checked (e.g ws\["Raging Fist"]). It will then equip the set defined and equip TPBonus set if tp_bonus is true. 
+"TPBonus". Any TPBonus gear like Moonshade earring. These will be equipped when a table named 'ws' exists. If it does, the weaponskill's english name is checked (e.g ws\["Raging Fist"]). It will then equip the set defined and equip TPBonus set if tp_bonus is true and tp is less than 3000. 
 
 > ws = {}
 > ws\["Raging Fist"] = { set = sets\["Raging Fist"], tp_bonus = true }
@@ -86,7 +86,7 @@ MasterGearFunctions
 
 "CP". This set will be equipped when CP mode is on, toggled by "//gs c cp"
 
-You can also do "Precast_<mode_name><name>" or "Midcast_<mode_name><name>". E.g If you have a mode called "Mode_2HighAcc" then you can do "Precast_HighAccRaging Fists" and it will equip "Precast_HighAccRaging Fists" only when you are using "Mode_2HighAcc".
+You can also do "Precast_(mode_name)(name)" or "Midcast_(mode_name)(name)". E.g If you have a mode called "Mode_2HighAcc" then you can do "Precast_HighAccRaging Fists" and it will equip "Precast_HighAccRaging Fists" only when you are using "Mode_2HighAcc".
 
 ## MasterGearLua Custom functions
 
