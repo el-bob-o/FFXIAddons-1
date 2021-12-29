@@ -61,13 +61,13 @@
 
 Use //autowsmb or //awsmb
 
-## //awsmb start
+## //awsmb start (ws/mb)
 
-Starts auto ws.
+Starts auto ws/mb. Both if argument is omitted.
 
-## //awsmb stop
+## //awsmb stop (ws/mb)
 
-Stops auto ws.
+Stops auto ws/mb. Both if argument is omitted.
 
 ## //awsmb dontopen
 
@@ -89,18 +89,6 @@ Set the name of ws and tp of ws to try to skillchain with. will try to make skil
 
 Will only try to skillchain and make skillchains of the level set here or above.
 
-## //awsmb startmb
-
-Starts auto magic bursting.
-		
-## //awsmb stopmb
-
-Stops auto magic bursting.
-			
-## //awsmb setmbdelay (number) 
-
-Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.
-
 ## //awsmb setspellpriority (spell_name,hpp,spell_name,hpp,...)
 
 Sets priority for spells to burst with. Will go in order of input and check elements. Hpp is amount of Hpp (HP percent) mob must have in order for spell to be used. Set to 0 for always use.
@@ -112,6 +100,14 @@ Starts/Stops spamming opener ws
 ## //awsmb am3 (on/off, ws_name if on)
 
 Holds/Don't hold until 3000TP to trigger AM3.")
+
+## //awsmb fastcast (0-80) 
+
+Sets fastcast value for mb recast calculation. Default 80.
+
+## //awsmb status:
+
+Prints current configuration to chatlog.
 
 ## SC Example
 
