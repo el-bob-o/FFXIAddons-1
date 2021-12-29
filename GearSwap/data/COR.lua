@@ -57,6 +57,8 @@ function custom_get_sets()
 	AM3Mode = false
 	DT = false
 	cancel_haste = 1
+	roll_range = true
+	quick_draw = "Light Shot"
 	
 	setup_text_window()
 		
@@ -105,6 +107,10 @@ function custom_precast(spell)
 		return true
 	elseif spell.type == "CorsairRoll" then
 		equip(sets["Precast_Phantom Roll"])
+		if roll_range then equip(sets["Roll Range"]) end
+		return true
+	elseif spell.type == "CorsairShot" then
+		equip(sets["Quick Draw"])
 		return true
     end
 end
@@ -142,6 +148,30 @@ function custom_command(args)
 		elseif DT == true then
 			add_to_chat(122, "DT false")
 			DT = false
+		end
+	elseif args[1] == "rollrange" then
+		if args[2] then
+			if args[2] == "on" then roll_range = true
+			elseif args[2] == "off" then roll_range = false
+			end
+		else
+			roll_range = not roll_range
+		end
+		add_to_chat(122, "Roll Range: " .. tostring(roll_range))
+	elseif args[1] == "qd" then
+		if args[2] then 
+			if args[2] == "light" then quick_draw = "Light Shot"
+			elseif args[2] == "dark" then quick_draw = "Dark Shot"
+			elseif args[2] == "earth" then quick_draw = "Earth Shot"
+			elseif args[2] == "wind" then quick_draw = "Wind Shot"
+			elseif args[2] == "ice" then quick_draw = "Ice Shot"
+			elseif args[2] == "water" then quick_draw = "Water Shot"
+			elseif args[2] == "fire" then quick_draw = "Fire Shot"
+			elseif args[2] == "thunder" then quick_draw = "Thunder Shot"
+			end
+			add_to_chat(122, "Quick Draw: " .. quick_draw)
+		else
+			send_command('input /ja "' .. quick_draw .. '" <t>')
 		end
 	end
 end

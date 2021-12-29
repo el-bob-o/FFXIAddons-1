@@ -7,7 +7,7 @@ function custom_get_sets()
 	ws["Impulse Drive"] = { set = sets["Impulse Drive"], tp_bonus = true }
 	ws["Camlann's Torment"] = { set = sets["Camlann's Torment"], tp_bonus = false }
 	ws["Sonic Thrust"] = { set = sets["Camlann's Torment"], tp_bonus = true }
-	ws["Drakesbane"] = { set = sets["Drakesbane"], tp_bonus = false }
+	ws["Drakesbane"] = { set = sets["Drakesbane"], tp_bonus = true }
 	ws["Stardiver"] = { set = sets["Stardiver"], tp_bonus = false }
 	ws["SO_Impulse Drive"] = { set = sets["SO_Impulse Drive"], tp_bonus = true }
 	ws["SO_Camlann's Torment"] = { set = sets["SO_Camlann's Torment"], tp_bonus = true }
