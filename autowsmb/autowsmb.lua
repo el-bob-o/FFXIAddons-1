@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.14'
+_addon.version  = '0.0.15'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -428,7 +428,7 @@ local function parse_spell_settings()
 end
 
 local function check_job_and_parse_settings()
-	local new_job = string.lower(windower.ffxi.get_player().main_job
+	local new_job = string.lower(windower.ffxi.get_player().main_job)
 	if current_main_job == new_job then return end
 	current_main_job = new_job
 	notice("Don't Open: " .. tostring(dont_open))

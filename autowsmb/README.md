@@ -1,4 +1,7 @@
 #Auto WS and MB
+0.0.15:
+- Fix compile error
+
 0.0.14:
 - Removed mb delay, added fastcast value to replace. Calculate delay from fastcast value. Use //awsmb fastcast (0-80) to set.
 - Leave buffer time to get tp without ws when maintaining AM3. Currently this is 10 secs.
