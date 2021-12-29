@@ -1,4 +1,4 @@
--- Version 1.4.3
+-- Version 1.4.5
 
 include("MasterGear/MasterGearFunctions.lua")
 include('THHelper/THHelper.lua')
@@ -72,8 +72,16 @@ end
 function midcast(spell)
 	if custom_midcast and type(custom_midcast) == 'function' and custom_midcast(spell) then
 	elseif spell.action_type == "Ranged Attack" then equip(sets["Midshot"])
-	elseif sets["Midcast_" .. modes[mode].name ..spell.english] then equip(sets["Midcast_" .. modes[mode].name ..spell.english])
-	elseif sets["Midcast_" .. spell.english] then equip(sets["Midcast_" .. spell.english])
+	elseif sets["Midcast_" .. modes[mode].name ..spell.english] then 
+		equip(sets["Midcast_" .. modes[mode].name ..spell.english])
+		if spell.element == world.weather_element or spell.element == world.day_element then 
+			equip(sets["WeatherObi"])
+		end 
+	elseif sets["Midcast_" .. spell.english] then 
+		equip(sets["Midcast_" .. spell.english])
+		if spell.element == world.weather_element or spell.element == world.day_element then 
+			equip(sets["WeatherObi"])
+		end
 	end
 end
 

@@ -1,4 +1,8 @@
 # MasterGear
+1.4.5
+MasterGearLua
+- Add WeatherObi set to midcast
+
 1.4.4
 MasterGearFunctions
 - Enabled wardrobe 4 by default
