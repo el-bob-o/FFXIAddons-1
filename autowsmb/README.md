@@ -1,4 +1,11 @@
 #Auto WS and MB
+0.0.14:
+- Removed mb delay, added fastcast value to replace. Calculate delay from fastcast value. Use //awsmb fastcast (0-80) to set.
+- Leave buffer time to get tp without ws when maintaining AM3. Currently this is 10 secs.
+- Added status command to print current configuration to chat.
+- Removed startmb amd stopmb commands.
+- Changed start command to start both ws and mb. Use //awsmb start (mb/ws) to start only mb or ws.
+
 0.0.13:
 - Add functionality not to do anything for 20 secs after getting double up buff so that other addons like roller can do their thing
 

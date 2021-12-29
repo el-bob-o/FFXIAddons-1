@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.13'
+_addon.version  = '0.0.14'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -17,7 +17,6 @@ local default_setting = {
 	["open_ws"] = "",
 	["ws_priority"] = "",
 	["spell_priority"] = "",
-	["mb_delay"] = 4,
 	["am3_ws"] = "",
 }
 
@@ -57,6 +56,11 @@ local current_main_job = "war"
 local debug_print = false
 local double_up_time = 0
 local double_up_buffer = 20
+local am3_time = 0
+local am3_buffer = 170 -- 180-10 = 170. This leaves 10 seconds to get back to 3000tp
+local fast_cast = 80 -- assume cap
+
+local global_delay = 3
 
 -- .element, .name, .tp
 local parsed_wses = {}
@@ -146,6 +150,7 @@ function get_next_skillchain_elements(target_index)
 end
 
 local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_index)
+	if not started then return end
 	local time_now = os.clock()
 	if time_now - double_up_time < double_up_buffer then return nil,nil end
 	if am3 then
@@ -153,6 +158,8 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 		for _, v in pairs(buffs) do
 			if v == 272 then 
 				got_am3 = true
+				if debug_print then notice(tostring(time_now) .. "-" .. am3_time) end
+				if time_now - am3_time > am3_buffer then return nil,nil end
 				break
 			end
 		end
@@ -160,6 +167,7 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 			if player_tp < 3000 then return nil, nil
 			else
 				if debug_print then notice("Doing " .. parsed_am3_ws .. " for AM3") end
+				am3_time = time_now
 				return parsed_am3_ws, nil
 			end
 		end
@@ -230,34 +238,46 @@ local function get_burst_elements(animation)
 	return nil
 end
 
-local function get_mb_spells(animation, target_hp)
+local function get_mb_spells(animation, target_hp, time_left)
 	local mp_available = windower.ffxi.get_player().vitals.mp
 	local recasts = windower.ffxi.get_spell_recasts()
 	local burst_elements = get_burst_elements(animation)
 	if burst_elements ~= nil then
+		local fc_multi = (100 - fast_cast) / 100
 		for _,v in pairs(parsed_spells) do
 			if burst_elements:contains(v.element)
 			and mp_available > v.mp 
 			and recasts[v.recast] == 0 
-			and target_hp >= v.hpp then
-				return v.name
+			and target_hp >= v.hpp 
+			and time_left > v.cast_time * fc_multi 
+			then 
+				return v.name, v.cast_time * fc_multi
 			end
 		end
 	end
-	return nil
+	return nil, nil
 end
 
 local function check_mb()
 	local player = windower.ffxi.get_player()
 	local target_index = player.target_index
+	local time_now = os.clock()
+	if debug_print then notice("Checking MB") end
 	if last_skillchain[target_index] and last_skillchain[target_index].name ~= nil and #last_skillchain[target_index].name >= 1 
-	and os.clock() - last_skillchain[target_index].time < sc_window_end and target_sc_step >= 1
+	and time_now - last_skillchain[target_index].time < sc_window_end and target_sc_step >= 1
 	then
+		local time_left = 8 + sc_window_delay - (time_now - last_skillchain[target_index].time) - target_sc_step
 		local mob = windower.ffxi.get_mob_by_index(target_index)
-		local spell = get_mb_spells(string.lower(last_skillchain[target_index].name[1]), mob.hpp)
+		local spell, cast_time = get_mb_spells(string.lower(last_skillchain[target_index].name[1]), mob.hpp, time_left)
 		if spell ~= nil then
 			local commandstring ='input /ma "' .. spell .. '" <t>'
 			windower.send_command(commandstring)
+			if debug_print then notice("MB with " .. spell) end
+			local delay = cast_time + global_delay
+			if time_now + delay - last_skillchain[target_index].time < sc_window_end then
+				coroutine.schedule(check_mb, delay)
+				if debug_print then notice("Check MB again in " .. tostring(delay)) end
+			end
 		end
 	end
 end
@@ -314,9 +334,6 @@ local function parse_action(act)
 						if actor_id == player.id then coroutine.schedule(check_mb, 3)
 						else
 							check_mb()
-							if settings[current_main_job]["mb_delay"] <= 8 then
-								coroutine.schedule(check_mb, settings[current_main_job]["mb_delay"])
-							end
 						end
 					end
 				elseif ability and message_ids:contains(message_id) then
@@ -344,6 +361,7 @@ local function parse_ws_settings()
 	for _,v in pairs(skills.weapon_skills) do
 		if string.lower(v.en) == open_ws_table[1] then
 			parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp, target = v.target }
+			notice("WS To Use: " .. parsed_wses[1].name .. " (" .. parsed_wses[1].tp .. " TP)")
 			break
 		end
 	end
@@ -364,6 +382,9 @@ local function parse_ws_settings()
 				end
 			end
 		end
+		for i = 2, #parsed_wses do
+			notice("WS Priority " .. tostring(i - 1) .. ": " .. parsed_wses[i].name .. " (" .. parsed_wses[i].tp .. " TP)")
+		end
 		return true
 	end
 	return false
@@ -374,6 +395,7 @@ local function parse_am3_ws_settings()
 	for _,v in pairs(skills.weapon_skills) do
 		if string.lower(v.en) == string.lower(settings[current_main_job]["am3_ws"]) then
 			parsed_am3_ws = settings[current_main_job]["am3_ws"]
+			notice("AM3: " .. tostring(parsed_am3_ws))
 			return true
 		end
 	end
@@ -390,28 +412,77 @@ local function parse_spell_settings()
 			else
 				for _,v2 in pairs(res.spells) do
 					if string.lower(spell_table[i]) == string.lower(v2.en) then
-						table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost, hpp = spell_hp })
+						table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost, hpp = spell_hp, cast_time = v2.cast_time })
 					end
 				end
 			end
 		end
 	end
-	if #parsed_spells >= 1 then return true end
+	if #parsed_spells >= 1 then
+		for i = 1, #parsed_spells do
+			notice("Spell Priority " .. tostring(i) .. ": " .. parsed_spells[i].name .. " (" .. parsed_spells[i].hpp .. "% HP)")
+		end
+		return true 
+	end
 	return false
+end
+
+local function check_job_and_parse_settings()
+	local new_job = string.lower(windower.ffxi.get_player().main_job
+	if current_main_job == new_job then return end
+	current_main_job = new_job
+	notice("Don't Open: " .. tostring(dont_open))
+	notice("SC Level: " .. tostring(settings[current_main_job]["sc_level"]))
+	notice("Spamming: " .. tostring(spam_mode))
+	notice("Mantain AM3: " .. tostring(am3))
+	notice("Fast Cast: " .. tostring(fast_cast))
+	parse_ws_settings()
+	parse_spell_settings()
+	parse_am3_ws_settings()
 end
 
 local function handle_command(...)
     local args = T{...}
 	if args[1] == "start" then
-		if parse_ws_settings() then
-			started = true
-			notice("Started: " .. tostring(started))
-		else
-			warning("Error parsing weapon skills")
+		local startws = true
+		local startmb = true
+		if args[2] then
+			if args[2] == "ws" then startmb = false
+			elseif args[2] == "mb" then startws = false
+			end
+		end
+		if startws then 
+			if parse_ws_settings() then
+				started = true
+				notice("Start WS: " .. tostring(started))
+			else
+				warning("Error parsing weapon skills")
+			end
+		end
+		if startmb then 
+			if parse_spell_settings() then 
+				should_mb = true
+				notice("Start MB: " .. tostring(should_mb))
+			else
+				warning("Error parsing spells")
+			end
 		end
 	elseif args[1] == "stop" then
-		started = false
-		notice("Started: " .. tostring(started))
+		local stopws = true
+		local stopmb = true
+		if args[2] then
+			if args[2] == "ws" then stopmb = false
+			elseif args[2] == "mb" then stopws = false
+			end
+		end
+		if stopws then
+			started = false
+			notice("Start WS: " .. tostring(started))
+		end
+		if stopmb then
+			should_mb = false
+			notice("Start MB: " .. tostring(should_mb))
+		end
 	elseif args[1] == "dontopen" then
 		dont_open = true
 		notice("Don't Open: " .. tostring(dont_open))
@@ -428,7 +499,6 @@ local function handle_command(...)
 		local old_open_ws = settings[current_main_job]["open_ws"]
 		settings[current_main_job]["open_ws"] = commandstring
 		if parse_ws_settings() then
-			notice("WS To Use: " .. parsed_wses[1].name .. " (" .. parsed_wses[1].tp .. " TP)")
 			config.save(settings)
 		else
 			settings[current_main_job]["open_ws"] = old_open_ws
@@ -444,9 +514,6 @@ local function handle_command(...)
 		local old_ws_priority = settings[current_main_job]["ws_priority"]
 		settings[current_main_job]["ws_priority"] = commandstring
 		if parse_ws_settings() then
-			for i = 2, #parsed_wses do
-				notice("WS Priority " .. tostring(i - 1) .. ": " .. parsed_wses[i].name .. " (" .. parsed_wses[i].tp .. " TP)")
-			end
 			config.save(settings)
 		else
 			settings[current_main_job]["ws_priority"] = old_ws_priority
@@ -465,25 +532,6 @@ local function handle_command(...)
 		else
 			notice("Error parsing " .. args[2])
 		end
-	elseif args[1] == "startmb" then
-		if parse_spell_settings() then 
-			should_mb = true
-			notice("MB: " .. tostring(should_mb))
-		else
-			warning("Error parsing spells")
-		end
-	elseif args[1] == "stopmb" then
-		should_mb = false
-		notice("MB: " .. tostring(should_mb))
-	elseif args[1] == "setmbdelay" and args[2] then
-		local delay = tonumber(args[2])
-		if delay then
-			settings[current_main_job]["mb_delay"] = delay
-			notice("MB Delay: " .. tostring(settings[current_main_job]["mb_delay"]))
-			config.save(settings)
-		else
-			notice("Error parsing " .. args[2])
-		end
 	elseif args[1] == "setspellpriority" and args[2] then
 		local commandstring = ""
 		for i = 2, #args do
@@ -494,9 +542,6 @@ local function handle_command(...)
 		local old_spell_priority = settings[current_main_job]["spell_priority"]
 		settings[current_main_job]["spell_priority"] = commandstring
 		if parse_spell_settings() then
-			for i = 1, #parsed_spells do
-				notice("Spell Priority " .. tostring(i) .. ": " .. parsed_spells[i].name .. " (" .. parsed_spells[i].hpp .. "% HP)")
-			end
 			config.save(settings)
 		else
 			settings[current_main_job]["spell_priority"] = old_spell_priority
@@ -518,25 +563,38 @@ local function handle_command(...)
 				am3 = false
 			end
 		elseif args[2] == "off" then am3 = false end
-		notice("AM3: " .. tostring(am3))
+		notice("Mantain AM3: " .. tostring(am3))
+	elseif args[1] == "fastcast" and args[2] then
+		local fc = tonumber(args[2])
+		if fc then
+			if fc >= 0 and fc <= 80 then
+				fast_cast = fc
+				notice("Fast Cast: " .. tostring(fast_cast))
+			else
+				notice("Fast Cast needs to be between 0 and 80, not " .. tostring(fc))
+			end
+		else
+			notice("Error parsing " .. args[2])
+		end
 	elseif args[1] == "debug" and args[2] then
 		if args[2] == "on" then debug_print = true
 		elseif args[2] == "off" then debug_print = false end
 		notice("Debug: " .. tostring(debug_print))
+	elseif args[1] == "status" then
+		check_job_and_parse_settings()
     else
-		notice("//awsmb start: Starts auto ws.")
-		notice("//awsmb stop: Stops auto ws.")
+		notice("//awsmb start (ws/mb): Starts auto ws/mb. Both if argument is omitted.")
+		notice("//awsmb stop (ws/mb): Stops auto ws/mb. Both if argument is omitted.")
 		notice("//awsmb dontopen: Don't use open ws, only try to skill chain.")
 		notice("//awsmb open: Use open ws.")
 		notice("//awsmb setopenws (name,tp): Set the name of ws to open with and the minimum tp to use the ws.")
 		notice("//awsmb setwspriority ((name,tp,name,tp,...): Set the name of ws and tp of ws to try to skillchain with. will try to make skillchains in the order of input.")
 		notice("//awsmb setsclevel (1-3): Will only try to skillchain and make skillchains of the level set here or above.")
-		notice("//awsmb startmb: Starts auto magic bursting.")
-		notice("//awsmb stopmb: Stops auto magic bursting.")
-		notice("//awsmb setmbdelay (number): Sets delay between spells for mb. Default is 4 seconds. If set more than 8 then will only burst 1 spell.")
 		notice("//awsmb setspellpriority (spell_name,hpp,spell_name,hpp,...): Sets priority for spells to burst with. Will go in order of input and check elements. Hpp is amount of Hpp (HP percent) mob must have in order for spell to be used. Set to 0 for always use.")
 		notice("//awsmb spam (on/off): Starts/Stops spamming opener ws.")
 		notice("//awsmb am3 (on/off, ws_name if on): Holds/Don't hold until 3000TP to trigger AM3.")
+		notice("//awsmb fastcast (0-80): Sets fastcast value for mb recast calculation. Default 80.")
+		notice("//awsmb status: Prints current configuration to chatlog.")
     end
 end
 
@@ -547,12 +605,6 @@ local function handle_zone_change(new, old)
 		last_skillchain = {}
 		notice("Zoned. Stopped autows and automb")
 	end
-end
-
-local function check_job_and_parse_settings()
-	current_main_job = string.lower(windower.ffxi.get_player().main_job)
-	parse_ws_settings()
-	parse_spell_settings()
 end
 
 local function gain_buff(buff_id)
