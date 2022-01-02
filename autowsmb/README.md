@@ -1,4 +1,7 @@
 #Auto WS and MB
+1.0.0:
+- Add aeonic support. Only works for player, doesn't work for others.
+
 0.0.15:
 - Fix compile error
 
@@ -131,7 +134,3 @@ When there is a liquefaction skillchain, will try to burst Fire VI and Fire V af
 2. //awsmb setmbdelay 10
 
 When there is a darkness skillchain, will only burst Water VI since delay is more than 8
-
-# TO DO:
-
-1. Aeonic support

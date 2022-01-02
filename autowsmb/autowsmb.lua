@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.0.15'
+_addon.version  = '1.0.0'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -18,6 +18,25 @@ local default_setting = {
 	["ws_priority"] = "",
 	["spell_priority"] = "",
 	["am3_ws"] = "",
+}
+
+local aeonic_weapon = {
+    [20515] = 'Godhands',
+    [20594] = 'Aeneas',
+    [20695] = 'Sequence',
+    [20843] = 'Chango',
+    [20890] = 'Anguta',
+    [20935] = 'Trishula',
+    [20977] = 'Heishi Shorinken',
+    [21025] = 'Dojikiri Yasutsuna',
+    [21082] = 'Tishtrya',
+    [21147] = 'Khatvanga',
+    [21485] = 'Fomalhaut',
+    [21694] = 'Lionheart',
+    [21753] = 'Tri-edge',
+    [22117] = 'Fail-Not',
+    [22131] = 'Fail-Not',
+    [22143] = 'Fomalhaut'
 }
 
 local default_settings = {
@@ -149,6 +168,21 @@ function get_next_skillchain_elements(target_index)
 	return elements_to_return
 end
 
+local function check_aeonic(buffs, weapon)
+	local equipment = windower.ffxi.get_items('equipment')
+	local main_bag = equipment.main_bag
+	local main_slot = equipment.main
+	local main_weapon = windower.ffxi.get_items(main_bag, main_slot)
+	if aeonic_weapon[main_weapon.id] and aeonic_weapon[main_weapon.id] == weapon then
+		for _, v in pairs(buffs) do
+			if v == 272 or v == 271 or v == 270 then -- any aftermath means got aeonic element 
+				return true
+			end
+		end
+	end
+	return false
+end
+
 local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_index)
 	if not started then return end
 	local time_now = os.clock()
@@ -180,9 +214,13 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 			for i = 2, #parsed_wses do
 				if player_tp >= parsed_wses[i].tp then
 					if parsed_wses[i].elements ~= nil then
+						local got_aeonic = false
+						if parsed_wses[i].aeonic then
+							got_aeonic = check_aeonic(buffs, parsed_wses[i].weapon)
+						end
 						for _, v2 in pairs(parsed_wses[i].elements) do
 							for _, v3 in pairs(elements_to_continue) do
-								if string.lower(v3) == string.lower(v2) then
+								if string.lower(v3) == string.lower(v2) or (got_aeonic and string.lower(parsed_wses[i].aeonic) == string.lower(v3)) then
 									ws_to_return = parsed_wses[i].name
 									break
 								end
@@ -341,6 +379,11 @@ local function parse_action(act)
 					if last_skillchain[target_index] == nil then last_skillchain[target_index] = {} end
 					if ability.skillchain ~= nil then 
 						last_skillchain[target_index].name = ability.skillchain
+						if ability.aeonic and actor_id == player.id then
+							if check_aeonic(player.buffs, ability.weapon) then
+								table.insert(last_skillchain[target_index].name, 1, ability.aeonic)
+							end
+ 						end
 						last_skillchain[target_index].time = os.clock()
 						sc_window_delay = ability.delay or 3
 						sc_window_end = 6 + sc_window_delay
@@ -361,6 +404,10 @@ local function parse_ws_settings()
 	for _,v in pairs(skills.weapon_skills) do
 		if string.lower(v.en) == open_ws_table[1] then
 			parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp, target = v.target }
+			if v.aeonic then 
+				parsed_wses[1].aeonic = v.aeonic 
+				parsed_wses[1].weapon = v.weapon
+			end
 			notice("WS To Use: " .. parsed_wses[1].name .. " (" .. parsed_wses[1].tp .. " TP)")
 			break
 		end
@@ -375,7 +422,12 @@ local function parse_ws_settings()
 				else
 					for _, v2 in pairs(skills.weapon_skills) do
 						if string.lower(v2.en) == ws_p_table[i] then
-							table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target } )
+							if v2.aeonic then 
+								table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target, aeonic = v2.aeonic, weapon = v2.weapon } )
+							else
+								table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target } )
+							end
+							
 							break
 						end
 					end
@@ -427,18 +479,20 @@ local function parse_spell_settings()
 	return false
 end
 
-local function check_job_and_parse_settings()
+local function check_job_and_parse_settings(force)
 	local new_job = string.lower(windower.ffxi.get_player().main_job)
-	if current_main_job == new_job then return end
-	current_main_job = new_job
-	notice("Don't Open: " .. tostring(dont_open))
-	notice("SC Level: " .. tostring(settings[current_main_job]["sc_level"]))
-	notice("Spamming: " .. tostring(spam_mode))
-	notice("Mantain AM3: " .. tostring(am3))
-	notice("Fast Cast: " .. tostring(fast_cast))
-	parse_ws_settings()
-	parse_spell_settings()
-	parse_am3_ws_settings()
+	if not force and current_main_job == new_job then return end
+	if settings[current_main_job] then -- monstrosity gives somem weird mainjob haha
+		current_main_job = new_job
+		notice("Don't Open: " .. tostring(dont_open))
+		notice("SC Level: " .. tostring(settings[current_main_job]["sc_level"]))
+		notice("Spamming: " .. tostring(spam_mode))
+		notice("Mantain AM3: " .. tostring(am3))
+		notice("Fast Cast: " .. tostring(fast_cast))
+		parse_ws_settings()
+		parse_spell_settings()
+		parse_am3_ws_settings()
+	end
 end
 
 local function handle_command(...)
@@ -581,7 +635,7 @@ local function handle_command(...)
 		elseif args[2] == "off" then debug_print = false end
 		notice("Debug: " .. tostring(debug_print))
 	elseif args[1] == "status" then
-		check_job_and_parse_settings()
+		check_job_and_parse_settings(true)
     else
 		notice("//awsmb start (ws/mb): Starts auto ws/mb. Both if argument is omitted.")
 		notice("//awsmb stop (ws/mb): Stops auto ws/mb. Both if argument is omitted.")
