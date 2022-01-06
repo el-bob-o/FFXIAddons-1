@@ -1,4 +1,4 @@
--- Version 1.0.2
+-- Version 1.0.3
 
 haste_level = 0
 cancel_haste = 0
@@ -8,8 +8,8 @@ local spells_started = {}
 local time_to_fail = 5 -- 5 seconds then considered fail if no complete message
 
 local function get_haste_level(id)
-	if id == 57 or id == 358 then return 1 -- 57: Haste, 358: Hastega,
-	elseif id == 511 or id == 710 then return 2 -- 511: Haste II, 710: Erratic Flutter
+	if id == 57 or id == 358 or id == 595 then return 1 -- 57: Haste, 358,595: Hastega,
+	elseif id == 511 or id == 710 or id == 602 then return 2 -- 511: Haste II, 710: Erratic Flutter, 602: Hastega II
 	else return 0
 	end
 end
@@ -32,7 +32,7 @@ local function set_haste_level(actor_id)
 end
 
 local function parse_action(act)
-	if act.category == 8 then
+	if act.category == 8 or act.category == 7 then
 		if act.param == 24931 then
 			for k, v in pairs(act.targets) do
 				if v.id == player.id then
@@ -58,7 +58,7 @@ local function parse_action(act)
 				end
 			end
 		end
-	elseif act.category == 4 then -- finish casting spell
+	elseif act.category == 4 or act.category == 13 then -- finish casting spell
 		for k, v in pairs(act.targets) do
 			if v.id == player.id then
 				if get_haste_level(act.param) > 0 then
