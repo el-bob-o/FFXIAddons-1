@@ -133,8 +133,4 @@ But if Noillurie is in the party, if she does Tachi: Kaiten, this will wait for 
 
 1. //awsmb setspellpriority fire vi,50,thunder vi,50,water vi,50,fire v,40,blizzard iii,30
 
-When there is a liquefaction skillchain, will try to burst Fire VI and Fire V after 4 seconds.
-
-2. //awsmb setmbdelay 10
-
-When there is a darkness skillchain, will only burst Water VI since delay is more than 8
+When there is a liquefaction skillchain, will try to burst Fire VI and Fire V after casting Fire VI + 3 seconds. Use //awsmb fastcast (value) to set your fastcast value so that the casting time can be calculated correctly.
