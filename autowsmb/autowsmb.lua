@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '1.0.0'
+_addon.version  = '1.0.1'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -279,21 +279,38 @@ end
 local function get_mb_spells(animation, target_hp, time_left)
 	local mp_available = windower.ffxi.get_player().vitals.mp
 	local recasts = windower.ffxi.get_spell_recasts()
+	local ja_recasts = windower.ffxi.get_ability_recasts()
 	local burst_elements = get_burst_elements(animation)
+	local recast = 99
 	if burst_elements ~= nil then
 		local fc_multi = (100 - fast_cast) / 100
 		for _,v in pairs(parsed_spells) do
 			if burst_elements:contains(v.element)
 			and mp_available > v.mp 
-			and recasts[v.recast] == 0 
 			and target_hp >= v.hpp 
 			and time_left > v.cast_time * fc_multi 
-			then 
-				return v.name, v.cast_time * fc_multi
+			then
+				if v.prefix == "/magic" then
+					if recasts[v.recast] == 0 then
+						return v.name, v.cast_time * fc_multi, v.prefix, nil
+					else
+						if recast > recasts[v.recast] then 
+							recast = recasts[v.recast]
+						end
+					end
+				elseif v.prefix == "/pet" then
+					if ja_recasts[v.recast] == 0 then
+						return v.name, v.cast_time * fc_multi, v.prefix, nil
+					else
+						if recast > ja_recasts[v.recast] then 
+							recast = ja_recasts[v.recast]
+						end
+					end
+				end
 			end
 		end
 	end
-	return nil, nil
+	return nil, nil, nil, recast
 end
 
 local function check_mb()
@@ -306,14 +323,19 @@ local function check_mb()
 	then
 		local time_left = 8 + sc_window_delay - (time_now - last_skillchain[target_index].time) - target_sc_step
 		local mob = windower.ffxi.get_mob_by_index(target_index)
-		local spell, cast_time = get_mb_spells(string.lower(last_skillchain[target_index].name[1]), mob.hpp, time_left)
+		local spell, cast_time, prefix, recast = get_mb_spells(string.lower(last_skillchain[target_index].name[1]), mob.hpp, time_left)
 		if spell ~= nil then
-			local commandstring ='input /ma "' .. spell .. '" <t>'
+			local commandstring ='input ' .. prefix .. ' "' .. spell .. '" <t>'
 			windower.send_command(commandstring)
 			if debug_print then notice("MB with " .. spell) end
 			local delay = cast_time + global_delay
 			if time_now + delay - last_skillchain[target_index].time < sc_window_end then
 				coroutine.schedule(check_mb, delay)
+				if debug_print then notice("Check MB again in " .. tostring(delay)) end
+			end
+		elseif recast ~= nil then
+			if time_now + recast - last_skillchain[target_index].time < sc_window_end then
+				coroutine.schedule(check_mb, recast)
 				if debug_print then notice("Check MB again in " .. tostring(delay)) end
 			end
 		end
@@ -427,7 +449,6 @@ local function parse_ws_settings()
 							else
 								table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target } )
 							end
-							
 							break
 						end
 					end
@@ -462,9 +483,19 @@ local function parse_spell_settings()
 			local spell_hp = tonumber(spell_table[i + 1])
 			if spell_hp == nil or spell_hp > 100 or spell_hp < 0 then spell_hp = 0
 			else
-				for _,v2 in pairs(res.spells) do
-					if string.lower(spell_table[i]) == string.lower(v2.en) then
-						table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost, hpp = spell_hp, cast_time = v2.cast_time })
+				if current_main_job == "smn" or current_main_job == "bst" then
+					for _,v2 in pairs(res.job_abilities) do
+						if string.lower(spell_table[i]) == string.lower(v2.en) then
+							table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost, hpp = spell_hp, cast_time = 3, prefix = v2.prefix })
+							break
+						end	
+					end
+				else
+					for _,v2 in pairs(res.spells) do
+						if string.lower(spell_table[i]) == string.lower(v2.en) then
+							table.insert(parsed_spells, { name = v2.en, element = v2.element, recast = v2.recast_id, mp = v2.mp_cost, hpp = spell_hp, cast_time = v2.cast_time, prefix = v2.prefix })
+							break
+						end
 					end
 				end
 			end

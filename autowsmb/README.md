@@ -1,4 +1,8 @@
 #Auto WS and MB
+
+1.0.1:
+- Add support for job ability magic burst. Mostly used for SMN blood pacts and BST ready moves.
+
 1.0.0:
 - Add aeonic support. Only works for player, doesn't work for others.
 
