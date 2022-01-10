@@ -1,4 +1,4 @@
--- Version 1.0.3
+-- Version 1.0.4
 
 haste_level = 0
 cancel_haste = 0
@@ -104,7 +104,7 @@ end
 
 local function time_change(new, old)
 	if not check_spell_started() then -- if someone still casting spell on player then don't cancel
-		if cancel_haste >= haste_level then
+		if cancel_haste > 0 and cancel_haste >= haste_level then
 			local playerbuffs = windower.ffxi.get_player().buffs
 			for k, _buff_id in pairs(playerbuffs) do
 				if (_buff_id == 33 or _buff_id == 580) then

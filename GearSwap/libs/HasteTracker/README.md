@@ -1,6 +1,9 @@
 # HasteTracker
+1.0.4
+- Don't do anything if cancelhaste set to 0
+
 1.0.3
-- Fixed hastega and hastega II from Garuda
+- Fixed hastega and hastega II from Garuda (Doesn't seem to work if it's not your own Garuda)
 
 1.0.2
 - Fixed the check to see if any spells were still being cast. Can't use # operator for non-contiguous tables! 
