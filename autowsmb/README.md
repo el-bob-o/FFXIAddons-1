@@ -1,4 +1,6 @@
 #Auto WS and MB
+1.1.0:
+- Add support for SMN bloodpacts and BST ready moves for skillchains. For BST, assumes max ready recast reduction.
 
 1.0.1:
 - Add support for job ability magic burst. Mostly used for SMN blood pacts and BST ready moves.

@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '1.0.1'
+_addon.version  = '1.1.0'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -72,6 +72,9 @@ local should_mb = false
 local spam_mode = false
 local am3 = false
 local current_main_job = "war"
+local bst_jp = 2100
+local sic_recast_merits = 5
+local bst_ready_minus_5 = true
 local debug_print = false
 local double_up_time = 0
 local double_up_buffer = 20
@@ -84,7 +87,7 @@ local global_delay = 3
 -- .element, .name, .tp
 local parsed_wses = {}
 
-local parsed_am3_ws = ""
+local parsed_am3_ws = {}
 
 -- .name, .element, .recast_id, .mp, .hpp
 local parsed_spells = {}
@@ -183,6 +186,23 @@ local function check_aeonic(buffs, weapon)
 	return false
 end
 
+local function job_ability_check(ws_info, ja_recasts)
+	local pet = windower.ffxi.get_mob_by_target("pet")
+	if current_main_job == "smn" and ws_info.recast_id and (ja_recasts[ws_info.recast_id] > 0 or pet == nil) then return false
+	elseif current_main_job == "bst" and ws_info.recast_id then
+		if pet == nil then return false end
+		if ja_recasts[ws_info.recast_id] > 0 then
+			local sic_recast = 30
+			if bst_jp >= 100 then sic_recast = sic_recast - 5 end
+			sic_recast = sic_recast - (2 * sic_recast_merits)
+			if bst_ready_minus_5 then sic_recast = sic_recast - 5 end
+			local charges = math.floor(3 - 3 * (ja_recasts[ws_info.recast_id] / 3 * sic_recast))
+			if charges < ws_info.mp_cost then return false end
+		end	
+	end
+	return true
+end
+
 local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_index)
 	if not started then return end
 	local time_now = os.clock()
@@ -193,24 +213,25 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 			if v == 272 then 
 				got_am3 = true
 				if debug_print then notice(tostring(time_now) .. "-" .. am3_time) end
-				if time_now - am3_time > am3_buffer then return nil,nil end
+				if time_now - am3_time > am3_buffer then return nil end
 				break
 			end
 		end
 		if not got_am3 then
-			if player_tp < 3000 then return nil, nil
+			if player_tp < 3000 then return nil
 			else
 				if debug_print then notice("Doing " .. parsed_am3_ws .. " for AM3") end
 				am3_time = time_now
-				return parsed_am3_ws, nil
+				return parsed_am3_ws
 			end
 		end
 	end
+	local ja_recasts = windower.ffxi.get_ability_recasts()
+	local prefix = "/ws"
 	if not spam_mode and last_skillchain[target_index] and last_skillchain[target_index].name ~= nil and not double_light_darkness and time_since_last_skillchain <= sc_window_end then
 		local elements_to_continue = get_next_skillchain_elements(target_index)
 		if #elements_to_continue >= 1 then
 			local ws_to_return = nil
-			local target_to_return = nil
 			for i = 2, #parsed_wses do
 				if player_tp >= parsed_wses[i].tp then
 					if parsed_wses[i].elements ~= nil then
@@ -218,42 +239,45 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 						if parsed_wses[i].aeonic then
 							got_aeonic = check_aeonic(buffs, parsed_wses[i].weapon)
 						end
-						for _, v2 in pairs(parsed_wses[i].elements) do
-							for _, v3 in pairs(elements_to_continue) do
-								if string.lower(v3) == string.lower(v2) or (got_aeonic and string.lower(parsed_wses[i].aeonic) == string.lower(v3)) then
-									ws_to_return = parsed_wses[i].name
-									break
+						local job_ability_ok = job_ability_check(parsed_wses[i], ja_recasts)
+						if job_ability_ok then
+							for _, v2 in pairs(parsed_wses[i].elements) do
+								for _, v3 in pairs(elements_to_continue) do
+									if string.lower(v3) == string.lower(v2) 
+									or (got_aeonic and string.lower(parsed_wses[i].aeonic) == string.lower(v3)) then
+										ws_to_return = parsed_wses[i]
+										break
+									end
 								end
+								if ws_to_return ~= nil then break end
 							end
-							if ws_to_return ~= nil then break end
 						end
 					else
-						ws_to_return = parsed_wses[i].name
-						target_to_return = parsed_wses[i].target
+						ws_to_return = parsed_wses
 					end
 				end
 				if ws_to_return ~= nil then break end
 			end
 			if ws_to_return ~= nil then
 				if time_since_last_skillchain >= sc_window_delay then
-					if debug_print then notice("Doing SC with " .. ws_to_return) end
-					return ws_to_return, target_to_return
+					if debug_print then notice("Doing SC with " .. ws_to_return.name) end
+					return ws_to_return
 				else
-					return nil, nil
+					return nil
 				end
-			elseif not dont_open and player_tp >= parsed_wses[1].tp then -- couldn't find the next ws to continue skillchain so open ws immediately
+			elseif not dont_open and player_tp >= parsed_wses[1].tp and job_ability_check(parsed_wses[1], ja_recasts) then -- couldn't find the next ws to continue skillchain so open ws immediately
 				if debug_print then notice("No WS to continue. Opening with " .. parsed_wses[1].name) end
-				return parsed_wses[1].name, parsed_wses[1].target
+				return parsed_wses[1]
 			end
-		elseif not dont_open and player_tp >= parsed_wses[1].tp then -- no possible continuation so open ws immediately
+		elseif not dont_open and player_tp >= parsed_wses[1].tp and job_ability_check(parsed_wses[1], ja_recasts) then -- no possible continuation so open ws immediately
 			if debug_print then notice("No elements to continue. Opening with " .. parsed_wses[1].name) end
-			return parsed_wses[1].name, parsed_wses[1].target
+			return parsed_wses[1]
 		end
-	elseif player_tp >= parsed_wses[1].tp and (spam_mode or not dont_open) then -- first mob, already double dark/light or sc window closed
+	elseif player_tp >= parsed_wses[1].tp and (spam_mode or not dont_open) and job_ability_check(parsed_wses[1], ja_recasts) then -- first mob, already double dark/light or sc window closed
 		if debug_print then notice("Spam: " .. tostring(spam_mode) .. ", Don't Open: " .. tostring(spam_mode) .. ", Double Light/Dark: " .. tostring(double_light_darkness) .. ", Time: " .. tostring(time_since_last_skillchain)) end
-		return parsed_wses[1].name, parsed_wses[1].target
+		return parsed_wses[1]
 	end
-	return nil, nil
+	return nil
 end
 
 local function get_burst_elements(animation)
@@ -300,7 +324,7 @@ local function get_mb_spells(animation, target_hp, time_left)
 					end
 				elseif v.prefix == "/pet" then
 					if ja_recasts[v.recast] == 0 then
-						return v.name, v.cast_time * fc_multi, v.prefix, nil
+						return v.name, 2, v.prefix, nil
 					else
 						if recast > ja_recasts[v.recast] then 
 							recast = ja_recasts[v.recast]
@@ -364,16 +388,19 @@ local function parse_action(act)
 			local mob = windower.ffxi.get_mob_by_index(target_index)
 			if mob and target.id == mob.id then
 				if category == 'melee' and actor_id == player.id then
-					if player.vitals.tp >= 1000 then
-						local time_since_last_skillchain = os.clock()
-						if last_skillchain[target_index] then time_since_last_skillchain = time_since_last_skillchain - last_skillchain[target_index].time end
-						local next_ws, target = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs, target_index)
-						if next_ws ~= nil then 
-							if target ~= nil then 
-								windower.send_command('input /ws "' .. next_ws .. '" ' .. target)
-							else
-								windower.send_command('input /ws "' .. next_ws .. '" <t>')
-							end
+					local time_since_last_skillchain = os.clock()
+					if last_skillchain[target_index] then time_since_last_skillchain = time_since_last_skillchain - last_skillchain[target_index].time end
+					local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs, target_index)
+					if next_ws ~= nil then
+						local prefix = "/ws "
+						if next_ws.recast_id ~= nil then 
+							prefix = "/pet " 
+							if current_main_job == "bst" then next_ws.target = "<me>" end
+						end
+						if next_ws.target then
+							windower.send_command('input ' .. prefix .. '"' .. next_ws.name .. '" ' .. next_ws.target)
+						else
+							windower.send_command('input ' .. prefix .. '"' .. next_ws.name .. '" <t>')
 						end
 					end
 				elseif add_effect and conclusion and skillchain_ids:contains(add_effect.message_id) then
@@ -393,7 +420,7 @@ local function parse_action(act)
 					if should_mb then
 						if actor_id == player.id then coroutine.schedule(check_mb, 3)
 						else
-							check_mb()
+							coroutine.schedule(check_mb, 1) -- leave one sec for trusts to be stupid
 						end
 					end
 				elseif ability and message_ids:contains(message_id) then
@@ -423,15 +450,25 @@ local function parse_ws_settings()
 	if #open_ws_table ~= 2 then return false end
 	local open_tp = tonumber(open_ws_table[2])
 	if open_tp == nil or open_tp < 1000 or open_tp > 3000 then open_tp = 1000 end
-	for _,v in pairs(skills.weapon_skills) do
-		if string.lower(v.en) == open_ws_table[1] then
-			parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp, target = v.target }
-			if v.aeonic then 
-				parsed_wses[1].aeonic = v.aeonic 
-				parsed_wses[1].weapon = v.weapon
+	if current_main_job == "smn" or current_main_job == "bst" then
+		for k,v in pairs(skills.job_abilities) do
+			if string.lower(v.en) == open_ws_table[1] then
+				parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp, recast_id = res.job_abilities[k].recast_id, mp_cost = res.job_abilities[k].mp_cost }
+				notice("WS To Use: " .. parsed_wses[1].name .. " (" .. parsed_wses[1].tp .. " TP)")
 			end
-			notice("WS To Use: " .. parsed_wses[1].name .. " (" .. parsed_wses[1].tp .. " TP)")
-			break
+		end
+	end
+	if #parsed_wses == 0 then
+		for _,v in pairs(skills.weapon_skills) do
+			if string.lower(v.en) == open_ws_table[1] then
+				parsed_wses[1] = { name = open_ws_table[1], elements = v.skillchain, tp = open_tp, target = v.target }
+				if v.aeonic then 
+					parsed_wses[1].aeonic = v.aeonic 
+					parsed_wses[1].weapon = v.weapon
+				end
+				notice("WS To Use: " .. parsed_wses[1].name .. " (" .. parsed_wses[1].tp .. " TP)")
+				break
+			end
 		end
 	end
 	if #parsed_wses == 1 then
@@ -440,17 +477,23 @@ local function parse_ws_settings()
 		else
 			for i = 1, #ws_p_table, 2 do
 				local ws_tp = tonumber(ws_p_table[i + 1])
-				if ws_tp == nil or ws_tp < 1000 or ws_tp > 3000 then ws_tp = 1000
-				else
-					for _, v2 in pairs(skills.weapon_skills) do
-						if string.lower(v2.en) == ws_p_table[i] then
-							if v2.aeonic then 
-								table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target, aeonic = v2.aeonic, weapon = v2.weapon } )
-							else
-								table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target } )
-							end
+				if ws_tp == nil or ws_tp < 1000 or ws_tp > 3000 then ws_tp = 1000 end
+				if current_main_job == "smn" or current_main_job == "bst" then
+					for k,v in pairs(skills.job_abilities) do
+						if string.lower(v.en) == ws_p_table[i] then
+							table.insert(parsed_wses, { name = ws_p_table[i], elements = v.skillchain, tp = 0, recast_id = res.job_abilities[k].recast_id, mp_cost = res.job_abilities[k].mp_cost })
 							break
 						end
+					end
+				end
+				for _, v2 in pairs(skills.weapon_skills) do
+					if string.lower(v2.en) == ws_p_table[i] then
+						if v2.aeonic then 
+							table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target, aeonic = v2.aeonic, weapon = v2.weapon } )
+						else
+							table.insert(parsed_wses, {name = ws_p_table[i], elements = v2.skillchain, tp = ws_tp, target = v2.target } )
+						end
+						break
 					end
 				end
 			end
@@ -464,11 +507,11 @@ local function parse_ws_settings()
 end
 
 local function parse_am3_ws_settings()
-	parsed_am3_ws = ""
+	parsed_am3_ws = {}
 	for _,v in pairs(skills.weapon_skills) do
 		if string.lower(v.en) == string.lower(settings[current_main_job]["am3_ws"]) then
-			parsed_am3_ws = settings[current_main_job]["am3_ws"]
-			notice("AM3: " .. tostring(parsed_am3_ws))
+			parsed_am3_ws = { name = settings[current_main_job]["am3_ws"] }
+			notice("AM3: " .. tostring(parsed_am3_ws.name))
 			return true
 		end
 	end
@@ -511,10 +554,13 @@ local function parse_spell_settings()
 end
 
 local function check_job_and_parse_settings(force)
-	local new_job = string.lower(windower.ffxi.get_player().main_job)
+	local player = windower.ffxi.get_player()
+	local new_job = string.lower(player.main_job)
 	if not force and current_main_job == new_job then return end
 	if settings[current_main_job] then -- monstrosity gives somem weird mainjob haha
 		current_main_job = new_job
+		bst_jp = player.job_points.bst.jp_spent
+		sic_recast_merits = player.merits.sic_recast
 		notice("Don't Open: " .. tostring(dont_open))
 		notice("SC Level: " .. tostring(settings[current_main_job]["sc_level"]))
 		notice("Spamming: " .. tostring(spam_mode))
