@@ -1,4 +1,4 @@
--- Version 1.4.5
+-- Version 1.4.6
 
 include("MasterGear/MasterGearFunctions.lua")
 include('THHelper/THHelper.lua')
@@ -82,6 +82,8 @@ function midcast(spell)
 		if spell.element == world.weather_element or spell.element == world.day_element then 
 			equip(sets["WeatherObi"])
 		end
+	elseif THModes[THMode].fulltime then
+		equip(sets["TH"])
 	end
 end
 

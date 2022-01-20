@@ -1,4 +1,8 @@
 # MasterGear
+1.4.6
+MasterGeaLua
+- Use TH gear is no set defined for spells in midcast and if treasure hunter mode set to fulltime
+
 1.4.5
 MasterGearLua
 - Add WeatherObi set to midcast
