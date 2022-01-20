@@ -14,6 +14,10 @@ ready = {
 		["Ready2"] = { name = "Swooping Frenzy", set = "PetPhysicalTP", cost = 2 },
 		["Ready3"] = { name = "Pentapeck", set = "PetPhysicalTP", cost = 3 },
 	},
+	["Chapuli"] = {
+		["Ready1"] = { name = "Sensilla Blades", set = "PetPhysicalTP", cost = 1 },
+		["Ready2"] = { name = "Tegmina Buffet", set = "PetPhysicalTP", cost = 2 },
+	},
 }
 
 pets = {
@@ -22,6 +26,7 @@ pets = {
 	["VivaciousVickie"] = "Raaz",
 	["AttentiveIbuki"] = "Tulfaire",
 	["SwoopingZhivago"] = "Tulfaire",
+	["BouncingBertha"] = "Chapuli"
 }
 
 pet_info = [[${pet_name|none}
@@ -70,6 +75,8 @@ function setup_text_window()
 end
 
 function custom_get_sets()
+	cancel_haste = 1
+	auto_pet = false
 	ws = {}
 	ws["Raging Axe"] = { set = sets["Decimation"], tp_bonus = true }
 	ws["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
@@ -77,6 +84,8 @@ function custom_get_sets()
 	ws["Calamity"] = { set = sets["Decimation"], tp_bonus = true }
 	ws["Primal Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
 	ws["Cloudsplitter"] = { set = sets["Primal Rend"], tp_bonus = true }
+	
+	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = true }
 	
 	setup_text_window()
 	if pet.isvalid then update_pet_info(pet.name) end
@@ -115,6 +124,14 @@ function update_pet_info(name)
 
 end
 
+function pretarget(spell)
+	if spell.en == "Reward" then
+		equip(sets["PetFood"])
+	elseif spell.action_type == "Ranged Attack" then
+		equip(sets["Throwing"])
+	end
+end
+
 function sub_job_change(new, old)
 	if new == "NIN" or new == "DNC" then
 		sets["HybridSet"] = set_combine(sets["Hybrid"], sets["DW"])
@@ -124,8 +141,8 @@ function sub_job_change(new, old)
 end
  
 function custom_precast(spell)
-	if spell.type == "Monster" and not spell.interrupted then
-        if not buffactive['Unleash'] then
+	if spell.type == "Monster" then
+        if buffactive['Unleash'] == nil then
             equip(sets["Ready"])
         end
 		return true
@@ -159,9 +176,41 @@ function custom_command(args)
 				add_to_chat(122, "Please set up info for " .. pet.name)
 			end
 		end
+	elseif args[1] == "autopet" then
+		auto_pet = not auto_pet
+		add_to_chat(122, "AutoPet: " .. tostring(auto_pet))
 	end
 end
 
 function file_unload(file_name)
 	if pet_text_hub ~= nil then texts.destroy(pet_text_hub) end
 end
+
+function auto_pet(new, old)
+	if auto_pet and player.in_combat then
+		local recasts = windower.ffxi.get_ability_recasts()
+		local ja_recasts = windower.ffxi.get_ability_recasts()
+		if pet.isvalid then
+			if pet.status ~= "Engaged" and player.target ~= nil then
+				local x = math.abs(player.x - player.target.x)
+				local y = math.abs(player.y - player.target.y)
+				x = (x*x)
+				y = (y*y)
+				if x + y <= 36 then
+					send_command('input /ja Fight <t>')
+				end
+			end
+			if pet.hpp <= 10 and ja_recasts[94] > 0 then
+				equip(sets["PetFood"])
+				send_command('input /ja Reward <me>')
+			end
+		else
+			if ja_recasts[94] == 0 then
+				equip(sets["Raaz"])
+				send_command('input /ja "Bestial Loyalty" <me>')
+			end
+		end
+	end
+end
+
+windower.register_event('time change', auto_pet)

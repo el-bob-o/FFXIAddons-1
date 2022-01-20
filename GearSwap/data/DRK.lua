@@ -19,6 +19,7 @@ function custom_get_sets()
 	ws["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
 	ws["Upheaval"] = { set = sets["Insurgency"], tp_bonus = true }
 	ws["Resolution"]= { set = sets["Insurgency"], tp_bonus = true }
+	ws["Fell Cleave"] = { set = sets["Catastrophe"], tp_bonus = false }
 	
 	absorbs = {}
 	absorbs[1] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }
@@ -69,11 +70,13 @@ function custom_midcast(spell)
 			end
 		elseif spell.skill == "Dark Magic" then
 			if spell.english == "Dread Spikes" then
-				set_to_use = set_combine(sets["HP"], sets["DreadSpikes"])
+				set_to_use = set_combine(sets["HP"], sets["DreadSpikes"], sets["DarkDuration"])
 			elseif spell.english:startswith("Drain") or spell.english:startswith("Aspir") then
-				set_to_use = set_combine(sets["MagicAcc"], sets["DarkSkill"], sets["DrainAspir"])
+				set_to_use = set_combine(sets["MagicAcc"], sets["DarkSkill"], sets["DrainAspir"], sets["DarkDuration"])
 			elseif spell.english:startswith("Absorb") and (spell.english ~= "Absorb-TP" or spell.english ~= "Absorb-Attri") then
-				set_to_use = set_combine(sets["MagicAcc"], sets["DarkSkill"], sets["AbsorbDuration"])
+				set_to_use = set_combine(sets["MagicAcc"], sets["DarkSkill"], sets["AbsorbDuration"], sets["DarkDuration"])
+			elseif spell.english:startswith("Endark") then
+				set_to_use = set_combine(sets["DarkSkill"], sets["DarkDuration"])
 			end
 			if buffactive['Dark Seal'] then 
 				set_to_use = set_combine(set_to_use, sets["DarkSeal"])

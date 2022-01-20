@@ -260,7 +260,7 @@ end
 
 function equip_idle_set()
 	local setToUse = modes[mode].set
-	if not combat and (not engaged or movement) then setToUse = set_combine(setToUse, sets["movement"]) end
+	if (not combat and not engaged) or movement then setToUse = set_combine(setToUse, sets["Movement"]) end
 	equip(setToUse)
 end
 
@@ -329,7 +329,7 @@ end
 function custom_status_change(new,old)
 	if T{'Idle','Resting'}:contains(new) then
 		engaged = false
-    elseif new == 'engaged' then
+    elseif new == 'Engaged' then
         engaged = true
     end
 	equip_idle_set()
@@ -362,5 +362,8 @@ function custom_command(args)
 		if player.status == "engaged" then
 			equip_idle_set()
 		end
+	elseif args[1] == "recasts" then
+		recasts = windower.ffxi.get_ability_recasts()
+		windower.add_to_chat(122, "Blood Pact: Ward ready in " .. recasts[172])
 	end
 end

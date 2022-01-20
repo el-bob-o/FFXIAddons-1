@@ -11,13 +11,15 @@ function custom_get_sets()
 	ws["Rudra's Storm"] = { set = sets["Rudra's Storm"], tp_bonus = true }
 	ws["Mandalic Stab"] = { set = sets["Rudra's Storm"], tp_bonus = true }
 	ws["Shark Bite"] = { set = sets["Rudra's Storm"], tp_bonus = true }
-	ws["Savage Blade"] = { set = sets["STR_WS"], tp_bonus = true }
 	ws["Dancing Edge"] = { set = sets["Dancing Edge"], tp_bonus = false }
 	ws["Exenterator"] = { set = sets["Exenterator"], tp_bonus = false }
 	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
 	ws["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
 	ws["Cyclone"] = { set = sets["MagicAtk"], tp_bonus = true }
 	ws["Gust Slash"] = { set = sets["MagicAtk"], tp_bonus = true }
+	
+	ws["Savage Blade"] = { set = sets["STR_WS"], tp_bonus = true }
+	ws["Asuran Fists"] = { set = sets["Dancing Edge"], tp_bonus = false }
 	
 	print_current_ws()
 	print_throwing()

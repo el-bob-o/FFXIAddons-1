@@ -1,7 +1,6 @@
 include("MasterGear/MasterGearLua.lua")
 
-maintain_black = false
-maintain_white = false
+mp_recover = true
 
 function custom_get_sets()
 	ws = {}
@@ -74,7 +73,8 @@ function custom_get_sets()
 	sets["Midcast_Quake"] = sets["MagicBurst"]
 	sets["Midcast_Burst"] = sets["MagicBurst"]
 	sets["Midcast_Flood"] = sets["MagicBurst"]
-	sets["Midcast_Comet"] = sets["MagicBurst"]
+	
+	sets["Midcast_Comet"] = sets["CometBurst"]
 	
 	sets["Midcast_Burn"] = sets["MagicAccuracy"]
 	sets["Midcast_Frost"] = sets["MagicAccuracy"]
@@ -91,5 +91,38 @@ function custom_get_sets()
 	sets["Midcast_Bind"] = sets["MagicAccuracy"]
 	sets["Midcast_Stun"] = sets["MagicAccuracy"]
 	
+	sets["Midcast_Klimaform"] = sets["EnhDur"]
+	sets["Midcast_Sandstorm"] = sets["EnhDur"]
+	sets["Midcast_Rainstorm"] = sets["EnhDur"]
+	sets["Midcast_Windstorm"] = sets["EnhDur"]
+	sets["Midcast_Firestorm"] = sets["EnhDur"]
+	sets["Midcast_Hailstorm"] = sets["EnhDur"]
+	sets["Midcast_Thunderstorm"] = sets["EnhDur"]
+	sets["Midcast_Voidstorm"] = sets["EnhDur"]
+	sets["Midcast_Aurorastorm"] = sets["EnhDur"]
+	
 	send_command('@input /macro book 16')
+end
+
+function custom_command(args)
+	if args[1] == "mprecover" and args[2] then
+		if args[2] == "off" then
+			mp_recover = false
+		elseif args[2] == "on" then
+			mp_recover = true
+		end
+		add_to_chat(122, "MP Recovery: " .. tostring(mp_recover))
+	end
+end
+
+function custom_midcast(spell)
+	if sets["Midcast_" .. spell.english] then 
+		equip(sets["Midcast_" .. spell.english])
+		if spell.element == world.weather_element or spell.element == world.day_element then 
+			equip(sets["WeatherObi"])
+		end
+		if spell.skill == "Elemental" and mp_recover then
+			equip(sets["MPRecover"])
+		end
+	end
 end

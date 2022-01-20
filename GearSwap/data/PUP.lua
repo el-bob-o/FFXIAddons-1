@@ -133,8 +133,14 @@ function auto_maneuver(new, old)
 	if auto_maneuvers and player.in_combat then
 		local recasts = windower.ffxi.get_ability_recasts()
 		if pet.isvalid then
-			if pet.status ~= "Engaged" then
-				send_command('input /ja Deploy <t>')
+			if pet.status ~= "Engaged" and player.target ~= nil then
+				local x = math.abs(player.x - player.target.x)
+				local y = math.abs(player.y - player.target.y)
+				x = (x*x)
+				y = (y*y)
+				if x + y <= 36 then
+					send_command('input /ja Deploy <t>')
+				end
 			elseif not recasts[210] or recasts[210] == 0 then
 				for i = 1, 3 do
 					local maneuver = maneuver_cast[i]

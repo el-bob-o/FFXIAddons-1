@@ -132,9 +132,8 @@ function custom_midcast(spell)
 		if double_shot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
 		if buffactive["aftermath: lv.3"] then
 			local equipment = windower.ffxi.get_items().equipment
-			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)	
-			if res.items[range.id].name == "Armageddon" 
-			or res.items[range.id].name == "Gandiva" then
+			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range).name
+			if range == "Armageddon" or range == "Gandiva" then
 				if DT then 
 					setToUse = set_combine(setToUse, sets["AM3DT"])
 				else 
