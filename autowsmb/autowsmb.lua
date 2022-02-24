@@ -2,7 +2,7 @@
 
 _addon.name     = 'autowsmb'
 _addon.author   = 'Dabidobido'
-_addon.version  = '1.1.0'
+_addon.version  = '1.2.0'
 _addon.commands = {'autowsmb', 'awsmb'}
 
 require('logger')
@@ -17,7 +17,7 @@ local default_setting = {
 	["open_ws"] = "",
 	["ws_priority"] = "",
 	["spell_priority"] = "",
-	["am3_ws"] = "",
+	["am_ws"] = "",
 }
 
 local aeonic_weapon = {
@@ -78,16 +78,15 @@ local bst_ready_minus_5 = true
 local debug_print = false
 local double_up_time = 0
 local double_up_buffer = 20
-local am3_time = 0
-local am3_buffer = 170 -- 180-10 = 170. This leaves 10 seconds to get back to 3000tp
 local fast_cast = 80 -- assume cap
+local am_level = 0
 
 local global_delay = 3
 
 -- .element, .name, .tp
 local parsed_wses = {}
 
-local parsed_am3_ws = {}
+local parsed_am_ws = {}
 
 -- .name, .element, .recast_id, .mp, .hpp
 local parsed_spells = {}
@@ -178,7 +177,8 @@ local function check_aeonic(buffs, weapon)
 	local main_weapon = windower.ffxi.get_items(main_bag, main_slot)
 	if aeonic_weapon[main_weapon.id] and aeonic_weapon[main_weapon.id] == weapon then
 		for _, v in pairs(buffs) do
-			if v == 272 or v == 271 or v == 270 then -- any aftermath means got aeonic element 
+			if v == 272 or v == 271 or v == 270 then -- any aftermath means got aeonic element
+				if debug_print then notice("Got Aenoic due to buff ID: " .. v) end
 				return true
 			end
 		end
@@ -206,23 +206,26 @@ end
 local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_index)
 	if not started then return end
 	local time_now = os.clock()
-	if time_now - double_up_time < double_up_buffer then return nil,nil end
-	if am3 then
-		local got_am3 = false
+	if time_now - double_up_time < double_up_buffer then return nil end
+	if am_level > 0 and am_level <= 3 then
+		local current_am_level = 0
 		for _, v in pairs(buffs) do
-			if v == 272 then 
-				got_am3 = true
-				if debug_print then notice(tostring(time_now) .. "-" .. am3_time) end
-				if time_now - am3_time > am3_buffer then return nil end
+			if v == 270 then 
+				current_am_level = 1
+				break
+			elseif v == 271 then
+				current_am_level = 2
+				break
+			elseif v == 272 then 
+				current_am_level = 3
 				break
 			end
 		end
-		if not got_am3 then
-			if player_tp < 3000 then return nil
+		if current_am_level < am_level then
+			if player_tp < am_level * 1000 then return nil
 			else
-				if debug_print then notice("Doing " .. parsed_am3_ws .. " for AM3") end
-				am3_time = time_now
-				return parsed_am3_ws
+				if debug_print then notice("Doing " .. parsed_am_ws.name .. " for AM Level " .. am_level) end
+				return parsed_am_ws
 			end
 		end
 	end
@@ -233,35 +236,42 @@ local function get_next_ws(player_tp, time_since_last_skillchain, buffs, target_
 		if #elements_to_continue >= 1 then
 			local ws_to_return = nil
 			for i = 2, #parsed_wses do
-				if player_tp >= parsed_wses[i].tp then
-					if parsed_wses[i].elements ~= nil then
-						local got_aeonic = false
-						if parsed_wses[i].aeonic then
-							got_aeonic = check_aeonic(buffs, parsed_wses[i].weapon)
-						end
-						local job_ability_ok = job_ability_check(parsed_wses[i], ja_recasts)
-						if job_ability_ok then
-							for _, v2 in pairs(parsed_wses[i].elements) do
-								for _, v3 in pairs(elements_to_continue) do
-									if string.lower(v3) == string.lower(v2) 
-									or (got_aeonic and string.lower(parsed_wses[i].aeonic) == string.lower(v3)) then
+				if parsed_wses[i].elements ~= nil then
+					local got_aeonic = false
+					if parsed_wses[i].aeonic then
+						got_aeonic = check_aeonic(buffs, parsed_wses[i].weapon)
+					end
+					local job_ability_ok = job_ability_check(parsed_wses[i], ja_recasts)
+					if job_ability_ok then
+						for _, v2 in pairs(parsed_wses[i].elements) do
+							for _, v3 in pairs(elements_to_continue) do
+								if string.lower(v3) == string.lower(v2) then 
+									ws_to_return = parsed_wses[i]
+									break
+								elseif got_aeonic then
+									if string.lower(parsed_wses[i].aeonic) == string.lower(v3) then
 										ws_to_return = parsed_wses[i]
 										break
 									end
 								end
-								if ws_to_return ~= nil then break end
 							end
+							if ws_to_return ~= nil then break end
 						end
-					else
-						ws_to_return = parsed_wses
 					end
+				else
+					ws_to_return = parsed_wses[i]
 				end
 				if ws_to_return ~= nil then break end
 			end
 			if ws_to_return ~= nil then
 				if time_since_last_skillchain >= sc_window_delay then
-					if debug_print then notice("Doing SC with " .. ws_to_return.name) end
-					return ws_to_return
+					if player_tp >= ws_to_return.tp then 
+						if debug_print then notice("Doing SC with " .. ws_to_return.name) end
+						return ws_to_return
+					else
+						if debug_print then notice("Waiting for " .. ws_to_return.tp .. " TP") end
+						return nil
+					end
 				else
 					return nil
 				end
@@ -388,6 +398,10 @@ local function parse_action(act)
 			local mob = windower.ffxi.get_mob_by_index(target_index)
 			if mob and target.id == mob.id then
 				if category == 'melee' and actor_id == player.id then
+					if running then
+						running = false
+						windower.ffxi.run(false)
+					end
 					local time_since_last_skillchain = os.clock()
 					if last_skillchain[target_index] then time_since_last_skillchain = time_since_last_skillchain - last_skillchain[target_index].time end
 					local next_ws = get_next_ws(player.vitals.tp, time_since_last_skillchain, player.buffs, target_index)
@@ -506,12 +520,12 @@ local function parse_ws_settings()
 	return false
 end
 
-local function parse_am3_ws_settings()
-	parsed_am3_ws = {}
+local function parse_am_ws_settings()
+	parsed_am_ws = {}
 	for _,v in pairs(skills.weapon_skills) do
-		if string.lower(v.en) == string.lower(settings[current_main_job]["am3_ws"]) then
-			parsed_am3_ws = { name = settings[current_main_job]["am3_ws"] }
-			notice("AM3: " .. tostring(parsed_am3_ws.name))
+		if string.lower(v.en) == string.lower(settings[current_main_job]["am_ws"]) then
+			parsed_am_ws = { name = settings[current_main_job]["am_ws"] }
+			notice("AM WS: " .. tostring(parsed_am_ws.name))
 			return true
 		end
 	end
@@ -564,11 +578,11 @@ local function check_job_and_parse_settings(force)
 		notice("Don't Open: " .. tostring(dont_open))
 		notice("SC Level: " .. tostring(settings[current_main_job]["sc_level"]))
 		notice("Spamming: " .. tostring(spam_mode))
-		notice("Mantain AM3: " .. tostring(am3))
 		notice("Fast Cast: " .. tostring(fast_cast))
 		parse_ws_settings()
 		parse_spell_settings()
-		parse_am3_ws_settings()
+		parse_am_ws_settings()
+		notice("AM Level: " .. tostring(am_level))
 	end
 end
 
@@ -682,19 +696,6 @@ local function handle_command(...)
 		if args[2] == "on" then spam_mode = true
 		elseif args[2] == "off" then spam_mode = false end
 		notice("Spamming: " .. tostring(spam_mode))
-	elseif args[1] == "am3" and args[2] then
-		if args[2] == "on" then 
-			local old_am3_ws = settings[current_main_job]["am3_ws"]
-			if args[3] then settings[current_main_job]["am3_ws"] = args[3] end
-			if parse_am3_ws_settings() then 
-				am3 = true
-			else
-				notice("Error parsing am3 ws " .. settings[current_main_job]["am3_ws"])
-				settings[current_main_job]["am3_ws"] = old_am3_ws
-				am3 = false
-			end
-		elseif args[2] == "off" then am3 = false end
-		notice("Mantain AM3: " .. tostring(am3))
 	elseif args[1] == "fastcast" and args[2] then
 		local fc = tonumber(args[2])
 		if fc then
@@ -706,6 +707,31 @@ local function handle_command(...)
 			end
 		else
 			notice("Error parsing " .. args[2])
+		end
+	elseif args[1] == "amlvl" and args[2] then
+		local am_lvl = tonumber(args[2])
+		if am_lvl then
+			if am_lvl >= 0 and am_lvl <= 3 then
+				if am_lvl > 0 then
+					local old_am_lvl_ws = settings[current_main_job]["am_ws"]
+					if args[3] then settings[current_main_job]["am_ws"] = args[3] end	
+					if parse_am_ws_settings() then
+						am_level = am_lvl
+						if args[3] then config.save(settings) end
+					else
+						notice("Error parsing am ws " .. settings[current_main_job]["am_ws"])
+						settings[current_main_job]["am_ws"] = old_am_lvl_ws
+						am_level = 0
+					end
+				else
+					am_level = 0
+				end
+				notice("AM Level: " .. am_level)
+			else
+				notice("AM Level should be between 0 and 3. " .. args[2])
+			end
+		else
+			notice("AM Level should be between 0 and 3. " .. args[2])
 		end
 	elseif args[1] == "debug" and args[2] then
 		if args[2] == "on" then debug_print = true
@@ -723,7 +749,7 @@ local function handle_command(...)
 		notice("//awsmb setsclevel (1-3): Will only try to skillchain and make skillchains of the level set here or above.")
 		notice("//awsmb setspellpriority (spell_name,hpp,spell_name,hpp,...): Sets priority for spells to burst with. Will go in order of input and check elements. Hpp is amount of Hpp (HP percent) mob must have in order for spell to be used. Set to 0 for always use.")
 		notice("//awsmb spam (on/off): Starts/Stops spamming opener ws.")
-		notice("//awsmb am3 (on/off, ws_name if on): Holds/Don't hold until 3000TP to trigger AM3.")
+		notice("//awsmb amlvl (0-3, optional: ws_name): Holds TP to trigger aftermath.")
 		notice("//awsmb fastcast (0-80): Sets fastcast value for mb recast calculation. Default 80.")
 		notice("//awsmb status: Prints current configuration to chatlog.")
     end

@@ -1,4 +1,8 @@
 #Auto WS and MB
+1.2.0:
+- Changed am3 command to amlvl.
+- Removed buffer time for AM3 maintenance.
+
 1.1.0:
 - Add support for SMN bloodpacts and BST ready moves for skillchains. For BST, assumes max ready recast reduction.
 
@@ -109,9 +113,9 @@ Sets priority for spells to burst with. Will go in order of input and check elem
 
 Starts/Stops spamming opener ws
 
-## //awsmb am3 (on/off, ws_name if on)
+## //awsmb amlvl (0-3, optional: ws_name)
 
-Holds/Don't hold until 3000TP to trigger AM3.")
+Holds TP to trigger aftermath. Set to 0 to disable. 1-3 will trigger AM level 1-3.
 
 ## //awsmb fastcast (0-80) 
 
