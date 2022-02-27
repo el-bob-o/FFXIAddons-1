@@ -80,6 +80,7 @@ function custom_get_sets()
 	subjob_action = nil
 	enmity_mode = false
 	spell_interrupt_mode = false
+	auto_rune = false
 	target_rune_count = {
 		["tenebrae"] = 0,
 		["lux"] = 0,
@@ -104,6 +105,7 @@ function custom_get_sets()
 	ws["Resolution"] = { set = sets["Resolution"], tp_bonus = true }
 	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
 	ws["Requiescat"] = { set = sets["Requiescat"], tp_bonus = true }
+	ws["Sickle Moon"] = { set = sets["Savage Blade"], tp_bonus = true }
 	ws["Dimidiation"] = { set = sets["Dimidiation"], tp_bonus = true }
 	ws["Red Lotus Blade"] = { set = sets["Lunge"], tp_bonus = true }
 	ws["Seraph Blade"] = { set = sets["Lunge"], tp_bonus = true }
@@ -171,13 +173,29 @@ function custom_midcast(spell)
 			setToUse = sets[spell.english]
 		end
 		if equipEmnity then
-			setToUse = (set_combine(setToUse, sets["Emnity"]))
+			setToUse = set_combine(setToUse, sets["Emnity"])
 		end
 		if spell_interrupt_mode then
-			setToUse = (set_combine(setToUse, sets["SIR"]))
+			setToUse = set_combine(setToUse, sets["SIR"])
 		end
 		equip(setToUse)
 		return true
+	end
+end
+
+function cast_rune(skip_if_full)
+	for k,v in pairs(rune_cast) do
+		if buffactive[v] == nil or buffactive[v] < target_rune_count[v] then
+			send_command('input /ja "' .. v .. '" <me>')
+			rune_cast_index = k + 1
+			if rune_cast_index > 3 then rune_cast_index = 1 end
+			return
+		end
+	end
+	if not skip_if_full then
+		send_command('input /ja "' .. rune_cast[rune_cast_index] .. '" <me>')
+		rune_cast_index = rune_cast_index + 1
+		if rune_cast_index > 3 then rune_cast_index = 1 end
 	end
 end
  
@@ -235,27 +253,25 @@ function custom_command(args)
 					rune_cast_index = 1
 					print_current_rune()
 				end
-				
 			end
 		elseif args[2] then
 			local rune_to_cast = runes_elemental_map[string.lower(args[2])]
 			if rune_to_cast then
 				rune_cast = { rune_to_cast, rune_to_cast, rune_to_cast }
+				target_rune_count["lux"] = 0
+				target_rune_count["tenebrae"] = 0
+				target_rune_count["unda"] = 0
+				target_rune_count["sulpor"] = 0
+				target_rune_count["tellus"] = 0
+				target_rune_count["flabra"] = 0
+				target_rune_count["gelus"] = 0
+				target_rune_count["ignis"] = 0
+				target_rune_count[rune_to_cast] = 3
 				rune_cast_index = 1
 				print_current_rune()
 			end
 		else
-			for k,v in pairs(rune_cast) do			
-				if buffactive[v] == nil or buffactive[v] < target_rune_count[v] then
-					send_command('input /ja "' .. v .. '" <me>')
-					rune_cast_index = k + 1
-					if rune_cast_index > 3 then rune_cast_index = 1 end
-					return
-				end
-			end
-			send_command('input /ja "' .. rune_cast[rune_cast_index] .. '" <me>')
-			rune_cast_index = rune_cast_index + 1
-			if rune_cast_index > 3 then rune_cast_index = 1 end
+			cast_rune()
 		end
 	elseif args[1] == "sjAction" then
 		if subjob_action == nil then
@@ -296,10 +312,22 @@ function custom_command(args)
 			local arg2 = string.lower(args[2])
 			if resist_table[arg2] then 
 				rune_cast = { resist_table[arg2], resist_table[arg2], resist_table[arg2] }
+				target_rune_count["lux"] = 0
+				target_rune_count["tenebrae"] = 0
+				target_rune_count["unda"] = 0
+				target_rune_count["sulpor"] = 0
+				target_rune_count["tellus"] = 0
+				target_rune_count["flabra"] = 0
+				target_rune_count["gelus"] = 0
+				target_rune_count["ignis"] = 0
+				target_rune_count[resist_table[arg2]] = 3
 				rune_cast_index = 1
 				print_current_rune()
 			end
 		end
+	elseif args[1] == 'autorune' then
+		auto_rune = not auto_rune
+		add_to_chat(122, "Autorune: " .. tostring(auto_rune))
 	end
 end
 
@@ -349,3 +377,14 @@ function check_emnity(type, spellName)
 	end
 	return false
 end
+
+function auto_rune(new, old)
+	if auto_rune and player.in_combat then
+		local recasts = windower.ffxi.get_ability_recasts()
+		if recasts[10] == 0 then
+			cast_rune(true)
+		end
+	end
+end
+
+windower.register_event('time change', auto_rune)

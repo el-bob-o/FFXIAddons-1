@@ -74,7 +74,7 @@ bps = {
 		{
 			["Rage1"] = { name = "Eclipse Bite",		target = "stnpc",	 	set = "PhyBPDmg", 	description = "Slash" },
 			["Rage2"] = { name = "Lunar Bay",			target = "stnpc", 		set = "MagicBPDmg", description = "Dark Nuke" },
-			["Rage3"] = { name = "Impact",				target = "stnpc", 		set = "MagicBPDmg", description = "Dark & -Attr" },
+			["Rage3"] = { name = "Impact",				target = "stnpc", 		set = "SmnSkill", description = "Dark & -Attr" },
 			["Ward1"] = { name = "Lunar Cry", 			target = "stnpc", 		description = "-Evasion" },
 			["Ward2"] = { name = "Lunar Roar", 			target = "stnpc", 		description = "Dispel x2" },
 			["Ward3"] = { name = "Ecliptic Growl", 		target = "stpt", 		description = "+Attr" },

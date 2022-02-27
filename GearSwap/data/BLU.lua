@@ -6,7 +6,10 @@ function custom_get_sets()
 	ws = {}
 	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
 	ws["Expiacion"] = { set = sets["Savage Blade"], tp_bonus = true }
+	ws["Judgment"] = { set = sets["Black Halo"], tp_bonus = true }
 	ws["Black Halo"] = { set = sets["Black Halo"], tp_bonus = true }
+	ws["Flash Nova"] = { set = sets["MagicAtk"], tp_bonus = false }
+	ws["Seraph Strike"] = { set = sets["MagicAtk"], tp_bonus = true }
 	ws["Chant du Cygne"] = { set = sets["Chant Du Cygne"], tp_bonus = false }
 	ws["Requiescat"] = { set = sets["Requiescat"], tp_bonus = true }
 	ws["Realmrazer"] = { set = sets["Requiescat"], tp_bonus = false }
@@ -16,6 +19,7 @@ function custom_get_sets()
 	ws["Sanguine Blade"] = { set = sets["Sanguine Blade"], tp_bonus = false }
 	
 	sets["Sudden Lunge"] = sets["MagicAcc"]
+	sets["Acrid Stream"] = sets["MagicAcc"]
 	sets["Osmosis"] = sets["MagicAcc"]
 	sets["Dream Flower"] = sets["MagicAcc"]
 	sets["Anvil Lightning"] = sets["MagicAtk"]
@@ -24,6 +28,7 @@ function custom_get_sets()
 	sets["Subduction"] = sets["MagicAtk"]
 	sets["Tenebral Crush"] = sets["MagicAtk"]
 	sets["Entomb"] = sets["MagicAtk"]
+	sets["Enbalming Earth"] = sets["MagicAtk"]
 	
 	send_command('@input /macro book 9;wait 1;input /macro set 1')
 end

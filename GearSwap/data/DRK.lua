@@ -14,12 +14,17 @@ function custom_get_sets()
 	ws["Insurgency"] = { set = sets["Insurgency"], tp_bonus = true }
 	ws["Shadow of Death"] = { set = sets["DarkMagicAtk"], tp_bonus = true }
 	ws["Infernal Scythe"] = { set = sets["DarkMagicAtk"], tp_bonus = false }
+	
 	ws["Steel Cyclone"] = { set = sets["Catastrophe"], tp_bonus = true }
 	ws["Keen Edge"] = { set = sets["Catastrophe"], tp_bonus = false }
 	ws["Armor Break"] = { set = sets["Catastrophe"], tp_bonus = false }
 	ws["Upheaval"] = { set = sets["Insurgency"], tp_bonus = true }
-	ws["Resolution"]= { set = sets["Insurgency"], tp_bonus = true }
 	ws["Fell Cleave"] = { set = sets["Catastrophe"], tp_bonus = false }
+	
+	ws["Scourge"] = { set = sets["Catastrophe"], tp_bonus = false }
+	ws["Torcleaver"] = { set = sets["Catastrophe"], tp_bonus = true }
+	ws["Ground Strike"] = { set = sets["Catastrophe"], tp_bonus = true }
+	ws["Resolution"]= { set = sets["Insurgency"], tp_bonus = true }
 	
 	absorbs = {}
 	absorbs[1] = { buff = "Accuracy Boost", spell = "Absorb-Acc", recast_id = 242 }

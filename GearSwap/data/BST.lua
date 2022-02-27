@@ -82,6 +82,7 @@ function custom_get_sets()
 	ws["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
 	ws["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
 	ws["Calamity"] = { set = sets["Decimation"], tp_bonus = true }
+	ws["Mistral Axe"] = { set = sets["Decimation"], tp_bonus = true }
 	ws["Primal Rend"] = { set = sets["Primal Rend"], tp_bonus = true }
 	ws["Cloudsplitter"] = { set = sets["Primal Rend"], tp_bonus = true }
 	

@@ -10,27 +10,11 @@ function custom_get_sets()
 	ws["Seraph Strike"] = { set = sets["Flash Nova"], tp_bonus = true }
 	ws["Myrkr"] = { set = sets["Myrkr"], tp_bonus = true }
 		
-	sets["Midcast_Shell"] = sets["EnhDur"]
-	sets["Midcast_Shell II"] = sets["EnhDur"]
-	sets["Midcast_Shell III"] = sets["EnhDur"]
-	sets["Midcast_Shell IV"] = sets["EnhDur"]
 	sets["Midcast_Shell V"] = sets["EnhDur"]
-	sets["Midcast_Protect"] = sets["EnhDur"]
-	sets["Midcast_Protect II"] = sets["EnhDur"]
-	sets["Midcast_Protect III"] = sets["EnhDur"]
-	sets["Midcast_Protect IV"] = sets["EnhDur"]
 	sets["Midcast_Protect V"] = sets["EnhDur"]
 	
 	sets["Midcast_Haste"] = sets["EnhDur"]
 	sets["Midcast_Klimaform"] = sets["EnhDur"]
-	sets["Midcast_Sandstorm"] = sets["EnhDur"]
-	sets["Midcast_Rainstorm"] = sets["EnhDur"]
-	sets["Midcast_Windstorm"] = sets["EnhDur"]
-	sets["Midcast_Firestorm"] = sets["EnhDur"]
-	sets["Midcast_Hailstorm"] = sets["EnhDur"]
-	sets["Midcast_Thunderstorm"] = sets["EnhDur"]
-	sets["Midcast_Voidstorm"] = sets["EnhDur"]
-	sets["Midcast_Aurorastorm"] = sets["EnhDur"]
 	sets["Midcast_Sandstorm II"] = sets["EnhDur"]
 	sets["Midcast_Rainstorm II"] = sets["EnhDur"]
 	sets["Midcast_Windstorm II"] = sets["EnhDur"]
@@ -43,7 +27,7 @@ function custom_get_sets()
 	sets["Midcast_Animus Minuo"] = sets["EnhDur"]
 	sets["Midcast_Adloquium"] = sets["EnhDur"]
 	
-	sets["Midcast_Regen V"] = sets["EnhDur"]
+	sets["Midcast_Regen V"] = sets["Regen"]
 	
 	sets["Midcast_Fire V"] = sets["MagicBurst"]
 	sets["Midcast_Fire IV"] = sets["MagicBurst"]
@@ -96,7 +80,7 @@ function custom_get_sets()
 	sets["Midcast_Curaga II"] = sets["Cure"]
 	sets["Midcast_Curaga III"] = sets["Cure"]
 	
-	send_command('@input /macro book 16')
+	send_command('@input /macro book 17')
 end
 
 function custom_precast(spell)
@@ -108,6 +92,13 @@ function custom_precast(spell)
 		then
 			equip(sets["GrimoireFastcast"])
 		end
+		return true
+	end
+end
+
+function custom_midcast(spell)
+	if spell.skill == "Enhancing Magic" and buffactive["Perpetuance"] then
+		equip(set_combine(sets["Midcast_" .. spell.english], sets["Perpetuance"]))
 		return true
 	end
 end
