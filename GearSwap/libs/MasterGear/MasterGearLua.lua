@@ -1,4 +1,4 @@
--- Version 1.4.6
+-- Version 1.5.0
 
 include("MasterGear/MasterGearFunctions.lua")
 include('THHelper/THHelper.lua')
@@ -10,6 +10,7 @@ function get_sets()
 	combat = false
 	throwing = false
 	killer_effect = false
+	th_next = false
 
 	get_set_for_job_from_json()
 
@@ -61,6 +62,10 @@ function precast(spell)
 			if killer_effect then
 				setToUse = set_combine(setToUse, sets["KillerEffect"])
 			end
+			if th_next then
+				th_next = false
+				setToUse = set_combine(setToUse, sets["TH"])
+			end
 			equip(setToUse)
 		end
 	elseif spell.action_type == "Ranged Attack" then equip(sets["Snapshot"])
@@ -76,14 +81,20 @@ function midcast(spell)
 		equip(sets["Midcast_" .. modes[mode].name ..spell.english])
 		if spell.element == world.weather_element or spell.element == world.day_element then 
 			equip(sets["WeatherObi"])
-		end 
+		end
+		if th_next then
+			th_next = false
+			equip(sets["TH"])
+		end
 	elseif sets["Midcast_" .. spell.english] then 
 		equip(sets["Midcast_" .. spell.english])
 		if spell.element == world.weather_element or spell.element == world.day_element then 
 			equip(sets["WeatherObi"])
 		end
-	elseif THModes[THMode].fulltime then
-		equip(sets["TH"])
+		if th_next then
+			th_next = false
+			equip(sets["TH"])
+		end
 	end
 end
 
@@ -206,6 +217,8 @@ function self_command(command)
 			killer_effect = false
 		end
 		add_to_chat(122, "Killer Effect: " .. tostring(killer_effect))
+	elseif args[1] == "thnext" then
+		th_next = true
 	elseif custom_command and type(custom_command) == 'function' then
 		custom_command(args)
 	end

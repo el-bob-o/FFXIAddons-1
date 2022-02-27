@@ -1,6 +1,11 @@
 # MasterGear
+1.5.0
+MasterGearLua
+- added thnext command, to equip TH gear for next weaponskill or spellcast
+- removed behaviour added in 1.4.6
+
 1.4.6
-MasterGeaLua
+MasterGearLua
 - Use TH gear is no set defined for spells in midcast and if treasure hunter mode set to fulltime
 
 1.4.5
