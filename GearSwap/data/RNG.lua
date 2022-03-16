@@ -78,11 +78,16 @@ function custom_get_sets()
 	ws["Wildfire"] = { set = sets["Trueflight"], tp_bonus = false }
 	ws["Heavy Shot"] = { set = sets["Heavy Shot"], tp_bonus = false }
 	ws["Last Stand"] = { set = sets["Last Stand"], tp_bonus = true }
-	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
+	
+	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = true }
+	ws["Viper Bite"] = { set = sets["Evisceration"], tp_bonus = true }
 	ws["Aeolian Edge"] = { set = sets["Aeolian Edge"], tp_bonus = true }
+	
 	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
+	
 	ws["Ruinator"] = { set = sets["Decimation"], tp_bonus = false }
 	ws["Decimation"] = { set = sets["Decimation"], tp_bonus = false }
+	
 	ws["Flaming Arrow"] = { set = sets["Flaming Arrow"], tp_bonus = true }
 	ws["Empyreal Arrow"] = { set = sets["Apex Arrow"], tp_bonus = true }
 	ws["Apex Arrow"] = { set = sets["Apex Arrow"], tp_bonus = false }
@@ -103,10 +108,8 @@ function custom_precast(spell)
 			local setToUse = ws[spell.english].set
 			if ws[spell.english].tp_bonus then
 				local maxTP = 3000
-				local equipment = windower.ffxi.get_items().equipment
-				local range = windower.ffxi.get_items(equipment.range_bag, equipment.range)
-				if (res.items[range.id].name == "Fomalhaut" and spell.skill == "Marksmanship")
-				or (res.items[range.id].name == "Fail-Not" and spell.skill == "Archery") then
+				if (player.equipment.range == "Fomalhaut" and spell.skill == "Marksmanship")
+				or (player.equipment.range == "Fail-Not" and spell.skill == "Archery") then
 					maxTP = maxTP - 500
 				end
 				if player.sub_job == "WAR" then
@@ -131,9 +134,7 @@ function custom_midcast(spell)
 		if DT then setToUse = sets["MidshotDT"] end
 		if double_shot then setToUse = set_combine(setToUse, sets["Double Shot"]) end		
 		if buffactive["aftermath: lv.3"] then
-			local equipment = windower.ffxi.get_items().equipment
-			local range = windower.ffxi.get_items(equipment.range_bag, equipment.range).name
-			if range == "Armageddon" or range == "Gandiva" then
+			if player.equipment.range == "Armageddon" or player.equipment.range == "Gandiva" then
 				if DT then 
 					setToUse = set_combine(setToUse, sets["AM3DT"])
 				else 

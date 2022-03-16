@@ -18,6 +18,10 @@ ready = {
 		["Ready1"] = { name = "Sensilla Blades", set = "PetPhysicalTP", cost = 1 },
 		["Ready2"] = { name = "Tegmina Buffet", set = "PetPhysicalTP", cost = 2 },
 	},
+	["Acuex"] = {
+		["Ready1"] = { name = "Foul Waters", set = "PetMagicalTP", cost = 2 },
+		["Ready2"] = { name = "Pestilent Plume", set = "PetMagicalTP", cost = 2 },
+	},
 }
 
 pets = {
@@ -26,7 +30,9 @@ pets = {
 	["VivaciousVickie"] = "Raaz",
 	["AttentiveIbuki"] = "Tulfaire",
 	["SwoopingZhivago"] = "Tulfaire",
-	["BouncingBertha"] = "Chapuli"
+	["BouncingBertha"] = "Chapuli",
+	["AcuexFamiliar"] = "Acuex",
+	["FluffyBredo"] = "Acuex",
 }
 
 pet_info = [[${pet_name|none}
@@ -87,6 +93,9 @@ function custom_get_sets()
 	ws["Cloudsplitter"] = { set = sets["Primal Rend"], tp_bonus = true }
 	
 	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = true }
+	ws["Viper Bite"] = { set = sets["Viper Bite"], tp_bonus = false }
+	
+	ws["Savage Blade"] = { set = sets["Viper Bite"], tp_bonus = false }
 	
 	setup_text_window()
 	if pet.isvalid then update_pet_info(pet.name) end
@@ -155,6 +164,7 @@ function pet_midcast(spell)
 		for k,v in pairs(ready[pets[pet.name]]) do
 			if v.name == spell.name then
 				equip(sets[v.set])
+				return true
 			end
 		end
 	end
@@ -163,7 +173,7 @@ end
 function pet_aftercast(spell)
 	aftercast(spell)
 end
- 
+
 function custom_command(args)
 	if args[1] == "ready" and args[2] then
 		if pet.isvalid then

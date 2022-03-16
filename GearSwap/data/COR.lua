@@ -67,10 +67,12 @@ function custom_get_sets()
 	ws["Leaden Salute"] = { set = sets["Leaden Salute"], tp_bonus = true }
 	ws["Wildfire"] = { set = sets["Wildfire"], tp_bonus = false }
 	ws["Last Stand"] = { set = sets["Last Stand"], tp_bonus = true }
-	ws["Aeolian Edge"] = { set = sets["Wildfire"], tp_bonus = true }
+	
 	ws["Shining Blade"] = { set = sets["Wildfire"], tp_bonus = true }
 	ws["Savage Blade"] = { set = sets["Savage Blade"], tp_bonus = true }
-	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
+	
+	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = true }
+	ws["Aeolian Edge"] = { set = sets["Wildfire"], tp_bonus = true }
 	
 	check_buffs()
 	update_rng_info()	
@@ -171,7 +173,7 @@ function custom_command(args)
 			end
 			add_to_chat(122, "Quick Draw: " .. quick_draw)
 		else
-			send_command('input /ja "' .. quick_draw .. '" <t>')
+			send_command('input /ja "' .. quick_draw .. '" <stnpc>')
 		end
 	end
 end

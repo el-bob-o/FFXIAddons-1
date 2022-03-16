@@ -29,7 +29,22 @@ function custom_get_sets()
 	send_command('@input /macro book 5;wait 1;input /macro set 1')
 	print_elemental()
 end
- 
+
+function custom_precast(spell)
+	if spell.type=="WeaponSkill" and ws[spell.english] then
+		local setToUse = ws[spell.english].set
+		local maxTP = 3000
+		if player.equipment.main == "Heishi Shorinken" then
+			maxTP = maxTP - 500
+		end
+		if player.tp < maxTP then
+			setToUse = set_combine(setToUse, sets["TPBonus"])
+		end
+		equip(setToUse)
+		return true
+	end
+end
+
 function custom_midcast(spell)
 	if spell.action_type == 'Magic' and spell.skill == "Ninjutsu" then
 		if is_elemental_ninjutsu(spell.name) then

@@ -33,13 +33,10 @@ function custom_precast(spell)
 			local setToUse = ws[spell.english].set
 			if ws[spell.english].tp_bonus then
 				local maxTP = 3000
-				local equipment = windower.ffxi.get_items().equipment
-				local sub = windower.ffxi.get_items(equipment.sub_bag, equipment.sub)
-				local main = windower.ffxi.get_items(equipment.main_bag, equipment.main)
-				if res.items[main.id].name == "Aeneas" then
+				if player.equipment.main == "Aeneas" then
 					maxTP = maxTP - 500
 				end 
-				if res.items[sub.id].name == "Centovente" then
+				if player.equipment.sub == "Centovente" then
 					maxTP = maxTP - 1000
 				end
 				if player.tp < maxTP then

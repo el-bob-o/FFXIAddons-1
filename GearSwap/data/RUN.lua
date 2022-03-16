@@ -81,6 +81,7 @@ function custom_get_sets()
 	enmity_mode = false
 	spell_interrupt_mode = false
 	auto_rune = false
+	dt_mode = false
 	target_rune_count = {
 		["tenebrae"] = 0,
 		["lux"] = 0,
@@ -177,6 +178,9 @@ function custom_midcast(spell)
 		end
 		if spell_interrupt_mode then
 			setToUse = set_combine(setToUse, sets["SIR"])
+		end
+		if dt_mode then
+			setToUse = set_combine(setToUse, sets["Midcast_DT"])
 		end
 		equip(setToUse)
 		return true
@@ -325,6 +329,9 @@ function custom_command(args)
 				print_current_rune()
 			end
 		end
+	elseif args[1] == 'dt' then
+		dt_mode = not dt_mode
+		add_to_chat(122, "DT Mode: " .. tostring(dt_mode))
 	elseif args[1] == 'autorune' then
 		auto_rune = not auto_rune
 		add_to_chat(122, "Autorune: " .. tostring(auto_rune))

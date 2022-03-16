@@ -78,7 +78,7 @@ function update_combo_info()
 		and recasts[222] == 0 -- Reverse Flourish
 		and recasts[254] == 0 -- Grand Pas
 		and recasts[0] == 0 -- Trance
-		and player.tp == 3000
+		and player.tp >= 1000
 		and not disabled
 		then
 			can_combo = true
@@ -156,8 +156,8 @@ function custom_get_sets()
 	ws["Rudra's Storm"] = { set = sets["Rudra's Storm"], tp_bonus = true }
 	ws["Mandalic Stab"] = { set = sets["Rudra's Storm"], tp_bonus = true }
 	ws["Shark Bite"] = { set = sets["Rudra's Storm"], tp_bonus = true }
-	ws["Dancing Edge"] = { set = sets["Evisceration"], tp_bonus = false }
-	ws["Exenterator"] = { set = sets["Evisceration"], tp_bonus = false }
+	ws["Dancing Edge"] = { set = sets["Dancing Edge"], tp_bonus = false }
+	ws["Exenterator"] = { set = sets["Exenterator"], tp_bonus = false }
 	ws["Evisceration"] = { set = sets["Evisceration"], tp_bonus = false }
 	ws["Pyrrhic Kleos"] = { set = sets["Pyrrhic Kleos"], tp_bonus = false }
 	ws["Aeolian Edge"] = { set = sets["MagicAtk"], tp_bonus = true }
@@ -180,13 +180,10 @@ function custom_precast(spell)
 			else set_to_use = ws[spell.english].set end
 			if ws[spell.english].tp_bonus then
 				local maxTP = 3000
-				local equipment = windower.ffxi.get_items().equipment
-				local sub = windower.ffxi.get_items(equipment.sub_bag, equipment.sub)
-				local main = windower.ffxi.get_items(equipment.main_bag, equipment.main)
-				if res.items[main.id].name == "Aeneas" then
+				if player.equipment.main == "Aeneas" then
 					maxTP = maxTP - 500
 				end 
-				if res.items[sub.id].name == "Centovente" then
+				if player.equipment.sub == "Centovente" then
 					maxTP = maxTP - 1000
 				end
 				if player.tp < maxTP then
@@ -249,6 +246,30 @@ function custom_command(args)
 		print_current_ws()
 	elseif args[1] == "combo" then
 		do_combo()
+	elseif args[1] == 'tpitemws' then
+		local temp_items = windower.ffxi.get_items(3)
+		local tp_item = nil
+		for k, v in pairs(temp_items) do
+			if v.id ~= nil and v.id == 5834 then 
+				tp_item = 5834
+				break
+			elseif v.id ~= nil and v.id == 6475 then
+				tp_item = 6475
+				break
+			elseif v.id ~= nil and v.id == 4202 then
+				tp_item = 4202
+				break
+			end
+		end
+		if tp_item ~= nil then
+			if tp_item == 5834 then
+				send_command('input /item "Lucid Wings I" <me>;wait 3.5;input /ws "Rudra\'s Storm" <t>')
+			elseif tp_item == 6475 then
+				send_command('input /item "Lucid Wings II" <me>;wait 3.5;input /ws "Rudra\'s Storm" <t>')
+			elseif tp_item == 4202 then
+				send_command('input /item "Daedalus Wing" <me>;wait 3.5;input /ws "Rudra\'s Storm" <t>')
+			end
+		end
 	end
 end
 
