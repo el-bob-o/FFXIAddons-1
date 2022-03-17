@@ -24,3 +24,7 @@ The commands are:
     
     When loaded on a character a settings file will be created for that specific character.
     when setting the 'altdelay' be sure to use a unique number (between 0 and 5, inclusive) for each character.
+
+
+As of now the delay only affects opening the chest.  If multiple characters are attempting to buy cells from the Voidwatch npc
+at the same time you will still get conflicts.
