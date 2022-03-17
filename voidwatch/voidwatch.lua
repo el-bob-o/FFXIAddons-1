@@ -1,6 +1,7 @@
 _addon.name     = 'voidwatch'
 _addon.author   = 'Dabidobido'
-_addon.version  = '0.8.13'
+_addon.bastardizer = 'Snads'
+_addon.version  = '0.8.13.1'
 _addon.commands = {'vw'}
 
 -- copied lots of code from https://github.com/Muddshuvel/Voidwatch/blob/master/voidwatch.lua
