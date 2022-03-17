@@ -2,7 +2,7 @@ This is a modified version of Dabidobido's voidwatch file. It is modified to be 
 
 The commands are:
 
-    //vw t: trade cells and displacers and start fight
+                //vw t: trade cells and displacers and start fight
 		//vw bc (number): buy number * 12 cobalt cells from nearby Voidwatch Officer
 		//vw br (number): buy number * 12 rubicund cells from nearby Voidwatch Officer
 		//vw bp (number): buy (number) phase displacers from Ardrick
