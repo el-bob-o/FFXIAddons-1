@@ -20,7 +20,7 @@ The commands are:
 		//vw trustset (name): sets the name of the trust set. Uses Trusts addon to summon trusts.
 		//vw scdelay (number): sets the skillchain delay when a sc_opener is in the party.
 		//vw altdelay (0-5): sets a delay so that each character is attempting to open the chest at different times.
-           //vw stop: stops all parsing of incoming packets.
+            //vw stop: stops all parsing of incoming packets.
     
     When loaded on a character a settings file will be created for that specific character.
     when setting the 'altdelay' be sure to use a unique number (between 0 and 5, inclusive) for each character.
