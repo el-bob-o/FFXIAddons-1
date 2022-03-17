@@ -895,6 +895,7 @@ local function handle_command(...)
 		notice('//vw refreshtrusts: toggles whether to resummon trusts after battle.')
 		notice('//vw trustset (name): sets the name of the trust set. Uses Trusts addon to summon trusts.')
 		notice('//vw scdelay (number): sets the skillchain delay when a sc_opener is in the party.')
+		notice('//vw altdelay (0-5): sets a delay so that each character is attempting to open the chest at different times.')
 		notice('//vw stop: stops all parsing of incoming packets.')
     end
 end
