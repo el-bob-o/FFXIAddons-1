@@ -7,29 +7,56 @@ _addon.commands = {'vw'}
 
 require('logger')
 require('coroutine')
+require('luau')
+require('tables')
+require('strings')
+require('pack')
+require('actions')
 packets = require('packets')
 res = require('resources')
 config = require('config')
+chat = require('chat')
+chars = require('chat.chars')
 
 interact_distance_square = 5*5
 
-local default_settings = {
-	["displacers"] = 5,
-	["cobalt"] = 1,
-	["rubicund"] = 1,
-	["autoloop"] = false,
-	["autosell"] = false,
-	["autows"] = false,
-	["autowstp"] = 1000,
-	["WS"] = "Evisceration",
-	["scdelay"] = 3,
-	["converttocell"] = false,
-	["warpwhendone"] = false,
-	["trustset"] = "botulus",
-	["refreshtrusts"] = true,
-}
+math.randomseed(os.time())
 
-local settings = config.load(default_settings)
+local player = windower.ffxi.get_player()
+
+local defaults = T{}
+	defaults.displacers = 5
+	defaults.cobalt = 1
+	defaults.rubicund = 1
+	defaults.autoloop = false
+	defaults.autosell = false
+	defaults.autows = false
+	defaults.autowstp = 1000
+	defaults.WS = "Evisceration"
+	defaults.scdelay = 3
+	defaults.converttocell = false
+	defaults.warpwhendone = false
+	defaults.trustset = "botulus"
+	defaults.refreshtrusts = true
+	defaults.altdelay = 1
+
+
+local settings = T{}
+settings = config.load("data/"..player.name..".xml", defaults)
+settings.displacers = settings.displacers or 5
+settings.cobalt = settings.cobalt or 1
+settings.rubicund = settings.rubicund or 1
+settings.autoloop = settings.autoloop or false
+settings.autosell = settings.autosell or false
+settings.autows = settings.autows or false
+settings.autowstp = settings.autowstp or 1000
+settings.WS = settings.WS or "Evisceration"
+settings.scdelay = settings.scdelay or 3
+settings.converttocell = settings.converttocell or false
+settings.warpwhendone = settings.warpwhendone or false
+settings.trustset = settings.trustset or "botulus"
+settings.refreshtrusts = settings.refreshtrusts or true
+settings.altdelay = settings.altdelay or 1
 
 local bags = {
     'inventory',
@@ -199,9 +226,9 @@ local function trade_cells()
             ['Target Index'] = npc.index,
         })
         local remaining = {
-            cobalt = settings["cobalt"],
-            rubicund = settings["rubicund"],
-            phase = settings["displacers"],
+            cobalt = settings.cobalt,
+            rubicund = settings.rubicund,
+            phase = settings.displacers,
         }
         local idx = 1
         local n = 0
@@ -262,7 +289,7 @@ local function start_fight()
 				['Target Index'] = npc_index,
 				['Menu ID'] = menu_id,
 				['Zone'] = zone,
-				['Option Index'] = phase_cell_options[settings["displacers"]],
+				['Option Index'] = phase_cell_options[settings.displacers],
 				['_unknown1'] = 0,
 			})
 		packets.inject(p)
@@ -339,9 +366,11 @@ local function get_everything()
 		})
 	packets.inject(p)
 	if need_to_relinquish then
-		coroutine.schedule(poke_box, 1)
+		local n = math.random() + math.random(settings.altdelay + 0.2, settings.altdelay + 1)
+		windower.add_to_chat('time = ', n)
+		coroutine.schedule(poke_box, n)
 		wait_for_box_0x34 = true
-	elseif settings["autosell"] then
+	elseif settings.autosell then
 		coroutine.schedule(sparky_purge, 1)
 	end
 	if settings['refreshtrusts'] and windower.ffxi.get_party().party1_count < 6 then
@@ -363,7 +392,9 @@ local function get_pulse(index, convert)
 		p['_unknown1'] = 1
 	end
 	packets.inject(p)
-	coroutine.schedule(poke_box, 1)
+	local n = math.random() + math.random(settings.altdelay + 0.2, settings.altdelay + 1)
+	windower.add_to_chat('time = ', n)
+	coroutine.schedule(poke_box, n)
 end
 
 local function relinquish_everything()
@@ -376,7 +407,7 @@ local function relinquish_everything()
 			['Option Index'] = 9,
 		})
 	packets.inject(p)
-	if settings["autosell"] then
+	if settings.autosell then
 		coroutine.schedule(sparky_purge, 1)
 	end
 end
@@ -468,7 +499,9 @@ local function parse_incoming(id, data)
 				if p['Type'] == 'deru' then
 					wait_for_sc = nil
 					wait_for_box_spawn = false
-					coroutine.schedule(poke_box, 2)
+					local n = math.random() + math.random(settings.altdelay + 0.2, settings.altdelay + 1)
+					windower.add_to_chat('time = ', n)
+					coroutine.schedule(poke_box, n)
 				end
 			end
 		elseif id == 0x5b then
@@ -483,7 +516,7 @@ local function parse_incoming(id, data)
 				coroutine.schedule(face_target, 1.5)
 			end
 		elseif id == 0xe then
-			if settings["autoloop"] and wait_for_rift_spawn then
+			if settings.autoloop and wait_for_rift_spawn then
 				local p = packets.parse('incoming', data)
 				local npc = windower.ffxi.get_mob_by_id(p['NPC'])
 				if npc and npc.name == 'Planar Rift' and npc.distance <= interact_distance_square then
@@ -577,7 +610,7 @@ local function parse_action(action)
 							elseif use_cleric then
 								use_cleric = false
 								windower.send_command("input /item \"Cleric's Drink\" <me>")
-							elseif player.vitals.tp >= settings["autowstp"] then
+							elseif player.vitals.tp >= settings.autowstp then
 								do_ws()
 							end
 						elseif action.actor_id == player.id and action.category == 1 then
@@ -586,7 +619,7 @@ local function parse_action(action)
 								windower.ffxi.run(false)
 							end
 							if mob_stun_moves[player_target.name] and can_stun then
-								if player.vitals.tp >= settings["autowstp"] then
+								if player.vitals.tp >= settings.autowstp then
 									if player_target.hpp >= 80 or player_target.hpp <= 15 then
 										do_ws()
 									else
@@ -604,7 +637,7 @@ local function parse_action(action)
 									if os.time() > wait_for_sc and player.vitals.tp >= 1000 then
 										do_ws()
 									end
-								elseif player.vitals.tp >= settings["autowstp"] then
+								elseif player.vitals.tp >= settings.autowstp then
 									do_ws()
 								end
 							end
@@ -718,7 +751,7 @@ local function handle_command(...)
 		local number = tonumber(args[2])
 		if number then
 			if number >= 0 and number <= 5 then
-				settings["displacers"] = number
+				settings.displacers = number
 				config.save(settings)
 				log("Using " .. number .. " of phase displacers each fight.")
 			else
@@ -760,7 +793,7 @@ local function handle_command(...)
 		local number = tonumber(args[2])
 		if number then
 			if number >= 0 and number <= 1 then
-				settings["cobalt"] = number
+				settings.cobalt = number
 				config.save(settings)
 				log("Using " .. number .. " cobalt cell each fight.")
 			else
@@ -771,7 +804,7 @@ local function handle_command(...)
 		local number = tonumber(args[2])
 		if number then
 			if number >= 0 and number <= 1 then
-				settings["rubicund"] = number
+				settings.rubicund = number
 				config.save(settings)
 				log("Using " .. number .. " rubicund cell each fight.")
 			else
@@ -782,7 +815,7 @@ local function handle_command(...)
 		local number = tonumber(args[2])
 		if number then
 			if number >= 1000 and number <= 3000 then
-				settings["autowstp"] = number
+				settings.autowstp = number
 				config.save(settings)
 				log("Auto WS at " .. number .. " TP.")
 			else
@@ -810,6 +843,37 @@ local function handle_command(...)
 				log("Skillchain delay changed to " .. tostring(settings['scdelay']))
 			else
 				log("Number must be between 1 and 10(?)")
+			end
+		end
+	elseif args[1] == "altdelay" and args[2] then
+		local number = tonumber(args[2])
+		if number then
+			if number == 0 then
+				settings['altdelay'] = 1
+				config.save(settings)
+				log("Alt delay is now random between 1 and 2")
+			elseif number == 1 then
+				settings['altdelay'] = 2
+				config.save(settings)
+				log("Alt delay is now random between 2 and 3")
+			elseif number == 2 then
+				settings['altdelay'] = 3
+				config.save(settings)
+				log("Alt delay is now random between 3 and 4")
+			elseif number == 3 then
+				settings['altdelay'] = 4
+				config.save(settings)
+				log("Alt delay is now random between 4 and 5")
+			elseif number == 4 then
+				settings['altdelay'] = 5
+				config.save(settings)
+				log("Alt delay is now random between 5 and 6")
+			elseif number == 5 then
+				settings['altdelay'] = 6
+				config.save(settings)
+				log("Alt delay is now random between 6 and 7")
+			else
+				log("Number must be between 0 and 5")
 			end
 		end
     else
