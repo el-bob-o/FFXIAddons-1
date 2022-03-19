@@ -1,3 +1,3 @@
 # FFXIAddons-1
 
-FFXI Voidwatch program modified to be more multibox friendly.
+FFXI Voidwatch program by Dabiodobido, modified to be more multibox friendly.
